@@ -1261,6 +1261,18 @@ function vRecord(id){
 
 /* map */
 let MAP=null, mState={f:'',ids:null,label:''};
+/* remember where the map was (view, open bubble, scroll in its list) so Back returns to the same spot */
+const MVIEW={};
+function mapMemory(key,markers){ const v=MVIEW[key]; let restored=false;
+  if(v){ MAP.setView(v.c,v.z,{animate:false}); restored=true;
+    if(v.open&&markers[v.open]){ const st0=v.st||0; setTimeout(()=>{ const m=markers[v.open]; m.openPopup(); setTimeout(()=>{const el=m.getPopup()&&m.getPopup().getElement(); const sc=el&&el.querySelector('.leaflet-popup-content'); if(sc&&st0){ sc.scrollTop=st0; v.st=st0; }},60); },120); } }
+  const save=()=>{ const o=MVIEW[key]||{}; o.c=MAP.getCenter(); o.z=MAP.getZoom(); MVIEW[key]=o; };
+  MAP.on('moveend zoomend',save);
+  Object.entries(markers).forEach(([id,m])=>{
+    m.on('popupopen',e=>{ save(); MVIEW[key].open=id; MVIEW[key].st=0; const sc=e.popup.getElement().querySelector('.leaflet-popup-content'); if(sc) sc.addEventListener('scroll',()=>{ if(MVIEW[key]) MVIEW[key].st=sc.scrollTop },{passive:true}); });
+  });
+  MAP.on('click',()=>{ if(MVIEW[key]) MVIEW[key].open=null; });
+  setTimeout(save,300); return restored; }
 function mkMap(){
   MAP=L.map('map',{zoomControl:true,attributionControl:false,minZoom:8,maxZoom:16,preferCanvas:true,zoomSnap:.5}).setView([40.17,-74.17],11);
   MAP.createPane('pins').style.zIndex=650; MAP.createPane('lbl').style.zIndex=640;
@@ -1283,7 +1295,7 @@ function vMap(focus){
   const recs=D.records.filter(r=>r.pl&&(!mState.f||r.f===mState.f)&&(!mState.ids||mState.ids.has(r.id)));
   const by={}; recs.forEach(r=>(by[r.pl]=by[r.pl]||[]).push(r));
   const col={site:'#9c3b2e',place:'#3f6b3a',township:'#a08c6c',court:'#6b6f73'};
-  let focusMarker=null;
+  let focusMarker=null; const MK={};
   const TO={township:0,court:1,place:2,site:3};
   D.places.slice().sort((a,b)=>TO[a.tier]-TO[b.tier]).forEach(pl=>{const rs=by[pl.id]; if(!rs) return;
     const rad=pl.tier==='township'?Math.min(26,9+Math.sqrt(rs.length)*1.6):Math.min(20,6+Math.sqrt(rs.length)*1.8);
@@ -1292,9 +1304,11 @@ function vMap(focus){
     m.bindTooltip(pl.label.split(/[(/–,]/)[0].trim(),{permanent:true,direction:pl.tier==='township'?'center':'right',className:'plabel '+cls,pane:'pins',offset:pl.tier==='township'?[0,0]:[rad/2+2,0]});
     rs.sort((a,b)=>String(a.sd).localeCompare(String(b.sd)));
     m.bindPopup((pl.id==='miery'?`<img src="${IMG.survey}" style="width:100%;border-radius:4px;margin-bottom:6px" alt="">`:'')+`<b>${esc(pl.label)}</b><div class="tiny muted">${rs.length} record${rs.length>1?'s':''} · ${TIERTXT[pl.tier]||''}</div>`+rs.slice(0,60).map(r=>`<a href="#r-${r.id}">${esc(String(r.sd||'').slice(0,4))} · ${esc((r.t||'').split(/[—(;]/)[0].trim())}: ${esc(rtitle(r).slice(0,60))}</a>`).join('')+(rs.length>60?`<div class="tiny muted">…and ${rs.length-60} more (use Records › On the map)</div>`:''),{maxWidth:280});
-    if(focus===pl.id) focusMarker=m;
+    if(focus===pl.id) focusMarker=m; MK[pl.id]=m;
   });
   const zc=()=>{const z=MAP.getZoom(),c=MAP.getContainer().classList;c.toggle('zlow',z<12);c.toggle('zmid',z<13)}; MAP.on('zoomend',zc); zc();
+  const mkey='map|'+(focus||'')+'|'+mState.f+'|'+(mState.ids?mState.label+mState.ids.size:'');
+  if(mapMemory(mkey,MK)){ setTimeout(()=>MAP.invalidateSize(),60); return; }
   if(mState.ids&&!focus){ const pts=[...new Set(recs.map(r=>r.pl))].map(k=>PL[k]).filter(Boolean).map(pl=>[pl.lat,pl.lon]); if(pts.length===1) MAP.setView(pts[0],13); else if(pts.length) MAP.fitBounds(pts,{padding:[30,30],maxZoom:13}); }
   if(focusMarker){MAP.setView(focusMarker.getLatLng(),13);setTimeout(()=>focusMarker.openPopup(),200)}
   setTimeout(()=>MAP.invalidateSize(),60);
@@ -1380,16 +1394,16 @@ function vPMap(id){
   const pinR=mkMap();
   const at={};
   PMG.forEach(([k,t,c,gi])=>{ if(!pmOn[k]) return; G[k].forEach(pid=>pmHits(pid).forEach(h=>{const a=at[h.pl]=at[h.pl]||{}; (a[k]=a[k]||[]).push({pid,...h});}));});
-  const pts=[]; const rows=[];
+  const pts=[]; const rows=[]; const PMK={};
   Object.entries(at).forEach(([plid,grp])=>{const pl=PL[plid]; const ks=PMG.map(g=>g[0]).filter(k=>grp[k]);
     const n=ks.reduce((s,k)=>s+grp[k].length,0);
     ks.forEach((k,i)=>{const c=PMG.find(g=>g[0]===k)[2]; const off=(i-(ks.length-1)/2)*0.0016;
       const rad=Math.min(14,6+Math.sqrt(grp[k].length)*2);
       const m=L.circleMarker([pl.lat,pl.lon+off],{pane:'pins',renderer:pinR,radius:rad,color:'#fff',weight:2,fillColor:c,fillOpacity:pl.tier==='township'||pl.tier==='court'?.6:.95,dashArray:pl.tier==='township'?'3 3':null}).addTo(MAP);
-      m.bindPopup(pmPop(pl,grp),{maxWidth:290});});
+      m.bindPopup(pmPop(pl,grp),{maxWidth:290}); if(!PMK[plid]) PMK[plid]=m;});
     pts.push([pl.lat,pl.lon]); rows.push([pl,grp,n]);
   });
-  if(pts.length===1) MAP.setView(pts[0],13); else if(pts.length) MAP.fitBounds(pts,{padding:[30,30],maxZoom:13});
+  if(!mapMemory('pmap|'+id+'|'+PMG.map(g=>pmOn[g[0]]).join(''),PMK)){ if(pts.length===1) MAP.setView(pts[0],13); else if(pts.length) MAP.fitBounds(pts,{padding:[30,30],maxZoom:13}); }
   rows.sort((a,b)=>b[2]-a[2]);
   document.getElementById('pmlist').innerHTML=rows.length?`<h3 class="sec">Places (${rows.length})</h3>`+rows.map(([pl,grp,n])=>`<div class="card small" style="padding:9px 12px"><b>${esc(pl.label.split(/[(–]/)[0].trim())}</b> <span class="tiny muted">${esc(TIERTXT[pl.tier]||'')}</span><div class="tiny" style="margin-top:4px">${PMG.filter(g=>grp[g[0]]).map(([k,t,c])=>{const who=[...new Set(grp[k].map(h=>h.pid))]; return `<div><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${c}"></i> ${who.map(w=>`<a href="#p-${w}">${esc(P[w].n)}</a>`).join(', ')} — ${grp[k].length} item${grp[k].length>1?'s':''}</div>`}).join('')}</div></div>`).join(''):'<div class="empty">Nothing to show for the groups selected.</div>';
   setTimeout(()=>MAP&&MAP.invalidateSize(),60);

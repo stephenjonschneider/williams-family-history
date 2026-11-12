@@ -778,7 +778,7 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .lv-probable{background:var(--amber-l);color:#7c5b0c;border-color:#e2c983}
 .lv-open{background:var(--red-l);color:var(--red);border-color:#e0aea4}
 .lv-tree{background:var(--grey-l);color:#5f584c;border-color:#d3cabb}
-.lv-user{background:#e9eef4;color:#4c6380;border-color:#c3cfdd}
+.lv-user{background:#f1f8ec;color:#5b7f4c;border-color:#d3e8c8}
 .flag{background:#fff3e8;color:#9a5a2a;border-color:#efc9a6}
 .more{display:block;width:100%;padding:12px;border:1px dashed var(--line);border-radius:10px;background:transparent;color:var(--green);font-weight:600;cursor:pointer;margin-top:6px}
 /* person */
@@ -838,7 +838,7 @@ details.rs summary{cursor:pointer;font-weight:600;color:var(--green)}
 .kids.lk-probable{border-left:2px dashed var(--amber)}
 .kids.lk-open{border-left:2px dashed var(--red)}
 .kids.lk-tree{border-left:2px dotted #a79f91}
-.kids.lk-user{border-left:2px dotted #8fa3bd}
+.kids.lk-user{border-left:2px dotted #b7dba6}
 .linknote{font-size:12px;margin:2px 0 0 2px}
 .sp{font-size:13px;color:var(--muted);margin:-2px 0 4px 6px}
 .legend{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
@@ -1037,7 +1037,7 @@ function strEntry(f){ const te=P[D.anchor];
   return {Williams:D.anchor, Layton:findP('Elizabeth Layton',1805), Newman:findP('Catherine Louisa Newman',1840),
     Wolcott:te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n)), Bowne:findP('Catherine Bowne',1718),
     Grover:findP('Esther Grover',1688), Stout:findP('Mary Stout',1650)}[f]; }
-const SC={proved:'#2f6b35',documented:'#2f6b35',strong:'#5f9a4a',probable:'#d08a3c',open:'#c0392b',tree:'#c96a55',user:'#6f86a3'};
+const SC={proved:'#2f6b35',documented:'#2f6b35',strong:'#5f9a4a',probable:'#d08a3c',open:'#c0392b',tree:'#c96a55',user:'#b7dba6'};
 const SD={probable:'7 5',open:'4 4',tree:'2 4',user:'3 3'};
 function strLine(f){ const e=strEntry(f); if(!e||!P[e]) return {up:[],down:[]};
   const re=new RegExp(f,'i'); const up=[e]; let x=e, guard=0;
@@ -1071,7 +1071,7 @@ function vStr(f){
     <div class="chips" id="sf">${SLINES.map(([k,l])=>`<button class="chip ${k===f?'on':''}" onclick="go('str-${k}')">${l}</button>`).join('')}</div>
     <div class="card">${strip}</div>
     <div class="card sladder">${h}</div>
-    <div class="tiny muted" style="margin:6px 2px 14px">Each line between two names is one parent link, coloured by its proof: green documented or strong, orange probable, red open or unproven (dashed when not documented), slate blue “User” for a link entered by a family member with no record or tree behind it yet. The G-tag is shaded by how well that person is supported. Tap a name to open the person.</div></div>`;
+    <div class="tiny muted" style="margin:6px 2px 14px">Each line between two names is one parent link, coloured by its proof: green documented or strong, orange probable, red open or unproven (dashed when not documented), the palest green “User” for a link a family member entered themselves — trusted, but with no record or tree behind it yet. The G-tag is shaded by how well that person is supported. Tap a name to open the person.</div></div>`;
 }
 
 /* ---------- archives carousel ---------- */
@@ -1270,7 +1270,7 @@ function vChart(id){
   place(id,0);
   const yOf={}; nodes.forEach(n=>yOf[n.id+'@'+n.d]=n.y);
   const maxY=slot*SY, maxX=chartDepth*GX;
-  const LC={proved:'#7fbf6a',documented:'#7fbf6a',strong:'#a3cf8c',probable:'#e2b54a',open:'#e07a66',tree:'#b9b2a5',user:'#8fa3bd'};
+  const LC={proved:'#7fbf6a',documented:'#7fbf6a',strong:'#a3cf8c',probable:'#e2b54a',open:'#e07a66',tree:'#b9b2a5',user:'#cbe6bd'};
   let svg=`<svg width="${maxX}" height="${maxY+20}" style="position:absolute;left:0;top:0;overflow:visible">`;
   links.forEach(([c,pp,d,py])=>{const cy=yOf[c+'@'+d]+H/2, x1=d*GX+W, x2=(d+1)*GX, ym=py+H/2, xm=(x1+x2)/2; const ch=P[c]; const lv=lvOf(ch);
     const dash=lv==='open'||lv==='probable'?'6 4':lv==='tree'?'2 4':lv==='user'?'3 3':'';

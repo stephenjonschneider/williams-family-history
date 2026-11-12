@@ -807,6 +807,7 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .scon{display:flex;align-items:center;gap:6px;margin:-2px 0 -2px 7px;height:34px}.scon .badge{font-size:11px}
 .srow.mute .t{font-size:15px;color:#5d6a57}.srow.mute .sg{opacity:.75}.scon.mute{opacity:.75}
 .sjoin{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:6px 4px 2px;border-top:1px dashed var(--line);padding-top:8px}
+.pphead{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin:8px 0 2px;font-weight:600}
 .kv.cc{background:#eef3ea;border-left:3px solid var(--green);padding:8px 10px;border-radius:6px}
 .arch{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 2px 4px;margin:0 -2px;scrollbar-width:none}
 .arch::-webkit-scrollbar{display:none}
@@ -1356,7 +1357,7 @@ function vRecord(id){
 }
 
 /* map */
-let MAP=null, mState={f:'',ids:null,label:''};
+let MAP=null, mState={f:'',ids:null,label:''}, MCARRY=null;
 /* remember where the map was (view, open bubble, scroll in its list) so Back returns to the same spot */
 const MVIEW={};
 function mapMemory(key,markers){ const v=MVIEW[key]; let restored=false;
@@ -1370,7 +1371,7 @@ function mapMemory(key,markers){ const v=MVIEW[key]; let restored=false;
   MAP.on('click',()=>{ if(MVIEW[key]) MVIEW[key].open=null; });
   setTimeout(save,300); return restored; }
 function mkMap(){
-  MAP=L.map('map',{zoomControl:true,attributionControl:false,minZoom:8,maxZoom:16,preferCanvas:true,zoomSnap:.5}).setView([40.17,-74.17],11);
+  MAP=L.map('map',{zoomControl:true,attributionControl:false,minZoom:8,maxZoom:16,preferCanvas:true,zoomSnap:.5}).setView([40.17,-74.17],10);
   MAP.createPane('pins').style.zIndex=650; MAP.createPane('lbl').style.zIndex=640;
   const land=JSON.parse(document.getElementById('land').textContent);
   L.geoJSON({type:'Feature',geometry:land},{style:{color:'#c9bda3',weight:.6,fillColor:'#f4f0e3',fillOpacity:1},interactive:false}).addTo(MAP);
@@ -1378,14 +1379,23 @@ function mkMap(){
   const m=MAP; loadBase().then(B=>{ if(!B||MAP!==m) return; drawBase(B); }).catch(()=>{});
   return L.svg({pane:'pins'});
 }
+/* how a record ties a person to its place: 'home' (lived there or held land) or 'ref' (named there, or visiting) */
+const HOMEK=new Set(['deed','mort','survey','census','will']);
+function nmParts(n){const t=String(n||'').replace(/\(.*?\)|".*?"/g,'').split(/\s+/).filter(w=>/^[A-Za-z]/.test(w)&&!/^(jr|sr|capt|judge|esq|mrs|mr)\.?$/i.test(w)); return t.length>1?[t[0].toLowerCase(),t[t.length-1].toLowerCase()]:null}
+function tieOf(r,pid){const p=P[pid]; if(!p||!r.pl) return 'ref';
+  if(r.pl===p.bpl||r.pl===p.dpl) return 'home';
+  if(r.tk==='census') return 'home';
+  if(HOMEK.has(r.tk)){ const np=nmParts(p.n); const g=((r.g1||'')+' | '+(r.g2||'')).toLowerCase(); if(np&&g.includes(np[1])&&g.includes(np[0])) return 'home'; }
+  return 'ref';}
+function recTie(r){ if(r._tie) return r._tie; const ps=(r.ppl||[]).filter(x=>P[x]); r._tie=ps.length?(ps.some(x=>tieOf(r,x)==='home')?'home':'ref'):(HOMEK.has(r.tk)?'home':'ref'); return r._tie; }
 const TIERTXT={exact:'exact location',site:'identified site',place:'approximate — named place',township:'approximate — township only',court:'county court house (where the record was made)'};
 function vMap(focus){
   setTab('map');
   app.innerHTML=topBar('Map',!!focus||!!mState.ids)+`<div class="wrap">${mState.ids?`<div class="card small" style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:8px"><div style="flex:1"><b>${esc(mState.label)}</b> · ${mState.ids.size} mapped record${mState.ids.size===1?'':'s'}</div><button class="chip" id="mclr">Show all</button></div>`:''}<div class="chips" id="mf">${['',...FAMS].map(f=>`<button class="chip ${mState.f===f?'on':''}" data-f="${f}">${f||'All'}</button>`).join('')}</div><div id="map"></div>
-  <div class="maplegend"><span><span class="dot" style="background:#e0201b"></span>Exact location</span><span><span class="dot" style="background:#9c3b2e"></span>Identified site</span><span><span class="dot" style="background:#3f6b3a"></span>Named place (approx.)</span><span><span class="dot" style="background:transparent;border:2px dashed #8a7452"></span>Township only</span><span><span class="dot" style="background:#6b6f73"></span>Court house (court records)</span></div>
+  <div class="maplegend"><span><span class="dot" style="background:#3f6b3a"></span>Lived or held land</span><span><span class="dot" style="background:#fffdf6;border:2px solid #3f6b3a;box-sizing:border-box"></span>Named or visiting only</span><span><span class="dot" style="background:#3f6b3a;box-shadow:0 0 0 2px #fffdf6,0 0 0 3.5px #3f6b3a"></span>Both</span><span><span class="dot" style="background:#e0201b"></span>Exact location</span><span><span class="dot" style="background:#9c3b2e"></span>Identified site</span><span><span class="dot" style="background:#3f6b3a"></span>Named place (approx.)</span><span><span class="dot" style="background:transparent;border:2px dashed #8a7452"></span>Township only</span><span><span class="dot" style="background:#6b6f73"></span>Court house (court records)</span></div>
   <div class="card tiny muted">Pins are placed from the Locality column of each abstract. Most are approximate: a named brook, village or township, not a surveyed parcel. Exact parcels can be added as they are plotted. Base map: modern roads, streams and water from U.S. Census TIGER/Line 2024. Zoom in for local roads and stream names.</div></div>`;
   const mc=document.getElementById('mclr'); if(mc) mc.onclick=()=>{mState.ids=null;vMap(focus)};
-  document.getElementById('mf').onclick=e=>{const b=e.target.closest('[data-f]');if(b){mState.f=b.dataset.f;vMap(focus)}};
+  document.getElementById('mf').onclick=e=>{const b=e.target.closest('[data-f]');if(b){ if(MAP) MCARRY={c:MAP.getCenter(),z:MAP.getZoom()}; mState.f=b.dataset.f;vMap(focus)}};
   if(typeof L==='undefined'){document.getElementById('map').innerHTML='<div class="empty">Map could not load.</div>';return}
   const pinR=mkMap();
   const recs=D.records.filter(r=>r.pl&&(!mState.f||inF(r,mState.f))&&(!mState.ids||mState.ids.has(r.id)));
@@ -1394,16 +1404,25 @@ function vMap(focus){
   let focusMarker=null; const MK={};
   const TO={township:0,court:1,place:2,site:3,exact:4};
   D.places.slice().sort((a,b)=>TO[a.tier]-TO[b.tier]).forEach(pl=>{const rs=by[pl.id]; if(!rs) return;
-    const rad=pl.tier==='exact'?8:pl.tier==='township'?Math.min(26,9+Math.sqrt(rs.length)*1.6):Math.min(20,6+Math.sqrt(rs.length)*1.8);
-    const m=(pl.tier==='township'?L.circleMarker([pl.lat,pl.lon],{pane:'pins',renderer:pinR,radius:rad,color:'#8a7452',weight:2,dashArray:'3 3',fillColor:'#a08c6c',fillOpacity:.12}):L.circleMarker([pl.lat,pl.lon],{pane:'pins',renderer:pinR,radius:rad,color:'#fff',weight:2.2,fillColor:col[pl.tier],fillOpacity:.95})).addTo(MAP);
+    const nh=rs.filter(r=>recTie(r)==='home').length, nr=rs.length-nh;
+    const rsz=n=>pl.tier==='exact'?8:pl.tier==='township'?Math.min(26,9+Math.sqrt(n)*1.6):Math.min(20,6+Math.sqrt(n)*1.8);
+    const rad=rsz(rs.length), rh=nh?rsz(nh):rad;
+    if(nh&&nr&&pl.tier!=='township') L.circleMarker([pl.lat,pl.lon],{pane:'pins',renderer:pinR,radius:rad+3,color:col[pl.tier],weight:1.6,fill:false,interactive:false}).addTo(MAP);
+    const m=(pl.tier==='township'?L.circleMarker([pl.lat,pl.lon],{pane:'pins',renderer:pinR,radius:rad,color:'#8a7452',weight:2,dashArray:'3 3',fillColor:'#a08c6c',fillOpacity:nh?.12:.03}):
+      nh?L.circleMarker([pl.lat,pl.lon],{pane:'pins',renderer:pinR,radius:rh,color:'#fff',weight:2.2,fillColor:col[pl.tier],fillOpacity:.95}):
+         L.circleMarker([pl.lat,pl.lon],{pane:'pins',renderer:pinR,radius:rad,color:col[pl.tier],weight:2.6,fillColor:'#fffdf6',fillOpacity:.75})).addTo(MAP);
     const cls=(pl.tier==='township'&&rs.length>=40)?'major':(pl.tier==='site'||rs.length>=12)?'mid':'minor';
     m.bindTooltip(pl.label.split(/[(/–—,]/)[0].trim(),{permanent:true,direction:pl.tier==='township'?'center':pl.tier==='exact'?'bottom':'right',className:'plabel '+cls+(pl.tier==='exact'?' exact':''),pane:'pins',offset:pl.tier==='township'?[0,0]:pl.tier==='exact'?[0,6]:[rad/2+2,0]});
     rs.sort((a,b)=>String(a.sd).localeCompare(String(b.sd)));
-    m.bindPopup((pl.id==='miery'?`<img src="${IMG.survey}" style="width:100%;border-radius:4px;margin-bottom:6px" alt="">`:'')+`<b>${esc(pl.label)}</b><div class="tiny muted">${rs.length} record${rs.length>1?'s':''} · ${TIERTXT[pl.tier]||''}</div>`+rs.slice(0,60).map(r=>`<a href="#r-${r.id}">${esc(String(r.sd||'').slice(0,4))} · ${esc((r.t||'').split(/[—(;]/)[0].trim())}: ${esc(rtitle(r).slice(0,60))}</a>`).join('')+(rs.length>60?`<div class="tiny muted">…and ${rs.length-60} more (use Records › On the map)</div>`:''),{maxWidth:280});
+    m.bindPopup((pl.id==='miery'?`<img src="${IMG.survey}" style="width:100%;border-radius:4px;margin-bottom:6px" alt="">`:'')+`<b>${esc(pl.label)}</b><div class="tiny muted">${rs.length} record${rs.length>1?'s':''} · ${TIERTXT[pl.tier]||''}</div>`+(()=>{const ln=r=>`<a href="#r-${r.id}">${esc(String(r.sd||'').slice(0,4))} · ${esc((r.t||'').split(/[—(;]/)[0].trim())}: ${esc(rtitle(r).slice(0,60))}</a>`;
+      const H=rs.filter(r=>recTie(r)==='home'), F=rs.filter(r=>recTie(r)!=='home'); let n=0; const cap=60; let out='';
+      [[H,'Lived or held land here'],[F,'Named or visiting']].forEach(([A,t])=>{ if(!A.length) return; out+=`<div class="pphead">${t} (${A.length})</div>`; A.forEach(r=>{ if(n++<cap) out+=ln(r); }); });
+      return out+(rs.length>cap?`<div class="tiny muted">…and ${rs.length-cap} more (use Records › On the map)</div>`:'');})(),{maxWidth:280});
     if(focus===pl.id) focusMarker=m; MK[pl.id]=m;
   });
   const zc=()=>{const z=MAP.getZoom(),c=MAP.getContainer().classList;c.toggle('zlow',z<12);c.toggle('zmid',z<13)}; MAP.on('zoomend',zc); zc();
   const mkey='map|'+(focus||'')+'|'+mState.f+'|'+(mState.ids?mState.label+mState.ids.size:'');
+  if(MCARRY){ MVIEW[mkey]={c:MCARRY.c,z:MCARRY.z}; MCARRY=null; }
   if(mapMemory(mkey,MK)){ setTimeout(()=>MAP.invalidateSize(),60); return; }
   if(mState.ids&&!focus){ const pts=[...new Set(recs.map(r=>r.pl))].map(k=>PL[k]).filter(Boolean).map(pl=>[pl.lat,pl.lon]); if(pts.length===1) MAP.setView(pts[0],13); else if(pts.length) MAP.fitBounds(pts,{padding:[30,30],maxZoom:13}); }
   if(focusMarker){MAP.setView(focusMarker.getLatLng(),PL[focus]&&PL[focus].tier==='exact'?16:13);setTimeout(()=>focusMarker.openPopup(),200)}
@@ -1472,9 +1491,9 @@ function pmPeople(id){const p=P[id]; const ok=x=>P[x]&&!P[x].living&&!P[x].virt;
   const ch=(p.ch||[]).filter(ok); const g=[]; ch.forEach(c=>(P[c].ch||[]).filter(ok).forEach(x=>{if(!g.includes(x))g.push(x)}));
   return {self:[id],par:(p.par||[]).filter(ok),ch,gch:g};}
 function pmHits(pid){const p=P[pid], out=[];
-  if(p.bpl&&PL[p.bpl]) out.push({pl:p.bpl,what:'Born'+(p.b?' '+p.b:'')});
-  if(p.dpl&&PL[p.dpl]) out.push({pl:p.dpl,what:'Died'+(p.d&&p.d!=='Deceased'?' '+p.d:'')});
-  (p.rec||[]).forEach(x=>{const r=R[x]; if(r&&r.pl&&PL[r.pl]) out.push({pl:r.pl,r});});
+  if(p.bpl&&PL[p.bpl]) out.push({pl:p.bpl,what:'Born'+(p.b?' '+p.b:''),tie:'home'});
+  if(p.dpl&&PL[p.dpl]) out.push({pl:p.dpl,what:'Died'+(p.d&&p.d!=='Deceased'?' '+p.d:''),tie:'home'});
+  (p.rec||[]).forEach(x=>{const r=R[x]; if(r&&r.pl&&PL[r.pl]) out.push({pl:r.pl,r,tie:tieOf(r,pid)});});
   return out;}
 function pmapCount(id){const G=pmPeople(id); return Object.values(G).flat().reduce((n,x)=>n+pmHits(x).length,0)}
 function vPMap(id){
@@ -1484,7 +1503,7 @@ function vPMap(id){
    <div class="card small" style="padding:9px 12px">Where ${esc(p.living?'this person':p.n)} and close family appear in the records: birth and death places plus every mapped record tied to each person. Tap a group to show or hide it. Living people are left off.</div>
    <div class="pmleg" id="pml">${PMG.map(([k,t,c])=>`<button data-k="${k}" class="${pmOn[k]?'on':''}"${G[k].length?'':' disabled'}><i style="background:${c}"></i>${t} (${G[k].length})</button>`).join('')}</div>
    <div id="map"></div><div id="pmlist"></div>
-   <div class="card tiny muted">Pins are approximate unless marked as an identified site. Court records sit at the county court house where they were made, not where the family lived.</div></div>`;
+   <div class="card tiny muted">A filled circle means the person lived there or held land there (or was born or died there); a hollow ring means they are only named there or were visiting, as at a funeral; a ring around a filled circle means both. Pins are approximate unless marked as an identified site. Court records sit at the county court house where they were made, not where the family lived.</div></div>`;
   document.getElementById('pml').onclick=e=>{const b=e.target.closest('[data-k]'); if(b&&!b.disabled){pmOn[b.dataset.k]=pmOn[b.dataset.k]?0:1; vPMap(id)}};
   if(typeof L==='undefined'){document.getElementById('map').innerHTML='<div class="empty">Map could not load.</div>';return}
   const pinR=mkMap();
@@ -1494,8 +1513,11 @@ function vPMap(id){
   Object.entries(at).forEach(([plid,grp])=>{const pl=PL[plid]; const ks=PMG.map(g=>g[0]).filter(k=>grp[k]);
     const n=ks.reduce((s,k)=>s+grp[k].length,0);
     ks.forEach((k,i)=>{const c=PMG.find(g=>g[0]===k)[2]; const off=(i-(ks.length-1)/2)*0.0016;
-      const rad=Math.min(14,6+Math.sqrt(grp[k].length)*2);
-      const m=L.circleMarker([pl.lat,pl.lon+off],{pane:'pins',renderer:pinR,radius:rad,color:'#fff',weight:2,fillColor:c,fillOpacity:pl.tier==='township'||pl.tier==='court'?.6:.95,dashArray:pl.tier==='township'?'3 3':null}).addTo(MAP);
+      const hs=grp[k], nh=hs.filter(h=>h.tie==='home').length, nr=hs.length-nh;
+      const rz=n=>Math.min(14,6+Math.sqrt(n)*2), rad=rz(hs.length);
+      if(nh&&nr) L.circleMarker([pl.lat,pl.lon+off],{pane:'pins',renderer:pinR,radius:rad+3,color:c,weight:1.6,fill:false,interactive:false}).addTo(MAP);
+      const m=(nh?L.circleMarker([pl.lat,pl.lon+off],{pane:'pins',renderer:pinR,radius:rz(nh),color:'#fff',weight:2,fillColor:c,fillOpacity:pl.tier==='township'||pl.tier==='court'?.6:.95,dashArray:pl.tier==='township'?'3 3':null})
+                 :L.circleMarker([pl.lat,pl.lon+off],{pane:'pins',renderer:pinR,radius:rad,color:c,weight:2.6,fillColor:'#fffdf6',fillOpacity:.75,dashArray:pl.tier==='township'?'3 3':null})).addTo(MAP);
       m.bindPopup(pmPop(pl,grp),{maxWidth:290}); if(!PMK[plid]) PMK[plid]=m;});
     pts.push([pl.lat,pl.lon]); rows.push([pl,grp,n]);
   });
@@ -1504,7 +1526,7 @@ function vPMap(id){
   document.getElementById('pmlist').innerHTML=rows.length?`<h3 class="sec">Places (${rows.length})</h3>`+rows.map(([pl,grp,n])=>`<div class="card small" style="padding:9px 12px"><b>${esc(pl.label.split(/[(–]/)[0].trim())}</b> <span class="tiny muted">${esc(TIERTXT[pl.tier]||'')}</span><div class="tiny" style="margin-top:4px">${PMG.filter(g=>grp[g[0]]).map(([k,t,c])=>{const who=[...new Set(grp[k].map(h=>h.pid))]; return `<div><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${c}"></i> ${who.map(w=>`<a href="#p-${w}">${esc(P[w].n)}</a>`).join(', ')} — ${grp[k].length} item${grp[k].length>1?'s':''}</div>`}).join('')}</div></div>`).join(''):'<div class="empty">Nothing to show for the groups selected.</div>';
   setTimeout(()=>MAP&&MAP.invalidateSize(),60);
 }
-function pmPop(pl,grp){return `<b>${esc(pl.label)}</b><div class="tiny muted">${esc(TIERTXT[pl.tier]||'')}</div>`+PMG.filter(g=>grp[g[0]]).map(([k,t,c])=>`<div style="margin-top:6px;font-weight:600;color:${c}">${t}</div>`+grp[k].slice(0,25).map(h=>h.r?`<a href="#r-${h.r.id}">${esc(P[h.pid].n.split(' ')[0])} · ${esc(String(h.r.sd||'').slice(0,4))} ${esc(rtitle(h.r).slice(0,55))}</a>`:`<a href="#p-${h.pid}">${esc(P[h.pid].n)} · ${esc(h.what)}</a>`).join('')+(grp[k].length>25?`<div class="tiny muted">…${grp[k].length-25} more</div>`:'')).join('');}
+function pmPop(pl,grp){return `<b>${esc(pl.label)}</b><div class="tiny muted">${esc(TIERTXT[pl.tier]||'')}</div>`+PMG.filter(g=>grp[g[0]]).map(([k,t,c])=>`<div style="margin-top:6px;font-weight:600;color:${c}">${t}</div>`+grp[k].slice(0,25).map(h=>h.r?`<a href="#r-${h.r.id}">${esc(P[h.pid].n.split(' ')[0])} · ${esc(String(h.r.sd||'').slice(0,4))} ${esc(rtitle(h.r).slice(0,55))}${h.tie==='ref'?' <span class="tiny muted">· named / visiting</span>':''}</a>`:`<a href="#p-${h.pid}">${esc(P[h.pid].n)} · ${esc(h.what)}</a>`).join('')+(grp[k].length>25?`<div class="tiny muted">…${grp[k].length-25} more</div>`:'')).join('');}
 
 /* me */
 function vMe(){

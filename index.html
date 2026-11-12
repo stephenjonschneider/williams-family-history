@@ -727,6 +727,27 @@ button{font:inherit;color:inherit}
 .tabs button{flex:1;background:none;border:0;padding:8px 0 9px;font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
 .tabs button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.6}
 .tabs button.on{color:var(--green);font-weight:700}
+.storybtn{position:relative;display:block;width:100%;text-align:left;border:0;cursor:pointer;margin:12px 0 4px;padding:16px 16px 15px;border-radius:14px;color:#f6efdc;background:linear-gradient(135deg,#2f4a32 0%,#3e5f3f 55%,#6b4b2a 100%);box-shadow:0 3px 0 #1f3322,0 6px 14px rgba(40,30,10,.18);outline:2px solid #c9a25a;outline-offset:-6px}
+.storybtn .sbk{display:block;font-size:11.5px;letter-spacing:.18em;font-weight:700;color:#e2c27c}
+.storybtn b{display:block;font-family:var(--head);font-weight:400;font-size:25px;line-height:1.15;margin:3px 0 4px}
+.storybtn .sbs{display:block;font-size:13px;opacity:.9;padding-right:58px}
+.storybtn .sbgo{position:absolute;right:16px;bottom:14px;font-weight:700;font-size:15px;color:#e2c27c}
+.story .shead{background:rgba(250,246,238,.93);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px;text-align:center}
+.story .shead h2{font-family:var(--head);font-weight:400;font-size:27px;color:var(--green);margin:4px 0 6px}
+.story .shead p{margin:0;font-size:14.5px;color:var(--muted)}
+.schap{position:relative;background:rgba(250,246,238,.94);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;box-shadow:0 1px 3px rgba(60,40,20,.08)}
+.schap .snum{position:absolute;top:-12px;left:14px;width:26px;height:26px;border-radius:50%;background:var(--green);color:#f3e6c4;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;border:2px solid #c9a25a}
+.schap .skick{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay);font-weight:700;margin-top:4px}
+.schap h3{font-family:var(--head);font-weight:400;font-size:23px;color:var(--green);margin:2px 0 8px;line-height:1.15}
+.schap p{margin:0 0 10px;font-size:16px;line-height:1.55}
+.slink{color:var(--green);font-weight:700;text-decoration:underline;text-decoration-color:rgba(47,74,50,.35);text-underline-offset:2px;cursor:pointer}
+.schap .gtag{font-size:10px;padding:0 4px;margin-left:3px;vertical-align:1px}
+.schips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 6px}
+.srec{font-size:12.5px;background:#fff;border:1px solid #d9cdb8;border-radius:999px;padding:3px 10px;cursor:pointer;color:var(--ink)}
+.srec::before{content:"📜 "}
+.smap{border:0;background:none;color:var(--clay);font-weight:700;font-size:13.5px;padding:2px 0;cursor:pointer}
+.sjoint{text-align:center;color:#b08d4c;font-size:15px;margin:8px 0 14px}
+
 .tabs .kidtab{flex-direction:row;align-items:center;justify-content:center;gap:0;padding:6px 0 8px;font-family:'Fredoka','Arial Rounded MT Bold','Trebuchet MS',sans-serif;font-size:21px;font-weight:700;line-height:1}
 .tabs .kidtab b{display:inline-block;text-shadow:0 1px 0 #fff,1px 1px 0 rgba(0,0,0,.18);-webkit-text-stroke:.4px rgba(0,0,0,.15)}
 .tabs .kidtab.on{background:#fff6d6;border-radius:12px 12px 0 0}
@@ -1139,6 +1160,7 @@ function vHome(){
       <div class="photo" onclick="go('p-${fp('Harry Franklin Williams',1900)}')">${photo(2)}</div>
     </div>
     <div class="stats"><div class="stat"><b>${nPeople.toLocaleString()}</b><span>people</span></div><div class="stat tap" onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:${nRecNew?'true':'false'}};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i class="statnew">+${nRecNew} new</i>`:''}</div><div class="stat tap" onclick="go('pics')"><b>${NPHOTO}</b><span>photos</span>${nPicNew?`<i class="statnew">+${nPicNew} new</i>`:''}</div><div class="stat"><b>${nMapped.toLocaleString()}</b><span>on the map</span></div><div class="stat"><b>${FAMS.length}</b><span>family lines</span></div></div>
+    <button class="storybtn" onclick="go('story')"><span class="sbk">THE STORY</span><b>How the families became one</b><span class="sbs">Gravesend · Monmouth · Crosswicks · Adelphia · the Metedeconk — 1640s to 1956</span><span class="sbgo">Read ›</span></button>
     <button class="cta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>${ME&&ME.you?'You’re in the tree':'Find your place in the tree'}</b><span>${ME&&ME.you?'Relationships are shown relative to you. Tap to change.':'Tell the app how you descend, and every person will show how they’re related to you.'}</span></div></button>
     <h3 class="sec">Start with</h3>
     <div class="card" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">The Williams, Layton, Newman and Wolcott lines all meet in their children; the Bowne, Grover and Stout families come in through the Laytons.</div></div>
@@ -1777,12 +1799,62 @@ function kMap(){
   L.circleMarker([pl.lat,pl.lon],{radius:11,color:'#fff',weight:3,fillColor:'#e63b2e',fillOpacity:1}).addTo(MAP).bindTooltip(KS.ans==null?'Here!':esc(s.name),{permanent:true,direction:'top',offset:[0,-10]});
 }
 function kMapPick(i){ const {s,r}=KS.list[KS.i]; KS.ans=i; if(KS.opts[i]===kAt(s,kYear(KRID[r]))[1]) KS.score+=3; route(); }
+/* ---------- The Story: one narrative weaving the families together, built on the records ---------- */
+function sp(id,label){ const p=P[id]; if(!p) return esc(label); return `<a class="slink" onclick="go('p-${id}')">${esc(label||p.n)}</a>${gtag(p)}`; }
+function sr(id,label){ return `<a class="srec" onclick="go('r-${id}')">${esc(label)}</a>`; }
+function smap(pl,label){ return PL[pl]?`<button class="smap" onclick="go('map-${pl}')">📍 ${esc(label||PL[pl].label)} ›</button>`:''; }
+function vStory(){
+  setTab('home');
+  const CH=[
+   ['Long Island · 1640s–1660s','A Dutch bride and an English town',
+    `The oldest thread in this history is ${sp('p1060','Penelope')}, the wife of ${sp('p1135','Richard Stout')}. Family tradition says she was a young Dutch woman, born Van Princis, who survived a shipwreck and an attack near Sandy Hook, was cared for by the Lenape, and reached New Amsterdam, where she married Richard. The records cannot test that story, and her birthplace and her famous age of 110 remain tradition. What they do show is solid: she sold land beside Richard in 1679/80 and acknowledged the deed in person, and his will of 1703 calls her “my loving wife.”`,
+    `The Stouts made their home at Gravesend, the English town founded by Lady Moody on the Dutch side of Long Island. Their son Richard was born there about 1646. Their daughter ${sp('p981','Mary')} was the first link between two founding families.`,
+    [['BG-0310','Richard Stout’s will, 1703']],''],
+   ['Salem to Gravesend · 1631–1665','The Bownes',
+    `${sp('p1292','William Bowne')} of Yorkshire was at Salem, Massachusetts, by the mid-1630s, where his son ${sp('p649','James')} was baptized on 25 August 1636. About 1645 the family moved to Gravesend with Lady Moody's company and took a planter's lot there. On 26 December 1665, James Bowne married Mary Stout at Gravesend, joining the Bowne and Stout families.`,
+    '',[['BG-0307','Gravesend marriage, 1665']],''],
+   ['Navesink · 1664–1670','The men who bought Monmouth',
+    `In the early 1660s, Gravesend and Rhode Island men looked across the bay to the Navesink country. Governor Richard Nicolls's patent of 8 April 1665 names twelve patentees. Three of them belong to this family: Richard Stout, ${sp('p657','James Grover')} and Captain John Bowne, James's brother. One account counts Richard Stout's household among the first five families to settle on the purchase in 1664.`,
+    `James Grover was more than a name on the list. He had a Gravesend house lot by 1646, raised the English flag there in 1655, and in 1668 carried the settlers' letter to Governor Nicolls. When the purchase accounts were settled in 1670, the payments from every purchaser went to <b>“James Grover &amp; Company.”</b> With John Tilton and William Goulding, he had put up the money and goods that paid the Lenape sachems for Monmouth. The Bownes were among the first on the ground: James had lot No. 2 at Portland Point by 1667 and became a patentee in 1669. Stillwell records a tradition that his eldest child was the first born in Middletown.`,
+    [['BG-0133','The 1665 patent'],['BG-0137','Who paid for the purchase'],['BG-0129','List of purchasers, 1670']],'portlandpt'],
+   ['Middletown · 1658–1756','Grovers, Bownes and a boy named Safety',
+    `James Grover's son ${sp('p282','Safety')}, a captain by 1695, received land from his father by a deed of gift to “my son Safety Grover” in 1685. James and Mary Bowne's son ${sp('p127','Samuel')} married ${sp('p106','Esther')}. She was probably a Grover, and possibly Safety's daughter. When Samuel died in 1756, Esther took out the administration with Captain James Grover as her surety. Their son was named Safety Bowne. That unusual name now runs through three families, and it is one of the strongest clues in this history.`,
+    '',[['S-0076','“My son Safety Grover,” 1685'],['S-0023','Samuel Bowne’s estate, 1756']],'mtvillage'],
+   ['Middletown to Freehold · 1667–1761','The Laytons',
+    `${sp('p1304','William Layton')} came to Middletown by way of Portsmouth, Rhode Island, with his wife Violet. In 1667 he drew town lot No. 14, and by 1670 he was a paying townsman of the Monmouth purchase. He named five sons in his will of 1702. The next generation moved inland to Freehold, with meadow at the Great Meadow at the head of the Manasquan.`,
+    `There ${sp('p79','John Layton')}, a yeoman of Freehold and later Shrewsbury, married ${sp('p63','Catherine')}. She was a Bowne by tradition and probably Samuel and Esther's daughter, and so carried Stout, Bowne and Grover blood into the Laytons. They named a son Safety. John's will of 1761 names Safety, Andrew, John, ${sp('p56','William')} and Thomas. Which Layton was John's own father is still an open question.`,
+    [['L-0001','Townsman of the purchase, 1670'],['L-0054','John Layton’s will, 1761']],'greatmeadow'],
+   ['Crosswicks & Upper Freehold · 1688–1762','West to the Crosswicks country',
+    `The families also moved west. In 1688 James Bowne took up 480 acres at Crosswicks, and Bownes still held land there in the 1730s. ${sp('p133','Thomas Williams')}, a yeoman of Freehold from 1710, moved to Upper Freehold near Crosswicks and Doctors Creek by 1730, with 440 acres. His son ${sp('p82','Joseph')} married ${sp('p93','Sarah Layton')}, daughter of ${sp('p130','Thomas Layton')}. This is the first Williams–Layton marriage on record. Father and son both died intestate in 1746.`,
+    `The next step is a working hypothesis, not a proven one. A ${sp('p57','William Williams')} of Upper Freehold, who married Sarah Britton in 1762, may be Joseph's son and the father of the Daniel who comes next.`,
+    [['W-0062','Thomas Williams’s estate, 1746'],['W-0245','William Williams & Sarah Britton, 1762']],'crosswicks'],
+   ['Long Brook & Adelphia · 1720s–1801','The Brewers',
+    `Down the Manasquan, between Long Brook and the river at Blue Ball (today's Adelphia), farmed ${sp('p31','Aaron Brewer')}, born Aris Brouwer about 1724 into a Dutch Middletown family. His wife ${sp('p49','Ellenor Neeltje Cooper')} was born at Middletown in 1726. Her 1785 gravestone is the earliest dated burial in the Adelphia churchyard, and in 1801 the Methodist burying ground was laid out on Brewer land. The sons of John Layton held their shares nearby on the Mill Brook and Long Brook. Aaron's will of 7 April 1800 names his daughter <b>“Mary Williams.”</b>`,
+    '',[['W-0324','Aaron Brewer’s will, 1800'],['W-0334','Ellenor’s gravestone, 1785']],'adelphia'],
+   ['Miery Branch, Southard · 1788–1850','Into the Metedeconk woods',
+    `On 22 May 1788 ${sp('p18','Daniel Williams')} had land surveyed on the Miery Branch of the Metedeconk. The survey begins at the house he was then building, on ground where the Route 9 Walmart in Howell stands today. His wife was ${sp('p26','Mary Brewer')}. Daniel died intestate by December 1801, and his inventory still held Mary's £50 legacy from her father. His children divided the land in 1832.`,
+    `His son ${sp('p7','Daniel')} married ${sp('p8','Elizabeth Layton')} in 1826. She was a granddaughter of William Layton of the North Branch, so the Layton and Williams lands now ran together. Daniel's sister Catharine married a Layton cousin too. Daniel died in 1843, and the Orphans Court of 1849 names his children, among them ${sp('p5','Daniel D.')}.`,
+    [['W-0021','The 1788 survey'],['W-0271','Daniel’s estate, 1802'],['W-0225','The 1832 partition']],'miery'],
+   ['Shark River, Harmony & Burnt Tavern · 1768–1882','Newmans and Wolcotts join',
+    `The Newmans came up from Shark River and Wreck Pond. ${sp('p14','Silas Newman')}, an heir-at-law of Joseph I. Newman, gave the lot for the Harmony church in 1844 and bought land on the North Branch about 1850. His daughter ${sp('p4','Catherine Louisa')} married Daniel D. Williams at Farmingdale on 7 September 1862.`,
+    `The Wolcotts were Shrewsbury people from around Eatontown. ${sp('p10','Henry H. Wolcott')} kept a store and tavern at Burnt Tavern. His son ${sp('p3','Amos')}, a jeweler, was the father of ${sp('p1','Mary A. “May Anne” Wolcott')}, born in 1865. In about 1882 she married ${sp('p2','Thomas Edward Williams')}, Daniel D. and Catherine Louisa's son, at Howell.`,
+    [['N-0003','Harmony church lot, 1844'],['WO-0001','May Anne’s death certificate']],'wreckpond'],
+   ['Bethel · 1851–1956','Every name in one place',
+    `Look at the Howell maps of 1851 and 1873 around Bethel (Southard) and you can read this whole history in the names on the farms: Layton, Williams, Newman, Cooper and Matthews, all within a mile or two of each other along the North Branch of the Metedeconk. Thomas Edward Williams was born there in 1862. He later moved to Point Pleasant, where his son ${sp('p1344','Harry Franklin Williams')} raised the next generation. Stout, Bowne, Grover, Layton, Brewer, Newman and Wolcott all come together in the Williams family.`,
+    '',[['W-0319','Daniel D. Williams’s 1937 obituary']],'southard']];
+  app.innerHTML=topBar('The Story',true)+`<div class="wrap story">
+    <div class="shead"><div class="kicker">MONMOUTH COUNTY · 1640s – 1956</div><h2>How the families became one</h2>
+      <p>This history follows several families that started apart and came together. Every name below opens that person's page, and every chip opens the record behind the sentence. Where the story rests on tradition or a working hypothesis, it says so.</p></div>
+    ${CH.map((c,i)=>`<div class="schap"><div class="snum">${i+1}</div><div class="skick">${esc(c[0])}</div><h3>${esc(c[1])}</h3><p>${c[2]}</p>${c[3]?`<p>${c[3]}</p>`:''}
+      <div class="schips">${c[4].map(r=>sr(r[0],r[1])).join('')}</div>${c[5]?smap(c[5]):''}</div>`).join('<div class="sjoint">✦</div>')}
+    <div class="tiny muted" style="margin:10px 4px 18px;text-align:center">Written from the six research workbooks and the compiler's documents. Proof grades are on each person's page.</div></div>`;
+}
 
 function route(){
   app.onclick=null; if(MAP){MAP.remove();MAP=null}
   const h=decodeURIComponent(location.hash.slice(1)||'home');
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
-  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
+  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));
   else if(h.startsWith('r-')) vRecord(h.slice(2)); else if(h.startsWith('map-')) vMap(h.slice(4)); else if(h.startsWith('pmap-')) vPMap(h.slice(5)); else if(h.startsWith('pic-')) vPic(h.slice(4)); else if(h==='pics') vPics(); else if(h==='sources') vSources(); else vHome();
   if(!h.startsWith('anc-')&&!h.startsWith('desc-')) window.scrollTo(0,0);

@@ -1205,7 +1205,7 @@ function vSources(){ setTab('records');
   </div>`;}
 function rtype(r){const t=r.t||'';for(const [k,re] of TYPES) if(re.test(t)) return k; return 'other'}
 D.records.forEach(r=>r.tk=rtype(r));
-function rtitle(r){if(r.hd) return r.hd; const a=r.g1, b=r.g2; if(a&&b) return `${a} → ${b}`; if(a||b) return a||b; const d=(r.desc||''); return d.length>90?d.slice(0,88).replace(/\s+\S*$/,'')+'…':d}
+function rtitle(r){if(r.hd) return r.hd; const nz=x=>x&&!/^[\s—–-]*$/.test(x)?x:''; const a=nz(r.g1), b=nz(r.g2); if(!a&&!b&&r.t){const t=r.t; return t.length>90?t.slice(0,88).replace(/\s+\S*$/,'')+'…':t} if(a&&b) return `${a} → ${b}`; if(a||b) return a||b; const d=(r.desc||''); return d.length>90?d.slice(0,88).replace(/\s+\S*$/,'')+'…':d}
 function rrow(r,tag){return `<div class="row" onclick="go('r-${r.id}')"><div class="main"><div class="rtype">${esc((r.t||'Record').split(/[—(;]/)[0].trim())} · ${esc(r.dr&&r.dr.length<28?r.dr:String(r.sd||'').slice(0,4))}${tag?` · <span style="color:var(--muted);text-transform:none">${tag}</span>`:''}${r.pl?' · 📍':''}${r.img?' · 📄':''}${isNew(r)?' '+NEWB:''}</div><div class="t" style="font-weight:600;font-size:15px">${esc(rtitle(r)).slice(0,160)}</div><div class="s">${esc(r.loc||'')}</div></div></div>`}
 let rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:false};
 let LASTREC=[];

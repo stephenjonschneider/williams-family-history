@@ -1384,10 +1384,11 @@ const HOMEK=new Set(['deed','mort','survey','census','will']);
 function nmParts(n){const t=String(n||'').replace(/\(.*?\)|".*?"/g,'').split(/\s+/).filter(w=>/^[A-Za-z]/.test(w)&&!/^(jr|sr|capt|judge|esq|mrs|mr)\.?$/i.test(w)); return t.length>1?[t[0].toLowerCase(),t[t.length-1].toLowerCase()]:null}
 function tieOf(r,pid){const p=P[pid]; if(!p||!r.pl) return 'ref';
   if(r.pl===p.bpl||r.pl===p.dpl) return 'home';
+  if(r.home) return r.home.includes(pid)?'home':'ref';   // the workbook's own Lived Here column wins
   if(r.tk==='census') return 'home';
   if(HOMEK.has(r.tk)){ const np=nmParts(p.n); const g=((r.g1||'')+' | '+(r.g2||'')).toLowerCase(); if(np&&g.includes(np[1])&&g.includes(np[0])) return 'home'; }
   return 'ref';}
-function recTie(r){ if(r._tie) return r._tie; const ps=(r.ppl||[]).filter(x=>P[x]); r._tie=ps.length?(ps.some(x=>tieOf(r,x)==='home')?'home':'ref'):(HOMEK.has(r.tk)?'home':'ref'); return r._tie; }
+function recTie(r){ if(r._tie) return r._tie; const ps=(r.ppl||[]).filter(x=>P[x]); r._tie=r.home?(r.home.length?'home':'ref'):ps.length?(ps.some(x=>tieOf(r,x)==='home')?'home':'ref'):(HOMEK.has(r.tk)?'home':'ref'); return r._tie; }
 const TIERTXT={exact:'exact location',site:'identified site',place:'approximate — named place',township:'approximate — township only',court:'county court house (where the record was made)'};
 function vMap(focus){
   setTab('map');

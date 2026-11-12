@@ -778,6 +778,7 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .lv-probable{background:var(--amber-l);color:#7c5b0c;border-color:#e2c983}
 .lv-open{background:var(--red-l);color:var(--red);border-color:#e0aea4}
 .lv-tree{background:var(--grey-l);color:#5f584c;border-color:#d3cabb}
+.lv-user{background:#e9eef4;color:#4c6380;border-color:#c3cfdd}
 .flag{background:#fff3e8;color:#9a5a2a;border-color:#efc9a6}
 .more{display:block;width:100%;padding:12px;border:1px dashed var(--line);border-radius:10px;background:transparent;color:var(--green);font-weight:600;cursor:pointer;margin-top:6px}
 /* person */
@@ -837,6 +838,7 @@ details.rs summary{cursor:pointer;font-weight:600;color:var(--green)}
 .kids.lk-probable{border-left:2px dashed var(--amber)}
 .kids.lk-open{border-left:2px dashed var(--red)}
 .kids.lk-tree{border-left:2px dotted #a79f91}
+.kids.lk-user{border-left:2px dotted #8fa3bd}
 .linknote{font-size:12px;margin:2px 0 0 2px}
 .sp{font-size:13px;color:var(--muted);margin:-2px 0 4px 6px}
 .legend{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
@@ -932,7 +934,7 @@ function fp(n,y){const p=D.people.find(q=>q.n===n&&yr(q.b)===y);return p?p.id:nu
 const IMGS={};
 const SURVEY_CAP='Survey of 22 May 1788 by Anthony Dennis for Kenneth Hankinson at the request of Daniel Williams: 30 acres of pine land on the Miery Branch, Shrewsbury (later Howell). Record W-0021.';
 window.PHOTOS={1:IMG.cath,2:IMG.goldie}; window.PHOTO_CAPS={1:'Catherine Louisa Newman Williams',2:'Harry F. Williams with Goldie'};
-const LVL={proved:'Proved',documented:'Documented',strong:'Strong',probable:'Probable',open:'Open question',tree:'Tree only'};
+const LVL={proved:'Proved',documented:'Documented',strong:'Strong',probable:'Probable',open:'Open question',tree:'Tree only',user:'User'};
 const esc=s=>gShift(String(s==null?'':s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const yr=s=>{const m=String(s||'').match(/(1[5-9]\d\d|20\d\d)/);return m?+m[1]:null};
 function years(p){ if(p.living) return 'Living'+(p.ly?' · b. '+p.ly:'');
@@ -1035,8 +1037,8 @@ function strEntry(f){ const te=P[D.anchor];
   return {Williams:D.anchor, Layton:findP('Elizabeth Layton',1805), Newman:findP('Catherine Louisa Newman',1840),
     Wolcott:te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n)), Bowne:findP('Catherine Bowne',1718),
     Grover:findP('Esther Grover',1688), Stout:findP('Mary Stout',1650)}[f]; }
-const SC={proved:'#2f6b35',documented:'#2f6b35',strong:'#5f9a4a',probable:'#d08a3c',open:'#c0392b',tree:'#c96a55'};
-const SD={probable:'7 5',open:'4 4',tree:'2 4'};
+const SC={proved:'#2f6b35',documented:'#2f6b35',strong:'#5f9a4a',probable:'#d08a3c',open:'#c0392b',tree:'#c96a55',user:'#6f86a3'};
+const SD={probable:'7 5',open:'4 4',tree:'2 4',user:'3 3'};
 function strLine(f){ const e=strEntry(f); if(!e||!P[e]) return {up:[],down:[]};
   const re=new RegExp(f,'i'); const up=[e]; let x=e, guard=0;
   while(guard++<30){ const ps=(P[x].par||[]).filter(y=>P[y]&&P[y].G0); if(!ps.length) break;
@@ -1052,13 +1054,13 @@ function sgv(p){ return p.G||(p.G0&&isFinite(GOFF)&&p.G0-GOFF>=1?p.G0-GOFF:p.G0)
 function vStr(f){
   if(!SLINES.some(l=>l[0]===f)) f='Williams'; setTab('tree'); store('wfh-tree','str'); store('wfh-str',f);
   const {up,down}=strLine(f); const all=up.concat(down); const nUp=up.length;
-  const lnk=c=>{const p=P[c]; return {lv:lvOf(p), s:(p.ps&&p.ps.s)||LVL.tree}};
+  const lnk=c=>{const p=P[c]; const lv=lvOf(p); return {lv, s:lv==='user'?LVL.user:((p.ps&&p.ps.s)||LVL.tree)}};
   // strip across the top: one segment per parent link, oldest on the left
   const segs=[]; for(let i=1;i<all.length;i++){ const L=lnk(all[i]); segs.push({lv:L.lv,g:sgv(P[all[i-1]]),own:i<nUp}); }
   const cnt=k=>segs.filter(x=>x.own&&(k.includes(x.lv))).length;
   const strip=`<div class="sstrip">${segs.map(x=>`<i style="background:${SC[x.lv]};opacity:${x.own?1:.45}" title="G${x.g}"></i>`).join('')}</div>
     <div class="sstripg"><span style="left:0">G${sgv(P[all[0]])}</span><span style="left:${(nUp-1)/Math.max(1,segs.length)*100}%;transform:translateX(-50%)">G${sgv(P[all[nUp-1]])}</span><span style="right:0">G${sgv(P[all[all.length-1]])}</span></div>
-    <div class="tiny muted" style="margin:2px 2px 0">${f} line, G${sgv(P[all[0]])}–G${sgv(P[up[nUp-1]])}: ${cnt(['proved','documented'])} documented · ${cnt(['strong'])} strong · ${cnt(['probable'])} probable · ${cnt(['open','tree'])} open or unproven</div>`;
+    <div class="tiny muted" style="margin:2px 2px 0">${f} line, G${sgv(P[all[0]])}–G${sgv(P[up[nUp-1]])}: ${cnt(['proved','documented'])} documented · ${cnt(['strong'])} strong · ${cnt(['probable'])} probable · ${cnt(['open','tree'])} open or unproven${cnt(['user'])?` · ${cnt(['user'])} user`:''}</div>`;
   const row=(id,muted)=>{const p=P[id]; const b=band(p.sc);
     return `<div class="srow${muted?' mute':''}" onclick="go('p-${id}')"><span class="sg" style="background:${b?b.color:'#bbb'}">G${sgv(p)}</span>
       <div class="sn"><div class="t">${esc(ME&&ME.you&&id===ME.you?'You':(!(ME&&ME.you&&P[ME.you])&&id===D.root?'The compiler':(p.living?'Living':p.n)))}${p.flag?' <span class="badge flag" style="font-size:10.5px">needs proof</span>':''}</div><div class="s">${esc(years(p))}${p.sc!=null&&!p.living?` · support ${p.sc}/100`:''}</div></div><span class="chev">›</span></div>`;};
@@ -1069,7 +1071,7 @@ function vStr(f){
     <div class="chips" id="sf">${SLINES.map(([k,l])=>`<button class="chip ${k===f?'on':''}" onclick="go('str-${k}')">${l}</button>`).join('')}</div>
     <div class="card">${strip}</div>
     <div class="card sladder">${h}</div>
-    <div class="tiny muted" style="margin:6px 2px 14px">Each line between two names is one parent link, coloured by its proof: green documented or strong, orange probable, red open or unproven (dashed when not documented). The G-tag is shaded by how well that person is supported. Tap a name to open the person.</div></div>`;
+    <div class="tiny muted" style="margin:6px 2px 14px">Each line between two names is one parent link, coloured by its proof: green documented or strong, orange probable, red open or unproven (dashed when not documented), slate blue “User” for a link entered by a family member with no record or tree behind it yet. The G-tag is shaded by how well that person is supported. Tap a name to open the person.</div></div>`;
 }
 
 /* ---------- archives carousel ---------- */
@@ -1131,7 +1133,10 @@ function findP(n,y){return (D.people.find(p=>p.n===n&&yr(p.b)===y)||{}).id}
 
 let pState={q:'',f:'dl',lim:80};
 function peopleBy(f){ pState={q:'',f,lim:200}; go('people'); }
-function lvOf(p){ return (p.ps&&p.ps.lv)||'tree'; }
+/* "User": a link only the person who entered it vouches for — living people with no records, and deceased people found in no tree and no record */
+function userOnly(p){ if(!p) return false; if(p.virt) return true; const hasRec=(p.rs&&p.rs.length)>0;
+  if(p.living) return !hasRec; return !hasRec && !(p.src||[]).some(x=>!/^(compiler|entered on this device)$/i.test(x)); }
+function lvOf(p){ return userOnly(p)?'user':((p.ps&&p.ps.lv)||'tree'); }
 function pFilterLabel(f){ if(f.startsWith('band:')){const b=BANDS.find(x=>x[0]===+f.slice(5)); return b?'Support: '+b[1]:''}
   if(f==='flagdl') return 'Needs proof (compiler’s flag) — direct line';
   if(f.startsWith('lv:')){const v=f.slice(3); return 'Parent link: '+LVL[v]+' — each person listed is the child of that link'} return ''; }
@@ -1221,11 +1226,11 @@ function vAnc(id){
     const rec=(x,depth,key)=>{const p=P[x]; const pars=p.par.filter(y=>P[y]); const k=key+'/'+x;
       const open=openSet.has(k)||(!openSet.has('!'+k)&&depth<3);
       let h=`<div class="node">${nodeCard(x,pars.length>0,open,k)}`;
-      if(pars.length&&open){ const lv=(p.ps&&p.ps.lv)||'tree';
-        h+=`<div class="kids lk-${lv}">${p.ps?`<div class="linknote">${badge(lv,p.ps.s)}</div>`:''}${pars.map(y=>rec(y,depth+1,k)).join('')}</div>`;}
+      if(pars.length&&open){ const lv=lvOf(p);
+        h+=`<div class="kids lk-${lv}">${p.ps||lv==='user'?`<div class="linknote">${badge(lv,lv==='user'?LVL.user:p.ps.s)}</div>`:''}${pars.map(y=>rec(y,depth+1,k)).join('')}</div>`;}
       return h+'</div>';};
     store('wfh-tree','list');
-    app.innerHTML=topBar('Ancestors of '+(P[id].living?'Living':P[id].n),true)+`<div class="wrap"><div class="chartbar"><span class="seg"><button onclick="go('chart-${id}')">Chart</button><button class="on">List</button><button onclick="go('str-'+(store('wfh-str')||'Williams'))">Strength</button></span></div><div class="card small">Tap a name to open it, or <b>+</b> to go back another generation. The line’s style shows the proof for each parent link:<div class="legend">${['documented','strong','probable','open','tree'].map(k=>badge(k)).join('')}</div></div><div class="tree">${rec(id,0,'a')}</div><div class="btns"><button class="btn" onclick="go('desc-${id}')">Show descendants instead</button></div></div>`;
+    app.innerHTML=topBar('Ancestors of '+(P[id].living?'Living':P[id].n),true)+`<div class="wrap"><div class="chartbar"><span class="seg"><button onclick="go('chart-${id}')">Chart</button><button class="on">List</button><button onclick="go('str-'+(store('wfh-str')||'Williams'))">Strength</button></span></div><div class="card small">Tap a name to open it, or <b>+</b> to go back another generation. The line’s style shows the proof for each parent link:<div class="legend">${['documented','strong','probable','open','tree','user'].map(k=>badge(k)).join('')}</div></div><div class="tree">${rec(id,0,'a')}</div><div class="btns"><button class="btn" onclick="go('desc-${id}')">Show descendants instead</button></div></div>`;
   };
   draw();
   app.onclick=e=>{const t=e.target.closest('.tog'); if(!t) return; const k=t.dataset.k; if(t.textContent==='−'){openSet.delete(k);openSet.add('!'+k)}else{openSet.add(k);openSet.delete('!'+k)} const y=window.scrollY; draw(); window.scrollTo(0,y);};
@@ -1265,10 +1270,10 @@ function vChart(id){
   place(id,0);
   const yOf={}; nodes.forEach(n=>yOf[n.id+'@'+n.d]=n.y);
   const maxY=slot*SY, maxX=chartDepth*GX;
-  const LC={proved:'#7fbf6a',documented:'#7fbf6a',strong:'#a3cf8c',probable:'#e2b54a',open:'#e07a66',tree:'#b9b2a5'};
+  const LC={proved:'#7fbf6a',documented:'#7fbf6a',strong:'#a3cf8c',probable:'#e2b54a',open:'#e07a66',tree:'#b9b2a5',user:'#8fa3bd'};
   let svg=`<svg width="${maxX}" height="${maxY+20}" style="position:absolute;left:0;top:0;overflow:visible">`;
-  links.forEach(([c,pp,d,py])=>{const cy=yOf[c+'@'+d]+H/2, x1=d*GX+W, x2=(d+1)*GX, ym=py+H/2, xm=(x1+x2)/2; const ch=P[c]; const lv=(ch.ps&&ch.ps.lv)||'tree';
-    const dash=lv==='open'||lv==='probable'?'6 4':lv==='tree'?'2 4':'';
+  links.forEach(([c,pp,d,py])=>{const cy=yOf[c+'@'+d]+H/2, x1=d*GX+W, x2=(d+1)*GX, ym=py+H/2, xm=(x1+x2)/2; const ch=P[c]; const lv=lvOf(ch);
+    const dash=lv==='open'||lv==='probable'?'6 4':lv==='tree'?'2 4':lv==='user'?'3 3':'';
     svg+=`<path d="M${x1} ${cy} H${xm} V${ym} H${x2}" fill="none" stroke="${LC[lv]||'#b9b2a5'}" stroke-width="2" ${dash?`stroke-dasharray="${dash}"`:''}/>`;});
   svg+='</svg>';
   const plates=nodes.map(n=>{const p=P[n.id]; return `<div class="plate sup ${p.G?'dl':''} ${n.d===0?'root':''}" data-id="${n.id}" style="left:${n.d*GX}px;top:${n.y}px;${supCss(p)}"><div class="pn">${esc(p.n)}</div><div class="py">${esc(years(p))}${p.flag?' · <span style="color:#9a5a2a">needs proof</span>':''}</div>${p.G?`<span class="pg">G${p.G}</span>`:''}${n.more?`<button class="pmore" data-root="${n.id}" aria-label="Continue this line">›</button>`:''}</div>`}).join('');

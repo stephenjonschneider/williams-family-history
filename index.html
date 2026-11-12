@@ -1679,7 +1679,7 @@ function vKids(){
     ${card('det','#e63b2e','🔎','Detective Case Files','Is that really their parent? Read the evidence, then grade the case the way a genealogist would.',24)}
     ${card('era','#1f6fd1','⏳','Time Traveler','Clues about a real ancestor, one at a time. Guess when they were born. Fewer clues, more points!',32)}
     ${card('map','#2e9e4f','🗺️','Map Time Machine','A pin drops on a family spot. What town was it part of back then? Watch the borders change over 300 years.',18)}
-    ${card('orig','#8e44ad','🌍','Where in the World?','A family name from the tree. Which country did that family come from? England, Wales, the Netherlands, Germany, Italy…',20)}
+    ${card('orig','#8e44ad','🌍','Where in the World?','A family name from the tree. Which country did that family come from? England, the Netherlands, Belgium, Germany, Italy…',20)}
     <div class="tiny muted" style="margin:10px 2px 16px">For ages 12 and up. Scores stay on this device.</div></div>`;
 }
 function kStart(g){ KS={g,i:0,score:0,ans:null}; if(g==='det') KS.list=kShuffle(kCases()).slice(0,8);
@@ -1919,9 +1919,11 @@ function helpShare(){ const u=location.href.split('#')[0]+'#help', t='Williams F
   if(navigator.share){ navigator.share({title:t,url:u}).catch(()=>{}); }
   else { try{ navigator.clipboard.writeText(u); alert('Link copied'); }catch(e){ prompt('Copy this link',u); } } }
 /* ---- 4. Where in the World? surnames of the lines and where they came from ---- */
-const KLANDS={eng:['🏴󠁧󠁢󠁥󠁮󠁧󠁿','England'],wal:['🏴󠁧󠁢󠁷󠁬󠁳󠁿','Wales'],sco:['🏴󠁧󠁢󠁳󠁣󠁴󠁿','Scotland'],nl:['🇳🇱','The Netherlands'],de:['🇩🇪','Germany'],se:['🇸🇪','Sweden'],no:['🇳🇴','Norway'],it:['🇮🇹','Italy'],ie:['🇮🇪','Ireland'],fr:['🇫🇷','France']};
+const KLANDS={eng:['🏴󠁧󠁢󠁥󠁮󠁧󠁿','England'],wal:['🏴󠁧󠁢󠁷󠁬󠁳󠁿','Wales'],sco:['🏴󠁧󠁢󠁳󠁣󠁴󠁿','Scotland'],nl:['🇳🇱','The Netherlands'],de:['🇩🇪','Germany'],se:['🇸🇪','Sweden'],no:['🇳🇴','Norway'],it:['🇮🇹','Italy'],be:['🇧🇪','Belgium'],ie:['🇮🇪','Ireland'],fr:['🇫🇷','France']};
 const KNAMES=[
- ['Williams','wal','p2','A Welsh name meaning “son of William.” It is one of the most common surnames in Wales. Where John Williams the Settler himself was born is still unknown, but he was at Shrewsbury by 1679.'],
+ ['Williams','eng','p2','“Son of William.” The name is common across England and Wales. John Williams the Settler came from England and was at Shrewsbury, New Jersey, by 1679.'],
+ ['Van Pelt','be','p1331','“Van Pelt” means “from Pelt.” Teunis Laenen Van Pelt was baptized in 1622 at Overpelt, in today’s Belgium, and came to New Netherland in 1663. Catherine Van Pelt married William Layton in 1764.'],
+ ['Lippincott','eng','p763','An old English place-name from Devon. Richard Lippincott, a Devon Quaker, was one of the first settlers of Shrewsbury.'],
  ['Layton','eng','p1304','An English place-name surname. William Layton, the founder, was born in Bedfordshire, England, about 1630, and drew Middletown lot No. 14 in 1667.'],
  ['Bowne','eng','p1292','William Bowne came from Yorkshire, England, and was at Salem, Massachusetts, by the 1630s before moving to Gravesend on Long Island.'],
  ['Stout','eng','p1135','An English name. Richard Stout was an Englishman who settled at Gravesend, Long Island, and was one of the twelve Monmouth patentees of 1665.'],

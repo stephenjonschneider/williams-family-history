@@ -719,6 +719,7 @@ button{font:inherit;color:inherit}
 #app{max-width:760px;margin:0 auto;padding:calc(var(--safe-t) + 0px) 0 calc(76px + var(--safe-b))}
 .topbar{position:sticky;top:0;z-index:500;display:flex;align-items:center;gap:10px;padding:calc(var(--safe-t) + 10px) 14px 10px;background:rgba(47,74,50,.96);color:#f6f0e2;box-shadow:0 1px 0 rgba(0,0,0,.15)}
 .topbar .back{background:none;border:0;color:#f6f0e2;font-size:22px;padding:2px 8px 2px 0;cursor:pointer;line-height:1}
+.tbtn{margin-left:auto;flex:0 0 auto;background:rgba(246,240,226,.14);color:#f6f0e2;border:1px solid rgba(246,240,226,.45);border-radius:999px;padding:5px 12px;font-size:13.5px;cursor:pointer}.tbtn:active{background:rgba(246,240,226,.28)}
 .topbar h1{font-family:var(--sc);font-weight:400;font-size:20px;margin:0;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wrap{padding:14px}
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:600;display:flex;justify-content:center;background:rgba(250,246,238,.98);border-top:1px solid var(--line);padding-bottom:var(--safe-b)}
@@ -760,7 +761,7 @@ button{font:inherit;color:inherit}
 .search::placeholder{color:#9a907f;-webkit-text-fill-color:#9a907f}
 input,select,textarea{color:#2e2a24;-webkit-text-fill-color:#2e2a24}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
-#pf{flex-wrap:nowrap;gap:3px}#pf .chip{padding:5px 4px;font-size:clamp(9.5px,2.5vw,12.5px);flex:0 1 auto;white-space:nowrap}#pf .chip[data-f=__photos]{background:#eef3ea;border-color:#c9d8bf}
+#pf{flex-wrap:nowrap;gap:3px}#pf .chip{padding:5px 6px;font-size:clamp(10.5px,2.9vw,13px);flex:0 1 auto;white-space:nowrap}#pf .chip[data-f=__photos]{background:#eef3ea;border-color:#c9d8bf}
 .chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 11px;font-size:13.5px;cursor:pointer;white-space:nowrap}
 .chip.on{background:var(--green);border-color:var(--green);color:#f6f0e2}
 select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 13px) 55%,calc(100% - 8px) 55%;background-size:5px 5px;background-repeat:no-repeat}
@@ -1017,7 +1018,7 @@ document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');i
 function setTab(t){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
 function go(h){ if(location.hash==='#'+h) route(); else location.hash=h; }
 function goBack(){ if(NAVN>0) history.back(); else go('home'); }
-function topBar(title,back){return `<div class="topbar">${back?'<button class="back" onclick="goBack()" aria-label="Back">‹</button>':''}<h1>${esc(title)}</h1></div>`}
+function topBar(title,back,right){return `<div class="topbar">${back?'<button class="back" onclick="goBack()" aria-label="Back">‹</button>':''}<h1>${esc(title)}</h1>${right||''}</div>`}
 function prow(id,extra){const p=P[id]; return `<div class="row sup"${supAttr(p)} onclick="go('p-${id}')"><div class="main"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(years(p))}${extra?' · '+extra:''}</div></div>${p.flag?'<span class="badge flag" title="Compiler’s flag: link to the next generation needs more proof">needs proof</span>':''}</div>`}
 function pcard(id,sub){const p=P[id]; return `<div class="pc sup"${supAttr(p)} onclick="go('p-${id}')"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(sub||years(p))}</div></div>`}
 const BANDS=[[80,'Proved / strongly documented','#2f6b35'],[60,'Well supported','#5f9a4a'],[40,'Partly supported','#a8a23a'],[20,'Thin support','#d08a3c'],[1,'Little support','#c96a55'],[0,'No independent support yet','#b4ab9c']];
@@ -1104,7 +1105,7 @@ function vHome(){
       <div class="photo" onclick="go('p-${fp('Catherine Louisa Newman',1840)}')">${photo(1)}</div>
       <div class="photo" onclick="go('p-${fp('Harry Franklin Williams',1900)}')">${photo(2)}</div>
     </div>
-    <div class="stats"><div class="stat"><b>${nPeople}</b><span>people</span></div><div class="stat tap" onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:${nRecNew?'true':'false'}};go('records')"><b>${nRec}</b><span>records</span>${nRecNew?`<i class="statnew">+${nRecNew} new</i>`:''}</div><div class="stat tap" onclick="go('pics')"><b>${NPHOTO}</b><span>photos</span>${nPicNew?`<i class="statnew">+${nPicNew} new</i>`:''}</div><div class="stat"><b>${nMapped}</b><span>on the map</span></div><div class="stat"><b>${FAMS.length}</b><span>family lines</span></div></div>
+    <div class="stats"><div class="stat"><b>${nPeople.toLocaleString()}</b><span>people</span></div><div class="stat tap" onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:${nRecNew?'true':'false'}};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i class="statnew">+${nRecNew} new</i>`:''}</div><div class="stat tap" onclick="go('pics')"><b>${NPHOTO}</b><span>photos</span>${nPicNew?`<i class="statnew">+${nPicNew} new</i>`:''}</div><div class="stat"><b>${nMapped.toLocaleString()}</b><span>on the map</span></div><div class="stat"><b>${FAMS.length}</b><span>family lines</span></div></div>
     <button class="cta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>${ME&&ME.you?'You’re in the tree':'Find your place in the tree'}</b><span>${ME&&ME.you?'Relationships are shown relative to you. Tap to change.':'Tell the app how you descend, and every person will show how they’re related to you.'}</span></div></button>
     <h3 class="sec">Start with</h3>
     <div class="card" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">The Williams, Layton, Newman and Wolcott lines all meet in their children; the Bowne, Grover and Stout families come in through the Laytons.</div></div>
@@ -1136,7 +1137,7 @@ function pFilterLabel(f){ if(f.startsWith('band:')){const b=BANDS.find(x=>x[0]==
   if(f.startsWith('lv:')){const v=f.slice(3); return 'Parent link: '+LVL[v]+' — each person listed is the child of that link'} return ''; }
 function vPeople(){
   setTab('people');
-  app.innerHTML=topBar('People')+`<div class="wrap"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof'],['__photos','Photos']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
+  app.innerHTML=topBar('People',false,`<button class="tbtn" onclick="picState='people';picQ='';go('pics')">Photos ›</button>`)+`<div class="wrap"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
   const draw=()=>{
     const q=pState.q.trim().toLowerCase(); let L=Object.values(P).filter(p=>!p.virt);
     if(pState.f==='dl'||pState.f==='weak'||pState.f==='strong') L=L.filter(p=>p.G&&!p.living); if(pState.f==='flag') L=L.filter(p=>p.flag);
@@ -1153,7 +1154,7 @@ function vPeople(){
     const m=document.getElementById('pm'); if(m) m.onclick=()=>{pState.lim+=150;draw()};
   };
   document.getElementById('pq').oninput=e=>{pState.q=e.target.value;pState.lim=80;draw()};
-  document.getElementById('pf').onclick=e=>{const b=e.target.closest('[data-f]');if(b){ if(b.dataset.f==='__photos'){picState='people';go('pics');return;} pState.f=b.dataset.f;pState.lim=80;vPeople()}};
+  document.getElementById('pf').onclick=e=>{const b=e.target.closest('[data-f]');if(b){ pState.f=b.dataset.f;pState.lim=80;vPeople()}};
   draw();
 }
 
@@ -1310,7 +1311,7 @@ function vSources(){ setTab('records');
   const by={}; D.records.forEach(r=>{const k=rtype(r);(by[k]=by[k]||[]).push(r)});
   const cats=[...TYPES.map(([k,,l])=>[k,l]),['other','Other records']].filter(([k])=>by[k]);
   const yrs=L=>{const y=L.map(r=>parseInt(String(r.sd||'').slice(0,4))).filter(n=>n>1500&&n<2100).sort((a,b)=>a-b); return y.length?y[0]+'–'+y[y.length-1]:''};
-  app.innerHTML=topBar('Source categories',true)+`<div class="wrap"><div class="card small">The app holds <b>${D.records.length} records</b> abstracted from original documents and printed sources across the ${FAMS.length} family workbooks, plus <b>${NPHOTO} photographs</b>. Every record is grouped below by the kind of document it is. Tap a category to see its records.</div>
+  app.innerHTML=topBar('Source categories',true)+`<div class="wrap"><div class="card small">The app holds <b>${D.records.length.toLocaleString()} records</b> abstracted from original documents and printed sources across the ${FAMS.length} family workbooks, plus <b>${NPHOTO} photographs</b>. Every record is grouped below by the kind of document it is. Tap a category to see its records.</div>
    ${cats.map(([k,l])=>`<div class="row" onclick="rState={q:'',f:'',t:'${k}',map:false,lim:60,pp:'',nw:false};go('records')"><div class="main"><div class="t">${esc(l)} <span class="muted" style="font-weight:400">· ${by[k].length}</span></div><div class="s" style="white-space:normal;overflow:visible">${esc(TDESC[k]||'')}</div><div class="tiny muted" style="margin-top:3px">${yrs(by[k])}</div></div></div>`).join('')}
    <div class="row" onclick="go('pics')"><div class="main"><div class="t">Photographs <span class="muted" style="font-weight:400">· ${NPHOTO}</span></div><div class="s" style="white-space:normal;overflow:visible">Family portraits, gravestones, the homestead, the church and schoolhouse, and aerial views. Counted separately from the records.</div></div></div>
   </div>`;}
@@ -1342,7 +1343,7 @@ function vRecords(){
     const L=recFilter(); LASTREC=L;
     const nm=L.filter(r=>r.pl).length;
     document.getElementById('rshow').textContent=`📍 Show ${nm} on the map`;
-    document.getElementById('rl').innerHTML=`<div class="tiny muted" style="margin:0 2px 6px">${L.length} records, oldest first${pp?` · ${(pp.rec||[]).length} tied to this person, ${(pp.recn||[]).length} possible mentions`:''}</div>`+(L.slice(0,rState.lim).map(r=>rrow(r,pp&&!(pp.rec||[]).includes(r.id)?'possible mention':'')).join('')||'<div class="empty">No records match.</div>')+(L.length>rState.lim?`<button class="more" id="rmore">Show more (${L.length-rState.lim})</button>`:'');
+    document.getElementById('rl').innerHTML=`<div class="tiny muted" style="margin:0 2px 6px">${L.length.toLocaleString()} records, oldest first${pp?` · ${(pp.rec||[]).length} tied to this person, ${(pp.recn||[]).length} possible mentions`:''}</div>`+(L.slice(0,rState.lim).map(r=>rrow(r,pp&&!(pp.rec||[]).includes(r.id)?'possible mention':'')).join('')||'<div class="empty">No records match.</div>')+(L.length>rState.lim?`<button class="more" id="rmore">Show more (${L.length-rState.lim})</button>`:'');
     const m=document.getElementById('rmore'); if(m) m.onclick=()=>{rState.lim+=100;draw()};
   };
   document.getElementById('rq').oninput=e=>{rState.q=e.target.value;rState.lim=60;draw()};

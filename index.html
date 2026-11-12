@@ -1491,12 +1491,24 @@ function picsCard(p){const L=(p.pics||[]).map(x=>PIC[x]).filter(Boolean); if(!L.
   return `<h3 class="sec">Pictures (${L.length})</h3><div class="picgrid">${L.map(q=>`<a class="pic" href="#pic-${q.id}">${isNew(q)?NEWB:''}<img loading="lazy" src="${thumb(q.src)}" alt=""><span>${esc(q.t)}</span></a>`).join('')}</div>`;}
 let picState='people';
 const PCATS=[['people','People'],['places','Places'],['graves','Graves'],['maps','Maps'],['docs','Docs']];
-function vPics(){ setTab('home'); if(!PCATS.some(c=>c[0]===picState)) picState='people'; const L=(D.pics||[]).filter(q=>q.cat===picState).slice().sort((a,b)=>(isNew(b)-isNew(a))||((a.y||9999)-(b.y||9999)));
+let picQ='';
+function picHits(){ const t=qTerms(picQ);
+  return (D.pics||[]).filter(q=>t.length?qMatch([q.t,q.cap,q.y,(q.ppl||[]).map(x=>P[x]&&!P[x].living?P[x].n:'').join(' ')].join(' '),t):q.cat===picState)
+    .slice().sort((a,b)=>(isNew(b)-isNew(a))||((a.y||9999)-(b.y||9999))); }
+function picGrid(){ const L=picHits(); const g=document.getElementById('pg'); if(!g) return;
+  g.innerHTML=(picQ.trim()?`<div class="tiny muted" style="margin:0 2px 6px">${L.length} picture${L.length===1?'':'s'} match, across all categories</div>`:'')+
+    `<div class="picgrid">${L.map(q=>`<a class="pic" href="#pic-${q.id}">${isNew(q)?NEWB:''}<img loading="lazy" src="${thumb(q.src)}" alt=""><span>${esc(q.t)}</span></a>`).join('')}</div>`;
+  document.querySelectorAll('#phf .chip').forEach(b=>b.classList.toggle('on',!picQ.trim()&&b.dataset.k===picState)); }
+function vPics(){ setTab('home'); if(!PCATS.some(c=>c[0]===picState)) picState='people';
   const nn=(D.pics||[]).filter(isNew).length;
-  app.innerHTML=topBar('Pictures',true)+`<div class="wrap"><div class="card small" style="padding:9px 12px">${(D.pics||[]).length} pictures: the compiler's family photographs and the figures from his manuscript <i>The Williams Family Metedeconk Homestead</i> (2026)${nn?`; ${nn} added in the last two weeks are marked ${NEWB}`:''}. Photos and gravestones are counted separately from the records; document images also count once as records.</div>
-   <div class="chips" id="phf">${PCATS.map(([k,l])=>`<button class="chip ${picState===k?'on':''}" data-k="${k}">${l} <span class="tiny">${(D.pics||[]).filter(q=>q.cat===k).length}</span></button>`).join('')}</div>
-   <div class="picgrid">${L.map(q=>`<a class="pic" href="#pic-${q.id}">${isNew(q)?NEWB:''}<img loading="lazy" src="${thumb(q.src)}" alt=""><span>${esc(q.t)}</span></a>`).join('')}</div></div>`;
-  document.getElementById('phf').onclick=e=>{const b=e.target.closest('[data-k]'); if(b){picState=b.dataset.k; vPics()}};}
+  app.innerHTML=topBar('Pictures',true)+`<div class="wrap">
+   <input class="search" id="picq" type="search" placeholder="Search pictures — names, places, years" value="${esc(picQ)}" autocomplete="off">
+   <div class="chips" id="phf">${PCATS.map(([k,l])=>`<button class="chip" data-k="${k}">${l} <span class="tiny">${(D.pics||[]).filter(q=>q.cat===k).length}</span></button>`).join('')}</div>
+   <div id="pg"></div>
+   <div class="card small" style="padding:9px 12px;margin-top:14px">${(D.pics||[]).length} pictures: the compiler's family photographs and the figures from his manuscript <i>The Williams Family Metedeconk Homestead</i> (2026)${nn?`; ${nn} added in the last two weeks are marked ${NEWB}`:''}. Photos and gravestones are counted separately from the records; document images also count once as records. Search accepts "quoted phrases".</div></div>`;
+  picGrid();
+  document.getElementById('picq').oninput=e=>{picQ=e.target.value; picGrid();};
+  document.getElementById('phf').onclick=e=>{const b=e.target.closest('[data-k]'); if(b){picState=b.dataset.k; picQ=''; document.getElementById('picq').value=''; picGrid();}}; }
 function vPic(id){const q=PIC[id]; if(!q) return vHome(); setTab('people'); const pl=q.pl&&PL[q.pl];
   app.innerHTML=topBar(PKIND[q.k]||'Picture',true)+`<div class="wrap"><div class="card recbody"><div class="rtype">${esc(PKIND[q.k]||'')}${q.y?' · '+q.y:''}</div><div class="pname" style="font-size:22px">${esc(q.t)}${isNew(q)?' '+NEWB:''}</div>
    <a href="${q.src}" target="_blank" rel="noopener"><img class="docimg" src="${q.src}" alt=""></a><div class="figcap" style="margin:-4px 0 10px">Tap the image to open it full size.</div>

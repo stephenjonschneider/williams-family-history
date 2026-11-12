@@ -779,6 +779,8 @@ button{font:inherit;color:inherit}
 .kmapbox{height:230px!important;min-height:0!important;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
 .ktime{position:relative;display:flex;height:16px;border-radius:8px;overflow:hidden;margin:6px 0 8px}.ktime i{position:absolute;top:-3px;bottom:-3px;width:3px;background:#e63b2e;box-shadow:0 0 0 2px #fff}
 .ktl div{padding:3px 0;font-size:14.5px}.ktl div.on{font-weight:700}.kdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.kname{font-family:var(--head);font-size:40px;color:#8e44ad;line-height:1.1;margin:4px 0}
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kflag{flex-direction:column;gap:4px;text-align:center;justify-content:center;padding:14px 8px;margin:0}.kflag>span{font-size:40px}
 .kend{text-align:center;padding:22px 14px}.kend h2{font-family:'Fredoka',var(--body);margin:4px 0}.kend .big{font-family:'Fredoka',var(--body);font-size:34px;font-weight:700;color:var(--green)}
 
 .card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px;margin:0 0 12px;box-shadow:0 1px 2px rgba(60,40,20,.05)}
@@ -1677,11 +1679,13 @@ function vKids(){
     ${card('det','#e63b2e','🔎','Detective Case Files','Is that really their parent? Read the evidence, then grade the case the way a genealogist would.',24)}
     ${card('era','#1f6fd1','⏳','Time Traveler','Clues about a real ancestor, one at a time. Guess when they were born. Fewer clues, more points!',32)}
     ${card('map','#2e9e4f','🗺️','Map Time Machine','A pin drops on a family spot. What town was it part of back then? Watch the borders change over 300 years.',18)}
+    ${card('orig','#8e44ad','🌍','Where in the World?','A family name from the tree. Which country did that family come from? England, Wales, the Netherlands, Germany, Italy…',20)}
     <div class="tiny muted" style="margin:10px 2px 16px">For ages 12 and up. Scores stay on this device.</div></div>`;
 }
 function kStart(g){ KS={g,i:0,score:0,ans:null}; if(g==='det') KS.list=kShuffle(kCases()).slice(0,8);
   if(g==='era'){ KS.list=kShuffle(kEraPeople()).slice(0,8); KS.clue=1; }
   if(g==='map'){ KS.list=kShuffle(kMapRounds()).slice(0,6); }
+  if(g==='orig'){ KS.list=kOrigRounds(); }
   go('kid-'+g); }
 function kTop(t,col){ return `<div class="topbar" style="background:${col}"><button class="back" onclick="go('kids')" aria-label="Back">‹</button><h1>${esc(t)}</h1><span class="kscore">★ ${KS?KS.score:0}</span></div>`; }
 function kProg(){ return `<div class="kprog">${KS.list.map((_,i)=>`<i class="${i<KS.i?'d':i===KS.i?'c':''}"></i>`).join('')}</div>`; }
@@ -1692,7 +1696,7 @@ function kEnd(max,ranks){ const nb=kSaveBest(KS.g,KS.score); const r=ranks.find(
 function vKidGame(g){
   setTab('kids'); if(MAP){MAP.remove();MAP=null}
   if(!KS||KS.g!==g) return kStart(g);
-  if(g==='det') return kDet(); if(g==='era') return kEra(); if(g==='map') return kMap();
+  if(g==='det') return kDet(); if(g==='era') return kEra(); if(g==='map') return kMap(); if(g==='orig') return kOrig();
 }
 
 /* ---- 1. Detective Case Files ---- */
@@ -1914,6 +1918,40 @@ function vHelp(){
 function helpShare(){ const u=location.href.split('#')[0]+'#help', t='Williams Family History — open questions: can you help?';
   if(navigator.share){ navigator.share({title:t,url:u}).catch(()=>{}); }
   else { try{ navigator.clipboard.writeText(u); alert('Link copied'); }catch(e){ prompt('Copy this link',u); } } }
+/* ---- 4. Where in the World? surnames of the lines and where they came from ---- */
+const KLANDS={eng:['🏴󠁧󠁢󠁥󠁮󠁧󠁿','England'],wal:['🏴󠁧󠁢󠁷󠁬󠁳󠁿','Wales'],sco:['🏴󠁧󠁢󠁳󠁣󠁴󠁿','Scotland'],nl:['🇳🇱','The Netherlands'],de:['🇩🇪','Germany'],se:['🇸🇪','Sweden'],no:['🇳🇴','Norway'],it:['🇮🇹','Italy'],ie:['🇮🇪','Ireland'],fr:['🇫🇷','France']};
+const KNAMES=[
+ ['Williams','wal','p2','A Welsh name meaning “son of William.” It is one of the most common surnames in Wales. Where John Williams the Settler himself was born is still unknown, but he was at Shrewsbury by 1679.'],
+ ['Layton','eng','p1304','An English place-name surname. William Layton, the founder, was born in Bedfordshire, England, about 1630, and drew Middletown lot No. 14 in 1667.'],
+ ['Bowne','eng','p1292','William Bowne came from Yorkshire, England, and was at Salem, Massachusetts, by the 1630s before moving to Gravesend on Long Island.'],
+ ['Stout','eng','p1135','An English name. Richard Stout was an Englishman who settled at Gravesend, Long Island, and was one of the twelve Monmouth patentees of 1665.'],
+ ['Grover','eng','p657','An English name. James Grover had a house lot at Gravesend by 1646 and helped pay for the Monmouth purchase in 1670.'],
+ ['Wolcott','eng','p123','An English name. Samuel Wolcott was at Shrewsbury before 1687, and Peter Woolcott was the Quaker gravedigger at Burlington in 1685.'],
+ ['Newman','eng','p14','An English name meaning “the new man,” a newcomer. The family lived at Shark River and Wreck Pond for generations.'],
+ ['Cooper','eng','p49','An English job name: a cooper made barrels and casks. Ellenor Neeltje Cooper had a Dutch first name, though!'],
+ ['Borden','eng','p1130','Richard Borden came from Headcorn in Kent, England, to Rhode Island in the 1630s.'],
+ ['Brewer (Brouwer)','nl','p31','Brouwer is Dutch for “brewer.” Jan Brouwer, a blacksmith from Amsterdam, came to New Amsterdam in 1657 and lived at Flatlands, Long Island.'],
+ ['Van Princis','nl','p1060','Family tradition says Penelope Van Princis was a young Dutch woman who came ashore near Sandy Hook. “Van” means “from” in Dutch.'],
+ ['Blackman','sco','p1284','Violet Blackman, wife of founder William Layton, was born at Edinburgh, Scotland, in 1640, according to the family’s DFNJ papers.'],
+ ['Danzenbaker','de','p42','A German name. Johann Ludwig Danzenbaker was one of the many German families who came to Pennsylvania and New Jersey in the 1700s.'],
+ ['Seger (Sygars)','de','p43','A German name. Johann Peter Seger’s family name later turned into “Sygars” and “Sigars” in America.'],
+ ['Lomell','se','p1354','Ruth Lomell’s father was born in Sweden. The 1930 census says so!'],
+ ['Peterson','no','p1355','Ruth Lomell’s mother, Pauline Peterson, was born in Norway, according to the 1930 census.'],
+ ['DiCorcia','it','p1352','An Italian name. “Di” means “of” or “from.” The DiCorcias came to New Jersey from Italy.']];
+function kOrigRounds(){ return kShuffle(KNAMES.filter(x=>P[x[2]])).slice(0,10); }
+function kOrig(){
+  if(KS.i>=KS.list.length){ app.innerHTML=kTop('Where in the World?','#8e44ad')+`<div class="wrap">${kEnd(KS.list.length*2,[[.9,'World Explorer','🏆'],[.6,'Globe Trotter','🧳'],[.3,'Map Reader','🗺️'],[0,'Just Landed','🛬']])}</div>`; return; }
+  const [nm,ans,pid,fact]=KS.list[KS.i];
+  if(!KS.opts){ KS.opts=kShuffle([ans].concat(kShuffle(Object.keys(KLANDS).filter(k=>k!==ans)).slice(0,3))); }
+  let h=`<div class="wrap">${kProg()}<div class="card" style="text-align:center"><div class="klab">Family name</div><div class="kname">${esc(nm)}</div><div class="kq" style="margin-top:6px">Where did this family come from before America?</div></div>`;
+  if(KS.ans==null) h+=`<div class="kgrid">${KS.opts.map((k,i)=>`<button class="kopt kflag" onclick="kOrigPick(${i})"><span>${KLANDS[k][0]}</span><b>${KLANDS[k][1]}</b></button>`).join('')}</div>`;
+  else { const ok=KS.opts[KS.ans]===ans;
+    h+=`<div class="card kres ${ok?'ok':'no'}"><div class="kverd">${ok?'✅ Right! +2':`❌ It was ${KLANDS[ans][1]} ${KLANDS[ans][0]}`}</div>
+      <div class="klesson">${KLANDS[ans][0]} ${esc(fact)}</div>
+      <div class="btns"><button class="btn fill" onclick="kNext()">${KS.i+1<KS.list.length?'Next name ›':'See my badge ›'}</button><button class="btn" onclick="go('p-${pid}')">Meet ${esc(P[pid].n.split(' ')[0])}</button></div></div>`; }
+  app.innerHTML=kTop('Where in the World?','#8e44ad')+h+'</div>';
+}
+function kOrigPick(i){ KS.ans=i; if(KS.opts[i]===KS.list[KS.i][1]) KS.score+=2; route(); }
 
 function route(){
   app.onclick=null; if(MAP){MAP.remove();MAP=null}

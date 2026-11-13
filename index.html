@@ -749,7 +749,7 @@ button{font:inherit;color:inherit}
 .srec::before{content:"📜 "}
 .smap{border:0;background:none;color:var(--clay);font-weight:700;font-size:13.5px;padding:2px 0;cursor:pointer}
 .helpbtn{background:linear-gradient(135deg,#7a3b22 0%,#9a5a2e 55%,#5a4a2a 100%);box-shadow:0 3px 0 #4e2615,0 6px 14px rgba(40,30,10,.18);margin-top:18px}
-.hq h3{font-size:21px}.hfix{background:#f3ead6;border-left:3px solid var(--clay);border-radius:6px;padding:8px 10px;font-size:14.5px;margin:4px 0 2px}
+.hq h3{font-size:21px}.hsec{margin:0 0 8px}.hsec>b,.hfix>b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--clay);margin-bottom:3px}.hsec p{margin:0}.hul{margin:2px 0 0;padding-left:20px}.hul li{margin:0 0 4px;font-size:15px;line-height:1.45;text-align:justify;hyphens:auto}.hfix{background:#f3ead6;border-left:3px solid var(--clay);border-radius:6px;padding:8px 10px;font-size:14.5px;margin:4px 0 2px}
 .smapbox{position:relative;border:3px double #6b4e2a;border-radius:4px;overflow:hidden;box-shadow:0 2px 8px rgba(60,40,15,.25);cursor:zoom-in;background:#e3d6b4}
 .smapsvg{display:block;width:100%;height:auto;font-family:'IM Fell English',Georgia,serif}
 .smapsvg .seal{cursor:pointer}.smapsvg .seal text{fill:#f6e7bf;font:700 12px 'Source Sans 3',sans-serif;pointer-events:none}.smapsvg .seal.on circle{stroke:#fff;stroke-width:3}
@@ -1970,63 +1970,64 @@ function vStory(){
     <div class="sjoint">✦</div>${smapBlock()}
     <div class="tiny muted" style="margin:10px 4px 18px;text-align:center">Written from the six research workbooks and the compiler's documents. Proof grades are on each person's page.</div></div>`;
 }
-/* ---------- Help Wanted: the open questions that matter most, written for family members ---------- */
+/* ---------- Help Wanted: the open questions, explained well enough that a relative can join in ---------- */
+const HELP_CONTACT={email:'',form:''};   // fill in when the compiler sets up a submissions address / form
 function vHelp(){
   setTab('home');
   const Q=[
-   ['hypothesis','Who was the father of Daniel Williams, who built the Miery Branch house in 1788?',
-    `This is the biggest gap in the Williams line. Above ${sp('p18','Daniel')} (died by December 1801) we can't yet say who his parents were, so everything older on the Williams side hangs on this one link.`,
-    `The leading candidate is ${sp('p57','William Williams')} of Upper Freehold, who married Sarah Britton in 1762. Brittons were standing beside Daniel at his first survey in 1788, but no paper yet says “son of.”`,
-    `Guardianship papers for Daniel's young children (Monmouth Orphans Court, 1801–1806); any deed, bond or Bible page naming Daniel as someone's son.`,'Williams Q01, Q61',['p18','p57']],
-   ['probable','Was Catherine, wife of John Layton, a daughter of Samuel Bowne and Esther Grover?',
-    `${sp('p63','Catherine')} is the bridge to the Bownes, Grovers and Stouts, and through them to Penelope and the men who bought Monmouth in 1665. If she belongs to another Bowne household, that whole branch changes.`,
-    `Her children were named Safety, Catharine and Hester, the same names as in Samuel Bowne's household, and Stillwell himself thought Samuel's wife was a Grover. No marriage record survives.`,
-    `Samuel Bowne died without a will in 1756, so the law gave every child a share. The original estate papers (Lib. F p.403, NJ State Archives, Trenton) should hold receipts signed by each heir. A receipt signed “Catherine Layton” would settle it.`,'Bowne Q01 · Layton Q27',['p63','p127']],
-   ['open','Who was the father of John Layton (died 1761)?',
-    `${sp('p79','John Layton')} is where the Layton line splits. His father was either Andrew Layton or a son of Samuel Layton, both grandsons of the founder ${sp('p1304','William')}.`,
-    `It's roughly even. The names John gave his children favour Andrew, but where his land lay favours Samuel's family.`,
-    `Layton deeds and estate papers from 1730–1761 that name John's parent, especially the estates of Andrew (died 1761) and Samuel (died 1730–33).`,'Layton Q01',['p79']],
-   ['probable','Was Esther, Samuel Bowne’s wife, a Grover, perhaps Captain Safety Grover’s daughter?',
-    `This is the link that would carry the Safety name, and the line, back to ${sp('p282','Safety Grover')} and the patentee ${sp('p657','James Grover')}.`,
-    `${sp('p106','Esther')} named a son Safety, and Captain James Grover stood surety for her in 1756. Family trees say she died in 1739, but she was alive in 1756, so one date is wrong.`,
-    `Grover family wills that mention a “daughter Esther Bowne” or her children; Esther's own burial or estate.`,'Bowne Q04, Q15',['p106','p282']],
-   ['probable','Who were the parents of Joseph I. Newman (died 1846)?',
-    `${sp('p22','Joseph I.')} is the father of ${sp('p14','Silas')}, so this decides the whole Newman line above him.`,
-    `The leading model makes him a son of John Newman (1762–1830) and Rebecca. An older idea made him Peter Newman's son. His share of Peter's land may have come through his wife Lydia instead.`,
-    `The division of Peter Newman's real estate, which names the heir for each share; Joseph I.'s gravestone (age at death); any family Bible.`,'Newman Q21, Q28, Q69',['p22','p50']],
-   ['tree','Who were the parents of Rebecca Ann Matthews (about 1785–1858)?',
-    `${sp('p28','Rebecca')} married ${sp('p29','Thomas Layton')} in 1803 and is Elizabeth Layton's mother. Her side of the tree is blank.`,
-    `The compiler suspects Job Matthews, but a Charles Matthews of Freehold is just as likely.`,
-    `Wills or estate papers of Job and Charles Matthews; Matthews deeds that name heirs; her own 1858 estate.`,'Layton Q35, Q51',['p28']],
-   ['open','Was Peter Woolcott of Burlington a son of Samuel Wolcott of Shrewsbury?',
-    `This decides whether the Wolcott line begins in Shrewsbury in the 1670s or at Burlington in 1685.`,
-    `${sp('p123','Peter')} was the Burlington Friends' gravedigger from 1685 and died in 1690. Samuel's will was proved in 1687, but only short extracts of it have been read.`,
-    `The full text of Samuel's will (East Jersey Deeds, Vol. B p.214), and anything Peter left when he died in 1690.`,'Wolcott Q29',['p123','p1170']],
-   ['open','Which Wolcott was the father of Benjamin Wolcott (born 1724)?',
-    `${sp('p36','Benjamin')} is the link between the Burlington Wolcotts and the Eatontown family.`,
-    `It was either Benjamin (born 1687, Peter's son) or a Henry that a 1912 genealogy gives Peter. A “Benjamin Wollcott and wife Comfort” were in Shrewsbury in 1743.`,
-    `Shrewsbury Friends records for Benjamin (1687) and his wife; the elder Benjamin's estate (about 1750).`,'Wolcott Q30',['p36']],
-   ['probable','Were Ellenor Neeltje Cooper’s parents Thomas Cooper and Phebe, and is it the same Cooper family as on the Newman side?',
-    `${sp('p49','Ellenor')} is Mary Brewer's mother. If her Coopers are the same family as Silas Newman's wife's, the family descends from the Coopers twice.`,
-    `So far the parents come only from family trees. A Thomas Cooper who died by 1755 named John Williams of Freehold as one of his executors.`,
-    `Thomas Cooper's 1755 estate papers; Dutch Reformed baptisms at Freehold–Middletown about 1726.`,'Williams Q63',['p49']],
-   ['open','The Clevengers: where was Elizabeth Ann Clevenger born, and who were her grandparents?',
-    `${sp('p6','Elizabeth Ann')} (1845–1918) is May Anne Wolcott's mother. Above her, every Clevenger and Sygars link is so far from family trees only.`,
-    `One record says she was born at Smithburg, NJ, and another says Delaware. She died at West Point Pleasant in 1918.`,
-    `Her 1918 death certificate; family letters or photos; the Clevenger and Sygars households in the 1850–1880 censuses.`,'Wolcott Q10, Q38',['p6','p11']],
-   ['open','The Lomells and DiCorcias: what does the family remember?',
-    `These are the newest branches and the ones where family memory helps most. ${sp('p1346','Ruth Hildegard Lomell')} was born in Falmouth, Massachusetts, to a Swedish father and a Norwegian mother. ${sp('p1348','Michael P. DiCorcia')}'s parents came from Italy.`,
-    `Little is written down yet beyond censuses and obituaries.`,
-    `Stories, letters, passports, naturalization papers, ship names, home towns in the old country, photos with names on the back.`,'Williams workbook',['p1346','p1348']]];
+   {g:'hypothesis',ref:'Williams Q01, Q61',t:'Who was the father of Daniel Williams, who built the Miery Branch house in 1788?',who:['p18','p57'],
+    stand:`${sp('p18','Daniel')} (died by December 1801) is the first Williams of this line on the Metedeconk, and everything older on the Williams side hangs on who his father was. The working theory is ${sp('p57','William Williams')} of Upper Freehold, who married Sarah Britton in 1762, a grandson of ${sp('p133','Thomas Williams')} through his son ${sp('p82','Joseph')}.`,
+    why:`The theory follows a family pattern. Joseph Williams, who married ${sp('p93','Sarah Layton')}, died in Upper Freehold in 1746. About thirty years later a group of Williams men turns up in the Upper Freehold tax lists, living the same way on small lots. Then a Daniel appears in 1788 on the Metedeconk, surveying his land the day before a Layton surveyed next door. If Daniel was Sarah Layton's grandson, settling beside Laytons makes sense. There were very few Williams families in this part of the county, which narrows the field. The other possibility, still open, is that Daniel came from the older Shrewsbury Williams families near the coast.`,
+    has:['Joseph Williams of Upper Freehold died in 1746; his widow Sarah was Thomas Layton\'s daughter.','William Williams of Upper Freehold married Sarah Britton in 1762 and appears as a householder without land until 1792.','Daniel\'s 1788 survey (22 May) sits beside Joseph Layton\'s survey of the next day, with the Brittons, Layton in-laws, present.'],
+    need:['Guardianship papers for Daniel\'s young children, Monmouth Orphans Court 1801–1806.','Any deed, bond or Bible page naming Daniel as somebody\'s son, or naming William\'s children.','Where Nathaniel and Nicholas Britton came from: an Upper Freehold Britton family would strongly support William and Sarah.']},
+   {g:'probable',ref:'Bowne Q01, Q04, Q15 · Layton Q27',t:'Was Catherine, wife of John Layton, a daughter of Samuel Bowne and Esther Grover?',who:['p63','p127','p106'],
+    stand:`${sp('p63','Catherine')} is the bridge from the Laytons to the Bownes, Grovers and Stouts, and through them to Penelope and the men who bought Monmouth. The leading theory makes her a daughter of ${sp('p127','Samuel Bowne')} and his wife ${sp('p106','Esther')}, who was very probably a Grover.`,
+    why:`Catherine named her children Safety, Catharine and Hester, the same names found in Samuel Bowne's household (his son Safety Bowne, his wife Esther or Hester). The name Safety came from the Grover family, and Stillwell himself concluded that Samuel's wife was a Grover. The older idea, that she was a daughter of a Safety Bowne, fails because no Safety Bowne old enough has been found.`,
+    has:['John Layton\'s 1761 will names sons Safety, Andrew, John, William and Thomas, and daughters Catharine, Hester, Hannah and Ann.','Samuel Bowne died without a will in 1756; his widow Esther took out the administration.','Stillwell lists only three of Samuel\'s children, all sons, so his silence on daughters proves nothing.'],
+    need:['Samuel Bowne\'s original estate file (Lib. F p.403, NJ State Archives, Trenton). With no will, every child shared, and the receipts may be signed “Catherine Layton.”','Any release by “Catherine Layton, widow” from the 1767 Bowne brothers\' arbitration.','Wills of Safety (1774/77), Samuel Jr (1799), Deborah (1795) or Lydia Whitlock (1832) naming a “sister Catherine.”']},
+   {g:'open',ref:'Layton Q01',t:'Who was the father of John Layton (died 1761)?',who:['p79','p1304'],
+    stand:`${sp('p79','John Layton')} is the point where the Layton line splits. Both candidates are grandsons of the founder ${sp('p1304','William Layton')}: his son Andrew, or a son of his son Samuel. The case is currently judged roughly even.`,
+    why:`The names John gave his children point toward Andrew. The land points toward Samuel's family: a 1735 deed has Samuel's sons' land running to John Layton's, and when John's own sons divided his land in the 1760s their lines followed the same survey system and bordered “what was Samuel Layton's.” John's 1761 will was witnessed by a Samuel Layton, very likely his brother.`,
+    has:['The 1735 deed among Samuel Layton\'s sons, with John Layton as a neighbour.','The 1767 and 1770 mortgages of John\'s sons\' tracts on the same land.','John\'s 1761 will, witnessed by Samuel Layton.'],
+    need:['Andrew Layton\'s estate papers (he died about 1761).','The tract John received as a gift in 1729, traced forward.','The earmark entries in the Middletown Town Book.']},
+   {g:'probable',ref:'Newman Q21, Q28, Q69',t:'Who were the parents of Joseph I. Newman (died 1846)?',who:['p22','p46','p50'],
+    stand:`${sp('p22','Joseph I.')} is Silas Newman's father, so this decides the Newman line above him. The leading theory makes him a son of ${sp('p46','John Newman')} (1762–1830) and Rebecca.`,
+    why:`When Joseph began his farm in 1801, the deed called him “Joseph Newman, son of John Newman Junr,” and the John born in 1762 was styled “Junior” while his own father lived. Joseph's share of ${sp('p50','Peter Newman')}'s land was set off “for Joseph I. Newman and wife,” the same form used for Peter's daughter Phebe and her husband, so it most likely came through Joseph's wife Lydia rather than through Joseph as Peter's son.`,
+    has:['The 1801 deed: “Joseph Newman, son of John Newman Junr.”','The family Bible of Jeremiah Newman Jr (John\'s eldest son), whose land adjoined Joseph I.\'s in 1825.','Phebe Newman\'s will, showing a daughter of Peter taking a share with her husband.'],
+    need:['The division of Peter Newman\'s real estate, which should name the heir for each share.','Joseph I.\'s gravestone or death record with his age. His daughters were born in 1798 and 1800, which is early if he was John\'s second son (born 1781 or later).']},
+   {g:'tree',ref:'Layton Q35, Q51',t:'Who were the parents of Rebecca Ann Matthews (about 1785–1858)?',who:['p28','p29'],
+    stand:`${sp('p28','Rebecca')} married ${sp('p29','Thomas Layton')} in 1803 and is Elizabeth Layton's mother. Her own parents are unknown. The two candidates are Job Matthews and Charles Matthews of Freehold, on the Haystack Brook.`,
+    why:`The Matthews and Laytons were close before the marriage. In 1802, a year before it, William Layton Sr carried the chain for Charles Matthews's surveys on the Haystack Branch, and Aaron Layton's land adjoined Charles Matthews in 1791. A Charles Matthews later helped settle a Layton estate. That points toward Charles's family, but nothing names Rebecca as his daughter.`,
+    has:['William Layton Sr as chain bearer for Charles Matthews, September 1802.','Aaron Layton\'s Hollow Brook land beside Charles Matthews, 1791.','Charles Matthews co-administering David Layton\'s estate, 1837.'],
+    need:['The wills or estate papers of Charles Matthews and Job Matthews.','Matthews deeds that name heirs.','Which Rebecca Ann Layton died in 1858: Thomas\'s widow or another Rebecca.']},
+   {g:'open',ref:'Wolcott Q29, Q30',t:'How do the first Wolcotts connect: Samuel of Shrewsbury, Peter of Burlington, and the two Benjamins?',who:['p1170','p123','p62','p36'],
+    stand:`The line is clear from ${sp('p36','Benjamin Wolcott')} (born 1724) down. Above him, the tree runs ${sp('p62','Benjamin')} (born 1687) → ${sp('p123','Peter Woolcott')} of Burlington → ${sp('p1170','Samuel Wolcott')} of Shrewsbury, but two links are unproven.`,
+    why:`Peter was the Burlington Quaker meeting's gravedigger from 1685 and died about 1690. His widow Jone later returned to Shrewsbury, and their son Benjamin (born 1687) became a Shrewsbury householder, which suggests the family had Shrewsbury roots. A 1912 Wolcott genealogy gives Peter another son, Henry, as the father of the 1724 Benjamin, but the Shrewsbury records show a Benjamin, not a Henry, as the householder of that generation.`,
+    has:['Benjamin\'s 1687 birth to Peter and Jone, Burlington meeting records.','A “Benjamin Wollcott and wife Comfort” of Shrewsbury in 1743.','Jone\'s return to Shrewsbury, where she died in 1720.'],
+    need:['The full text of Samuel Wolcott\'s 1687 will, looking for any mention of Peter or his child.','Peter\'s own estate papers (about 1690).','Shrewsbury meeting records for the elder Benjamin, and his estate (about 1750) naming a son Benjamin.']},
+   {g:'probable',ref:'Williams Q63',t:'Is one Cooper family behind both the Brewer and the Newman sides?',who:['p49'],
+    stand:`${sp('p49','Ellenor Neeltje Cooper')} is Mary Brewer's mother. Generations later, Silas Newman married Mary Elizabeth Cooper. If both women came from the same Cooper family, the family descends from the Coopers twice.`,
+    why:`The Coopers keep turning up beside this family. A Thomas Cooper who died by 1755 named John Williams of Freehold as one of his executors. A Thomas Cooper witnessed Aaron Brewer's 1800 will. John Layton's daughter Hester married a Cooper and bought land on Long Brook. Ellenor's own parents are given as Thomas Cooper and Phebe, but so far only by family trees.`,
+    has:['Thomas Cooper\'s 1755 estate, with John Williams of Freehold as executor.','Thomas Cooper as witness to Aaron Brewer\'s 1800 will.','Mary Elizabeth Cooper\'s death certificate naming her parents George and Elizabeth Cooper.'],
+    need:['Thomas Cooper\'s will or estate papers (about 1754–55) naming his children.','The parents of George Cooper of Howell or Freehold (about 1780–1830).','Dutch Reformed baptisms at Freehold or Middletown about 1726 for Ellenor.']}];
   const LB={hypothesis:'Hypothesis',probable:'Probable',open:'Open',tree:'Tree only'};
+  const li=a=>`<ul class="hul">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
+  const contact=HELP_CONTACT.email||HELP_CONTACT.form;
   app.innerHTML=topBar('Help Wanted',true)+`<div class="wrap story">
     <div class="shead"><div class="kicker">OPEN QUESTIONS</div><h2>Can you help?</h2>
-      <p>These are the links in the family's lines that still need proof, most important first. Each one says what we know and what kind of paper would settle it. If you have a family Bible, old letters, deeds, photos with names on the back, or a free afternoon at an archive, one of these could be yours to crack.</p>
+      <p>These are the links in the family's lines that still need proof, most important first. Each one sets out where the research stands, why the current theory is what it is, what already supports it, and the kind of record that would settle it. Read up, then see if you have the missing piece.</p>
       <button class="btn fill" style="margin-top:10px" onclick="helpShare()">Share this list ›</button></div>
-    ${Q.map((q,i)=>`<div class="schap hq"><div class="snum">${i+1}</div><div class="skick">${badge(q[0],LB[q[0]])} <span class="muted" style="font-size:11px;letter-spacing:0;text-transform:none;font-weight:400">${esc(q[5])}</span></div>
-      <h3>${esc(q[1])}</h3><p><b>Why it matters.</b> ${q[2]}</p><p><b>What we know.</b> ${q[3]}</p><div class="hfix"><b>What would settle it:</b> ${esc(q[4])}</div></div>`).join('<div class="sjoint">✦</div>')}
-    <div class="shead" style="margin-top:14px"><h2 style="font-size:22px">Where the papers are</h2>
-      <p style="text-align:left">Monmouth County Archives (Manalapan) holds deeds, mortgages and road returns. The NJ State Archives (Trenton) holds original wills and estate files. FamilySearch has free scans of most Monmouth deed books. And family attics hold what no archive does. Found something? Send a photo of it to the compiler.</p></div>
+    ${Q.map((q,i)=>`<div class="schap hq"><div class="snum">${i+1}</div><div class="skick">${badge(q.g,LB[q.g])} <span class="muted" style="font-size:11px;letter-spacing:0;text-transform:none;font-weight:400">${esc(q.ref)}</span></div>
+      <h3>${esc(q.t)}</h3>
+      <div class="hsec"><b>Where we stand</b><p>${q.stand}</p></div>
+      <div class="hsec"><b>Why we think so</b><p>${q.why}</p></div>
+      <div class="hsec"><b>What already supports it</b>${li(q.has)}</div>
+      <div class="hfix"><b>What would settle it</b>${li(q.need)}</div></div>`).join('<div class="sjoint">✦</div>')}
+    <div class="shead" style="margin-top:14px"><h2 style="font-size:22px">Have something to share?</h2>
+      <p style="text-align:left">Family Bibles, letters, photographs with names on the back, old deeds, funeral cards, or simply what an older relative remembers: any of it can help. Clear photos or scans are perfect, as long as every word can be read.</p>
+      ${contact?`<div class="btns" style="justify-content:center;margin-top:8px">${HELP_CONTACT.form?`<a class="btn fill" href="${HELP_CONTACT.form}" target="_blank" rel="noopener">Send photos & documents ›</a>`:''}${HELP_CONTACT.email?`<a class="btn" href="mailto:${HELP_CONTACT.email}?subject=${encodeURIComponent('Williams Family History: something to share')}">Email the compiler ›</a>`:''}</div>`
+        :`<p style="text-align:left">A place to send photos and documents is being set up. Until then, please reach out to the compiler directly.</p>`}
+      <p style="text-align:left;margin-top:8px">Want to search yourself? The Monmouth County Archives (Manalapan) holds deeds and mortgages, the NJ State Archives (Trenton) holds original wills and estate files, and FamilySearch has free scans of most Monmouth deed books.</p></div>
     <div style="height:18px"></div></div>`;
 }
 function helpShare(){ const u=location.href.split('#')[0]+'#help', t='Williams Family History — open questions: can you help?';

@@ -994,7 +994,7 @@ details.rs summary{cursor:pointer;font-weight:600;color:var(--green)}
 /* me */
 .field{display:block;margin:8px 0}
 .field input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:16px;background:#fff}
-.genrow{display:flex;gap:8px;align-items:center;margin:6px 0}
+.genrow{display:flex;gap:8px;align-items:center;margin:6px 0}.megen{border:1px solid var(--line);border-radius:12px;padding:9px 11px;background:#fffdf8}.mehd{font-size:14px;margin-bottom:4px}.mearrow{text-align:center;color:var(--muted);line-height:1;margin:2px 0}.mesel{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:16px;background:#fff;color:#2e2a24;margin:2px 0 4px}.mepick{display:flex;flex-wrap:wrap;gap:6px}.mepick button{border:1px solid var(--green);background:transparent;color:var(--green);border-radius:999px;padding:7px 12px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}.mepick button.on{background:var(--green);color:#f6f0e2}
 .genrow input[type=text]{flex:1;min-width:0;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:16px;background:#fff;color:#2e2a24;-webkit-text-fill-color:#2e2a24;color-scheme:light}
 input[type=text],input[type=search],select,textarea{background-color:#fff}
 .genrow input[type=checkbox]{accent-color:var(--green)}
@@ -1055,7 +1055,9 @@ function applyMe(){
   Object.keys(P).filter(k=>k.startsWith('me')).forEach(k=>{const a=P[k].par[0]; if(P[a]) P[a].ch=P[a].ch.filter(x=>x!==k); delete P[k];});
   if(!ME||!ME.anchor||!P[ME.anchor]) return;
   let parent=ME.anchor;
-  (ME.gens||[]).forEach((g,i)=>{const id='me'+i; P[id]={id,n:g.living?'Living':(g.name||'Unnamed'),par:[parent],sp:[],ch:[],living:g.living?1:0,virt:1,src:['entered on this device']}; P[parent].ch.push(id); parent=id;});
+  Object.values(P).forEach(p=>{ if(p.you) delete p.you; });
+  (ME.gens||[]).forEach((g,i)=>{ if(g.id&&P[g.id]&&(P[g.id].par||[]).includes(parent)){ parent=g.id; return; }
+    const id='me'+i; P[id]={id,n:g.living?'Living':(g.name||'Unnamed'),par:[parent],sp:[],ch:[],living:g.living?1:0,virt:1,src:['entered on this device']}; P[parent].ch.push(id); parent=id;});
   P[parent].you=1; ME.you=parent;
 }
 /* generation tags follow whoever set "You're in the tree": you are G1, your parents G2 ... ; text tags from the workbooks shift by the same offset */
@@ -1676,32 +1678,52 @@ function vPMap(id){
 function pmPop(pl,grp){return `<b>${esc(pl.label)}</b><div class="tiny muted">${esc(TIERTXT[pl.tier]||'')}</div>`+PMG.filter(g=>grp[g[0]]).map(([k,t,c])=>`<div style="margin-top:6px;font-weight:600;color:${c}">${t}</div>`+grp[k].slice(0,25).map(h=>h.r?`<a href="#r-${h.r.id}">${esc(P[h.pid].n.split(' ')[0])} · ${esc(String(h.r.sd||'').slice(0,4))} ${esc(rtitle(h.r).slice(0,55))}${h.tie==='ref'?' <span class="tiny muted">· named / visiting</span>':''}</a>`:`<a href="#p-${h.pid}">${esc(P[h.pid].n)} · ${esc(h.what)}</a>`).join('')+(grp[k].length>25?`<div class="tiny muted">…${grp[k].length-25} more</div>`:'')).join('');}
 
 /* me */
+const REL=n=>n===0?'You':n===1?'Your parent':n===2?'Your grandparent':n===3?'Your great-grandparent':`Your ${n-2}× great-grandparent`;
+const DESC=n=>n===1?'child':n===2?'grandchild':n===3?'great-grandchild':`${n-2}× great-grandchild`;
 function vMe(){
   setTab('home');
   const st=ME||{anchor:'',gens:[]};
   const a=st.anchor&&P[st.anchor];
   app.innerHTML=topBar('Find your place',true)+`<div class="wrap">
-  <div class="card small">Pick the <b>most recent ancestor of yours who is already in the tree</b>, then add each generation down to you. What you type is saved <b>only on this device</b> — it isn’t sent to anyone or shown to other family members. Living people can stay as “Living”.</div>
-  <div class="card"><h2>1 · Your ancestor in the tree</h2>
-   ${a?`<div class="row" style="cursor:default"><div class="main"><div class="t">${esc(a.n)}${gtag(a)}</div><div class="s">${esc(years(a))}</div></div><button class="x" id="clrA" aria-label="Change">×</button></div>`:
-   `<input class="search" id="aq" placeholder="Type a name, e.g. Harry Franklin Williams" autocomplete="off"><div id="al" style="margin-top:8px"></div>`}
+  <div class="card small">Three quick steps: pick an ancestor of yours who is in the tree, say how you descend from them, then fill in the people in between. What you enter is saved <b>only on this device</b>. It isn’t sent to anyone or shown to other family members.</div>
+  <div class="card"><h2>1 · An ancestor of yours in the tree</h2>
+   ${a?`<div class="row" style="cursor:default"><div class="main"><div class="t">${esc(a.n)}${gtag(a)}</div><div class="s">${esc(years(a))}</div></div><button class="btn" id="clrA" style="padding:6px 12px;font-size:13px">Change</button></div>`:
+   `<div class="small muted" style="margin-bottom:6px">The closer to you the better: a grandparent or great-grandparent is ideal.</div><input class="search" id="aq" placeholder="Type a name, e.g. Harry Franklin Williams" autocomplete="off"><div id="al" style="margin-top:8px"></div>`}
   </div>
-  ${a?`<div class="card"><h2>2 · Each generation down to you</h2><div class="small muted">Start with ${esc(a.n)}’s child in your line. The last row is you.</div><div id="gl"></div><button class="btn" id="addg" style="margin-top:6px">+ Add a generation</button></div>
-  <div class="btns"><button class="btn fill" id="saveme">Save</button>${ME?'<button class="btn" id="clrme">Clear</button>':''}</div>`:''}
+  ${a?`<div class="card"><h2>2 · You are ${esc(a.n.split(' ')[0])}’s…</h2><div class="mepick" id="nsel"></div></div>
+  <div class="card"><h2>3 · The line down to you</h2><div class="small muted" id="glh"></div><div id="gl"></div></div>
+  <div class="btns"><button class="btn fill" id="saveme">Save</button>${ME&&ME.you?'<button class="btn" id="clrme">Clear</button>':''}</div>`:''}
   </div>`;
   if(!a){ const draw=q=>{q=q.trim().toLowerCase(); const T=qTerms(q); const L2=q.replace(/["“”]/g,'').trim().length<2?[]:Object.values(P).filter(p=>!p.virt&&!p.living&&qMatch(p.n,T)).sort((x,y)=>(x.G?0:1)-(y.G?0:1)||(yr(y.b)||0)-(yr(x.b)||0)).slice(0,25);
       document.getElementById('al').innerHTML=L2.map(p=>`<div class="row" data-id="${p.id}"><div class="main"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(years(p))}${p.bp?' · '+esc(p.bp.split(',')[0]):''}</div></div></div>`).join('')||(q.length>=2?'<div class="empty small">No match. Try a parent or grandparent instead.</div>':'');};
     document.getElementById('aq').oninput=e=>draw(e.target.value);
-    document.getElementById('al').onclick=e=>{const r=e.target.closest('[data-id]'); if(r){ME={anchor:r.dataset.id,gens:(st.gens&&st.gens.length?st.gens:[{name:'',living:1}])};vMe()}};
+    document.getElementById('al').onclick=e=>{const r=e.target.closest('[data-id]'); if(r){ME={anchor:r.dataset.id,gens:[],you:ME&&ME.you};vMe()}};
     return; }
-  let gens=(st.gens&&st.gens.length?st.gens:[{name:'',living:1}]).map(g=>({...g}));
-  const drawG=()=>{document.getElementById('gl').innerHTML=gens.map((g,i)=>`<div class="genrow"><input type="text" data-i="${i}" placeholder="${i===gens.length-1?'You (name optional)':'Name'}" value="${esc(g.name||'')}"><label><input type="checkbox" data-l="${i}" ${g.living?'checked':''}>living</label><button class="x" data-r="${i}" aria-label="Remove">×</button></div>`).join('');};
-  drawG();
+  /* gens: top (anchor's child) → bottom (you). Each entry is either {id} (already in the tree) or {name,living} */
+  let gens=(st.gens&&st.gens.length?st.gens:null);
+  if(!gens){ // first time with this ancestor: guess the number of generations from birth years, default grandchild
+    const g=2; gens=Array.from({length:g},()=>({name:'',living:1}));
+  } else gens=gens.map(g=>({...g}));
+  const kidsOf=id=>id&&P[id]&&!P[id].virt?(P[id].ch||[]).map(x=>P[x]).filter(q=>q&&!q.virt).sort((x,y)=>(yr(x.b)||x.ly||0)-(yr(y.b)||y.ly||0)):[];
+  const lab=q=>q.living?'Living'+(q.ly?', born '+q.ly:''):q.n+(yr(q.b)?' ('+yr(q.b)+')':'');
+  const drawN=()=>{document.getElementById('nsel').innerHTML=[1,2,3,4,5,6].map(n=>`<button data-n="${n}" class="${n===gens.length?'on':''}">${DESC(n)}</button>`).join('');};
+  const drawG=()=>{ let prev=st.anchor;
+    document.getElementById('glh').textContent=gens.length===1?`You are ${a.n}’s child.`:`Start with ${a.n}’s child in your line and work down to you.`;
+    document.getElementById('gl').innerHTML=gens.map((g,i)=>{ const n=gens.length-1-i, K=kidsOf(prev), pp=prev&&P[prev];
+      const head=`<div class="mehd"><b>${REL(n)}</b>${pp?`<span class="muted"> · child of ${esc(pp.living?(pp.id===st.anchor?a.n:'the person above'):pp.n)}</span>`:''}</div>`;
+      const opts=K.length?`<select data-s="${i}" class="mesel"><option value="">${g.id?'Someone not listed':'Not listed (type below)'}</option>${K.map(q=>`<option value="${q.id}" ${g.id===q.id?'selected':''}>${esc(lab(q))}</option>`).join('')}</select>`:'';
+      const free=g.id?'':`<div class="genrow"><input type="text" data-i="${i}" placeholder="${n===0?'Your name (optional)':'Name (optional)'}" value="${esc(g.name||'')}"><label><input type="checkbox" data-l="${i}" ${g.living?'checked':''}>living</label></div>`;
+      prev=g.id||null; return `<div class="megen">${head}${opts}${free}</div>`; }).join('<div class="mearrow">↓</div>');
+    if(!gens.some(g=>g.id)&&kidsOf(st.anchor).length) document.getElementById('glh').textContent+=' If someone is already in the tree, pick them from the list.';
+  };
+  drawN(); drawG();
+  document.getElementById('nsel').onclick=e=>{const n=+(e.target.dataset.n||0); if(!n) return; const you=gens[gens.length-1];
+    const top=gens.slice(0,gens.length-1); while(top.length<n-1) top.push({name:'',living:1}); top.length=n-1; gens=n===1?[you]:[...top,you]; drawN(); drawG();};
   document.getElementById('gl').oninput=e=>{const i=e.target.dataset.i; if(i!=null) gens[i].name=e.target.value;};
-  document.getElementById('gl').onchange=e=>{const i=e.target.dataset.l; if(i!=null) gens[i].living=e.target.checked?1:0;};
-  document.getElementById('gl').onclick=e=>{const i=e.target.dataset.r; if(i!=null){gens.splice(+i,1); if(!gens.length) gens=[{name:'',living:1}]; drawG();}};
-  document.getElementById('addg').onclick=()=>{gens.push({name:'',living:1});drawG()};
-  document.getElementById('clrA').onclick=()=>{ME={anchor:'',gens};vMe()};
+  document.getElementById('gl').onchange=e=>{const l=e.target.dataset.l, s=e.target.dataset.s;
+    if(l!=null) gens[l].living=e.target.checked?1:0;
+    if(s!=null){ const v=e.target.value; gens[s]=v?{id:v}:{name:'',living:1}; for(let j=+s+1;j<gens.length;j++) if(gens[j].id) gens[j]={name:'',living:1}; drawG(); }};
+  document.getElementById('clrA').onclick=()=>{ME={anchor:'',gens:[],you:ME&&ME.you};vMe()};
   document.getElementById('saveme').onclick=()=>{ME={anchor:st.anchor,gens}; store('wfh-me',ME); applyMe(); applyGen(); go('p-'+ME.you)};
   const c=document.getElementById('clrme'); if(c) c.onclick=()=>{ME=null; try{localStorage.removeItem('wfh-me')}catch(e){} applyMe(); applyGen(); go('home')};
 }

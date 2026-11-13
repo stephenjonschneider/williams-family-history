@@ -2147,14 +2147,21 @@ function kShow(words,kind,opts){ opts=opts||{}; const reduce=matchMedia('(prefer
 function kIntro(g){ const f=KFX[g]; if(!f) return; kSay(f[0][0]); kShow(f[0],f[1],{saidFirst:1}); }
 function kFinale(g){ if(KS&&KS.fin) return; if(KS) KS.fin=1; const f=KFX[g]||[[],'confetti']; setTimeout(()=>kShow(['GREAT','JOB!!!'],f[1],{light:1,hold:2200}),250); }
 
+/* scroll memory: each history entry remembers how far down it was; Back returns to that spot */
+const SCROLLMEM={}; let CURKEY='', RETURNING=false;
+window.addEventListener('scroll',()=>{ if(CURKEY) SCROLLMEM[CURKEY]=window.scrollY; },{passive:true});
 function route(){
   app.onclick=null; if(MAP){MAP.remove();MAP=null}
   const h=decodeURIComponent(location.hash.slice(1)||'home');
+  const back=RETURNING; RETURNING=false; CURKEY='';
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
   else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='help') vHelp(); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));
   else if(h.startsWith('r-')) vRecord(h.slice(2)); else if(h.startsWith('map-')) vMap(h.slice(4)); else if(h.startsWith('pmap-')) vPMap(h.slice(5)); else if(h.startsWith('pic-')) vPic(h.slice(4)); else if(h==='pics') vPics(); else if(h==='sources') vSources(); else vHome();
-  if(!h.startsWith('anc-')&&!h.startsWith('desc-')) window.scrollTo(0,0);
+  const key=NAVN+'|'+h, y=back?(SCROLLMEM[key]||0):0;
+  if(back&&y){ window.scrollTo(0,y); requestAnimationFrame(()=>window.scrollTo(0,y)); setTimeout(()=>{ if(window.scrollY<y-5) window.scrollTo(0,y); CURKEY=key; },250); }
+  else { if(!h.startsWith('anc-')&&!h.startsWith('desc-')) window.scrollTo(0,0); CURKEY=key; }
+  if(back&&y) setTimeout(()=>{CURKEY=key},260); else CURKEY=key;
 }
 /* back-button guard: the first entry is a guard; landing on it asks before leaving */
 let NAVN=0, LEAVING=false;
@@ -2168,7 +2175,7 @@ window.addEventListener('popstate',e=>{
   if(st.wfhGuard&&!LEAVING){ askLeave(); return; }
   NAVN=typeof st.wfhN==='number'?st.wfhN:Math.max(0,NAVN-1);
 });
-window.addEventListener('hashchange',()=>{ const st=history.state||{}; if(st.wfhGuard) return; if(typeof st.wfhN!=='number'){ NAVN++; try{history.replaceState({wfhN:NAVN},'')}catch(e){} } route(); });
+window.addEventListener('hashchange',()=>{ const st=history.state||{}; if(st.wfhGuard) return; if(typeof st.wfhN!=='number'){ NAVN++; try{history.replaceState({wfhN:NAVN},'')}catch(e){} } else RETURNING=true; route(); });
 function askLeave(){
   if(document.querySelector('.leave')) return;
   const d=document.createElement('div'); d.className='leave';

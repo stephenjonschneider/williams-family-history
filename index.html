@@ -1971,7 +1971,7 @@ function vStory(){
     <div class="tiny muted" style="margin:10px 4px 18px;text-align:center">Written from the six research workbooks and the compiler's documents. Proof grades are on each person's page.</div></div>`;
 }
 /* ---------- Help Wanted: the open questions, explained well enough that a relative can join in ---------- */
-const HELP_CONTACT={email:'',form:''};   // fill in when the compiler sets up a submissions address / form
+const HELP_CONTACT={email:'williamsfamilyhistorymonmouth@gmail.com',form:''};   // fill in when the compiler sets up a submissions address / form
 function vHelp(){
   setTab('home');
   const Q=[
@@ -2025,7 +2025,7 @@ function vHelp(){
       <div class="hfix"><b>What would settle it</b>${li(q.need)}</div></div>`).join('<div class="sjoint">✦</div>')}
     <div class="shead" style="margin-top:14px"><h2 style="font-size:22px">Have something to share?</h2>
       <p style="text-align:left">Family Bibles, letters, photographs with names on the back, old deeds, funeral cards, or simply what an older relative remembers: any of it can help. Clear photos or scans are perfect, as long as every word can be read.</p>
-      ${contact?`<div class="btns" style="justify-content:center;margin-top:8px">${HELP_CONTACT.form?`<a class="btn fill" href="${HELP_CONTACT.form}" target="_blank" rel="noopener">Send photos & documents ›</a>`:''}${HELP_CONTACT.email?`<a class="btn" href="mailto:${HELP_CONTACT.email}?subject=${encodeURIComponent('Williams Family History: something to share')}">Email the compiler ›</a>`:''}</div>`
+      ${contact?`<div class="btns" style="justify-content:center;margin-top:8px">${HELP_CONTACT.form?`<a class="btn fill" href="${HELP_CONTACT.form}" target="_blank" rel="noopener">Send photos & documents ›</a>`:''}${HELP_CONTACT.email?`<a class="btn${HELP_CONTACT.form?'':' fill'}" href="mailto:${HELP_CONTACT.email}?subject=${encodeURIComponent('Williams Family History: something to share')}">Email the compiler ›</a>`:''}</div>${HELP_CONTACT.email?`<p style="text-align:center;margin-top:8px;font-size:14px;word-break:break-all"><a href="mailto:${HELP_CONTACT.email}" style="color:var(--green)">${HELP_CONTACT.email}</a></p><p style="text-align:left;font-size:14px">Attach photos or scans straight to the email (up to about 25 MB per message; send several emails for larger batches). Please say who or what each item shows and who owns the original.</p>`:''}`
         :`<p style="text-align:left">A place to send photos and documents is being set up. Until then, please reach out to the compiler directly.</p>`}
       <p style="text-align:left;margin-top:8px">Want to search yourself? The Monmouth County Archives (Manalapan) holds deeds and mortgages, the NJ State Archives (Trenton) holds original wills and estate files, and FamilySearch has free scans of most Monmouth deed books.</p></div>
     <div style="height:18px"></div></div>`;

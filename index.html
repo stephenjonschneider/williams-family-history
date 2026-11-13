@@ -1496,6 +1496,7 @@ function mapMemory(key,markers){ const v=MVIEW[key]; let restored=false;
     m.on('popupopen',e=>{ save(); MVIEW[key].open=id; MVIEW[key].st=0; const sc=e.popup.getElement().querySelector('.leaflet-popup-content'); if(sc) sc.addEventListener('scroll',()=>{ if(MVIEW[key]) MVIEW[key].st=sc.scrollTop },{passive:true}); });
   });
   MAP.on('click',()=>{ if(MVIEW[key]) MVIEW[key].open=null; });
+  MAP.on('popupclose',()=>{ if(!ROUTING&&MVIEW[key]) MVIEW[key].open=null; });
   setTimeout(save,300); return restored; }
 function mkMap(){
   MAP=L.map('map',{zoomControl:true,attributionControl:false,minZoom:8,maxZoom:16,preferCanvas:true,zoomSnap:.5}).setView([40.17,-74.17],10);
@@ -1919,8 +1920,8 @@ function smapPick(n){ const s=SMAP.find(x=>x[0]===n); const el=document.getEleme
   document.querySelectorAll('.seal').forEach(g=>g.classList.toggle('on',+g.querySelector('text').textContent===n));
   el.innerHTML=`<div class="smapcard"><div class="sn2 ${SMAP_ROAD.includes(n)?'road':''}">${n}</div><div><b>${esc(s[1])}</b><div class="tiny">${esc(s[4])} · ${esc(s[5])}</div>
     <div class="btns" style="margin-top:6px"><button class="btn" onclick="document.querySelectorAll('.schap')[${s[6]-1}].scrollIntoView({behavior:'smooth',block:'start'})">Read chapter ${s[6]} ›</button>${s[7]&&PL[s[7]]?`<button class="btn" onclick="go('map-${s[7]}')">Records here ›</button>`:''}</div></div></div>`;
-  const ov=document.querySelector('.smapov'); if(ov){ ov.remove(); el.scrollIntoView({behavior:'smooth',block:'center'}); } }
-function smapBig(){ const o=document.createElement('div'); o.className='smapov'; o.innerHTML=`<div class="smapbar"><b>The families’ road</b><button onclick="this.closest('.smapov').remove()">✕</button></div><div class="smapscroll">${smapSvg()}</div>`; document.body.appendChild(o);
+  const ov=document.querySelector('.smapov'); if(ov){ closeOv(ov); el.scrollIntoView({behavior:'smooth',block:'center'}); } }
+function smapBig(){ const o=document.createElement('div'); o.className='smapov'; o.innerHTML=`<div class="smapbar"><b>The families’ road</b><button onclick="closeOv(this.closest('.smapov'))" aria-label="Close">✕</button></div><div class="smapscroll">${smapSvg()}</div>`; document.body.appendChild(o); o._L=layerOpen(()=>o.remove());
   const sc=o.querySelector('.smapscroll'), sv=sc.querySelector('svg'), vb=sv.viewBox.baseVal; sv.style.width=Math.max(innerWidth,(innerHeight-64)*vb.width/vb.height)+'px'; requestAnimationFrame(()=>{ sc.scrollLeft=(sc.scrollWidth-sc.clientWidth)*.55; sc.scrollTop=(sc.scrollHeight-sc.clientHeight)*.45; }); }
 
 function vStory(){
@@ -2203,10 +2204,11 @@ function vLandStory(k){ const L=LAND[k]; if(!L) return vLand(); setTab('home');
      <div class="btns" style="margin-top:8px"><a class="btn fill" href="${gm}" target="_blank" rel="noopener">Open in Google Maps ›</a><a class="btn" href="${ge}" target="_blank" rel="noopener">Google Earth ›</a></div>
      <div class="tiny muted" style="margin-top:6px">The satellite view needs an internet connection.</div></div>
    <div style="height:18px"></div></div>`; }
-function landZoom(f){ const o=document.createElement('div'); o.className='smapov'; o.innerHTML=`<div class="smapbar"><b>Tap to zoom</b><button onclick="this.closest('.smapov').remove()">✕</button></div><div class="smapscroll lzoom"><img src="docs/land/${f}.jpg" onclick="this.classList.toggle('big')"></div>`; document.body.appendChild(o); }
+function landZoom(f){ const o=document.createElement('div'); o.className='smapov'; o.innerHTML=`<div class="smapbar"><b>Tap to zoom</b><button onclick="closeOv(this.closest('.smapov'))" aria-label="Close">✕</button></div><div class="smapscroll lzoom"><img src="docs/land/${f}.jpg" onclick="this.classList.toggle('big')"></div>`; document.body.appendChild(o); o._L=layerOpen(()=>o.remove()); }
 
 function route(){
-  app.onclick=null; if(MAP){MAP.remove();MAP=null}
+  LAYERS.length=0; ROUTING=true; app.onclick=null; if(MAP){MAP.remove();MAP=null} ROUTING=false;
+  setTimeout(layerTidy,900);
   const h=decodeURIComponent(location.hash.slice(1)||'home');
   const back=RETURNING; RETURNING=false; CURKEY='';
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
@@ -2218,6 +2220,18 @@ function route(){
   else { if(!h.startsWith('anc-')&&!h.startsWith('desc-')) window.scrollTo(0,0); CURKEY=key; }
   if(back&&y) setTimeout(()=>{CURKEY=key},260); else CURKEY=key;
 }
+/* Back closes whatever is open on top (enlarged picture, big map, map pin box) before it leaves the page.
+   Opening one adds a history entry with the same address; closing it with ✕ quietly takes that entry back off. */
+const LAYERS=[]; let SKIPPOP=0, ROUTING=false;
+function layerOpen(close){ const L={close,h:location.hash}; LAYERS.push(L); const st=history.state||{};
+  if(!st.wfhLayer){ try{history.pushState({wfhN:NAVN,wfhLayer:1},'')}catch(e){} } return L; }
+function layerDone(L){ const i=LAYERS.indexOf(L); if(i<0) return; LAYERS.splice(i,1); setTimeout(layerTidy,0); }
+function layerTidy(){ const st=history.state||{}; if(!LAYERS.length&&st.wfhLayer){ SKIPPOP++; history.back(); } }
+function closeOv(o){ if(!o) return; o.remove(); if(o._L) layerDone(o._L); }
+try{ L.Map.addInitHook(function(){ const map=this;
+  map.on('popupopen',e=>{ const pp=e.popup; if(!pp._wfhL) pp._wfhL=layerOpen(()=>{ pp._wfhL=null; map.closePopup(pp); }); });
+  map.on('popupclose',e=>{ const pp=e.popup; if(pp._wfhL){ const l=pp._wfhL; pp._wfhL=null; layerDone(l); } });
+}); }catch(e){}
 /* back-button guard: the first entry is a guard; landing on it asks before leaving */
 let NAVN=0, LEAVING=false;
 (function(){ try{
@@ -2226,6 +2240,8 @@ let NAVN=0, LEAVING=false;
   history.pushState({wfhN:0},'',location.pathname+location.search+h);
 }catch(e){} })();
 window.addEventListener('popstate',e=>{
+  if(SKIPPOP>0){ SKIPPOP--; return; }
+  if(LAYERS.length&&location.hash===LAYERS[LAYERS.length-1].h&&!(e.state&&e.state.wfhLayer)){ const l=LAYERS.pop(); l.close(); if(LAYERS.length){ try{history.pushState({wfhN:NAVN,wfhLayer:1},'')}catch(x){} } return; }
   const st=e.state||{};
   if(st.wfhGuard&&!LEAVING){ askLeave(); return; }
   NAVN=typeof st.wfhN==='number'?st.wfhN:Math.max(0,NAVN-1);

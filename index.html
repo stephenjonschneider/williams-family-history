@@ -766,6 +766,13 @@ button{font:inherit;color:inherit}
 .smapbar{display:flex;align-items:center;justify-content:space-between;color:#f3e8cc;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;font-family:'IM Fell English',Georgia,serif;font-size:19px}
 .smapbar button{background:none;border:1px solid #f3e8cc;color:#f3e8cc;border-radius:50%;width:34px;height:34px;font-size:16px}
 .smapscroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}.smapscroll .smapsvg{max-width:none}
+.landbtn{background:linear-gradient(135deg,#3a5a6e 0%,#4f7a6a 55%,#6b5a2e 100%);box-shadow:0 3px 0 #253c49,0 6px 14px rgba(40,30,10,.18)}
+.landcard{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:rgba(250,246,238,.95);border:1px solid var(--line);border-left:5px solid var(--sage);border-radius:14px;padding:10px;margin:0 0 12px;cursor:pointer;font:inherit;color:inherit}
+.landcard img{width:110px;height:84px;object-fit:cover;border-radius:8px;flex:none}.landcard b{display:block;font-family:var(--head);font-weight:400;font-size:20px;color:var(--green)}.landcard small{display:block;color:var(--muted);font-size:13px}.landcard span{display:block;color:var(--clay);font-weight:700;font-size:13.5px;margin-top:4px}
+.lstep{margin-top:16px}.limg{display:block;width:100%;border-radius:8px;border:1px solid #cdbf9f;cursor:zoom-in}
+a.btn{text-decoration:none;display:inline-flex;align-items:center}
+.lmap{position:relative;border-radius:10px;overflow:hidden;border:2px solid #cdbf9f;height:260px;background:#ddd}.lmap iframe{width:100%;height:100%;border:0}.lmapov{position:absolute;inset:0}
+.lzoom{display:flex;align-items:flex-start;justify-content:center}.lzoom img{width:100%;height:auto}.lzoom img.big{width:260%;max-width:none}
 .sjoint{text-align:center;color:#b08d4c;font-size:15px;margin:8px 0 14px}
 
 .tabs .kidtab{flex-direction:row;align-items:center;justify-content:center;gap:0;padding:6px 0 8px;font-family:'Fredoka','Arial Rounded MT Bold','Trebuchet MS',sans-serif;font-size:21px;font-weight:700;line-height:1}
@@ -1202,6 +1209,7 @@ function vHome(){
     </div>
     <div class="stats"><div class="stat"><b>${nPeople.toLocaleString()}</b><span>people</span></div><div class="stat tap" onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:${nRecNew?'true':'false'}};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i class="statnew">+${nRecNew} new</i>`:''}</div><div class="stat tap" onclick="go('pics')"><b>${NPHOTO}</b><span>photos</span>${nPicNew?`<i class="statnew">+${nPicNew} new</i>`:''}</div><div class="stat"><b>${nMapped.toLocaleString()}</b><span>on the map</span></div><div class="stat"><b>${FAMS.length}</b><span>family lines</span></div></div>
     <button class="storybtn" onclick="go('story')"><span class="sbk">THE STORY</span><b>How the families became one</b><span class="sbs">Gravesend · Monmouth · Crosswicks · Adelphia · the Metedeconk — 1640s to 1956</span><span class="sbgo">Read ›</span></button>
+    <button class="storybtn landbtn" onclick="go('land')"><span class="sbk">LOCATING THE LAND</span><b>Where were the farms?</b><span class="sbs">Old surveys matched to today's map, the Williams homestead and the Newman farm</span><span class="sbgo">Explore ›</span></button>
     <button class="cta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>${ME&&ME.you?'You’re in the tree':'Find your place in the tree'}</b><span>${ME&&ME.you?'Relationships are shown relative to you. Tap to change.':'Tell the app how you descend, and every person will show how they’re related to you.'}</span></div></button>
     <h3 class="sec">Start with</h3>
     <div class="card" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">The Williams, Layton, Newman and Wolcott lines all meet in their children; the Bowne, Grover and Stout families come in through the Laytons.</div></div>
@@ -2149,13 +2157,59 @@ function kFinale(g){ if(KS&&KS.fin) return; if(KS) KS.fin=1; const f=KFX[g]||[[]
 
 /* scroll memory: each history entry remembers how far down it was; Back returns to that spot */
 const SCROLLMEM={}; let CURKEY='', RETURNING=false;
-window.addEventListener('scroll',()=>{ if(CURKEY) SCROLLMEM[CURKEY]=window.scrollY; },{passive:true});
+window.addEventListener('scroll',()=>{ if(CURKEY) SCROLLMEM[CURKEY]=window.scrollY; },{passive:true});/* ---------- Locating the Land: how old surveys are found on today's ground ---------- */
+const LAND={
+ williams:{title:'The Williams Homestead',sub:'Miery Branch, Southard · Howell Township · 1788',thumb:'w-survov',
+  q:'40.1334,-74.224', gq:'40.1334,-74.224',
+  intro:`On 22 May 1788 {p18|Daniel Williams} had 30 acres surveyed on the north side of the North Branch of the Metedeconk. The survey begins at the house he was then building. The land right came out of Lord Stirling's estate, through Robert R. Livingston, so this was patriot land.`,
+  steps:[
+   ['The 1788 survey','w-survey',`The surveyor's sketch gives four clues: the land lay north of the North Branch; it was a rectangle of about 30 acres; a road ran along its southeast corner; and a muddy “miery branch” ran past its northwest corner.`,'W-0021'],
+   ['One block fits','w-sat',`Only one place on today's map matches all four: Block 77 in Howell Township. The old road is Route 9, and the Miery Branch is today's Willow Run.`],
+   ['Laying the sketch on the ground','w-survov',`Turned to its compass bearings and laid over today's satellite view, the 1788 sketch sits squarely on Block 77.`],
+   ['The 1930s aerial','w-1930ov',`The 1930s aerial photograph, laid over the same view, still shows field edges along the old survey lines.`],
+   ['Following it through the maps','w-1873',`The county maps then show the family on the same spot: a school on the tract in 1851, and in 1873 the Methodist church, the school house and “W.H. Williams Store.”`]],
+  after:`Daniel died by December 1801, and his children divided the land in 1832. His son {p7|Daniel} added to it before his death in 1843. Daniel's daughter Mary and her husband Israel Reynolds bought it in 1850 and gave land for the Bethel church in 1864. Her brother William H. H. Williams opened his store there in 1873 and won most of the old tract back by the late 1870s.`,
+  recs:[['W-0021','The 1788 survey'],['W-0225','The 1832 partition']]},
+ newman:{title:'The Joseph I. Newman Farm',sub:'Bailey’s Corner · Wall Township · 1848',thumb:'n-3layer',
+  q:"Allaire Rd and Baileys Corner Rd, Wall Township, NJ", gq:'Allaire Road and Baileys Corner Road, Wall Township, NJ',
+  intro:`{p22|Joseph I. Newman} died without a will on 16 April 1846. His son {p14|Silas} took charge of the estate, and in 1848 the 200-acre farm was surveyed and divided among the heirs.`,
+  steps:[
+   ['The 1848 division','n-survey',`The division survey gives the clues: a brook running north–south through the western third; a “New Road” running east–west; a triangular lot in the southwest corner; a lot in the southeast with a piece cut out of its east side; and three long lots across the north (Silas, Rhoda and Lummus).`,'N-0014'],
+   ['Today, at Bailey’s Corner','n-sat',`The match is on the west side of Bailey's Corner Road at Allaire Road. The brook is a branch of Hannabrand Brook, and the “New Road” is Allaire Road.`],
+   ['The 1930s aerial','n-1930',`In 1930 the long northern lots were still open fields, with Bailey's Corner labeled on the photograph.`],
+   ['Three layers together','n-3layer',`The 1848 survey and the 1930 aerial laid over today's map: the road, the brook and the inner lot lines all line up. The triangle and the cut-out still survive in today's property lines, and the outline measures 200 acres.`],
+   ['The ground remembers','n-lidar',`Laser-measured elevation (LIDAR) shows the old hedgerows along the farm's edges and lot lines.`]],
+  after:`Today Wall Intermediate School stands on part of the old farm, with the township's municipal and sports complex just to the east.`,
+  recs:[['N-0014','The 1848 division of the farm']]}};
+function landText(s){ return esc(s).replace(/\{(p\d+)\|([^}]+)\}/g,(m,id,lab)=>sp(id,lab)); }
+function vLand(){ setTab('home');
+  app.innerHTML=topBar('Locating the Land',true)+`<div class="wrap story">
+   <div class="shead"><div class="kicker">LOCATING THE LAND</div><h2>Finding the farms</h2><p>Old surveys describe land by compass bearings, chains and landmarks. Here is how those descriptions were matched to today's map, one farm at a time.</p></div>
+   ${Object.entries(LAND).map(([k,L])=>`<button class="landcard" onclick="go('land-${k}')"><img src="docs/land/t-${L.thumb}.jpg" alt=""><div><b>${esc(L.title)}</b><small>${esc(L.sub)}</small><span>Read the story ›</span></div></button>`).join('')}
+   <div class="tiny muted" style="margin:10px 4px 18px;text-align:center">From the compiler's land studies.</div></div>`; }
+function vLandStory(k){ const L=LAND[k]; if(!L) return vLand(); setTab('home');
+  const gm='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(L.gq), ge='https://earth.google.com/web/search/'+encodeURIComponent(L.gq);
+  app.innerHTML=topBar(L.title,true)+`<div class="wrap story">
+   <div class="shead"><div class="kicker">${esc(L.sub.toUpperCase())}</div><h2>${esc(L.title)}</h2></div>
+   <div class="schap"><p>${landText(L.intro)}</p></div>
+   ${L.steps.map((s,i)=>`<div class="schap lstep"><div class="snum">${i+1}</div><h3>${esc(s[0])}</h3>
+     <img class="limg" src="docs/land/${s[1]}.jpg" alt="${esc(s[0])}" onclick="landZoom('${s[1]}')" loading="lazy"><div class="tiny muted" style="margin:2px 0 8px">Tap the image to enlarge</div>
+     <p>${landText(s[2])}</p>${s[3]?`<div class="schips">${sr(s[3],'See the record')}</div>`:''}</div>`).join('')}
+   <div class="schap"><h3>What happened to the land</h3><p>${landText(L.after)}</p><div class="schips">${L.recs.map(r=>sr(r[0],r[1])).join('')}</div></div>
+   <div class="schap"><h3>See it today</h3>
+     <div class="lmap"><iframe src="https://maps.google.com/maps?q=${encodeURIComponent(L.q)}&t=k&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Satellite view"></iframe>
+       <a class="lmapov" href="${gm}" target="_blank" rel="noopener" aria-label="Open in Google Maps"></a></div>
+     <div class="btns" style="margin-top:8px"><a class="btn fill" href="${gm}" target="_blank" rel="noopener">Open in Google Maps ›</a><a class="btn" href="${ge}" target="_blank" rel="noopener">Google Earth ›</a></div>
+     <div class="tiny muted" style="margin-top:6px">The satellite view needs an internet connection.</div></div>
+   <div style="height:18px"></div></div>`; }
+function landZoom(f){ const o=document.createElement('div'); o.className='smapov'; o.innerHTML=`<div class="smapbar"><b>Tap to zoom</b><button onclick="this.closest('.smapov').remove()">✕</button></div><div class="smapscroll lzoom"><img src="docs/land/${f}.jpg" onclick="this.classList.toggle('big')"></div>`; document.body.appendChild(o); }
+
 function route(){
   app.onclick=null; if(MAP){MAP.remove();MAP=null}
   const h=decodeURIComponent(location.hash.slice(1)||'home');
   const back=RETURNING; RETURNING=false; CURKEY='';
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
-  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='help') vHelp(); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
+  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='help') vHelp(); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));
   else if(h.startsWith('r-')) vRecord(h.slice(2)); else if(h.startsWith('map-')) vMap(h.slice(4)); else if(h.startsWith('pmap-')) vPMap(h.slice(5)); else if(h.startsWith('pic-')) vPic(h.slice(4)); else if(h==='pics') vPics(); else if(h==='sources') vSources(); else vHome();
   const key=NAVN+'|'+h, y=back?(SCROLLMEM[key]||0):0;

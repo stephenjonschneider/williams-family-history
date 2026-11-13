@@ -787,6 +787,19 @@ button{font:inherit;color:inherit}
 .kclue2{text-align:center;font-size:13.5px;color:var(--muted);margin-top:6px}
 .kguess{display:flex;gap:8px;margin:8px 0}.kguess input{flex:1;min-width:0;font:inherit;font-size:16px;padding:10px 12px;border:2px solid #cfc6b4;border-radius:12px;background:#fff}
 .kmsg{text-align:center;color:#b5452e;font-weight:600;margin:2px 0 6px}
+.kfx{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:background .8s ease,opacity .6s ease}
+.kfx.dark{background:radial-gradient(circle at 50% 45%,#3b2a6b 0%,#1a1236 60%,#0c0820 100%)}
+.kfx.dark.clear{background:rgba(12,8,32,0)}.kfx.gone{opacity:0}.kfx canvas{position:absolute;inset:0}
+.kfxw{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;height:100%;justify-content:center}
+.kfx.clear .kword{animation:kwordOut .7s ease forwards}
+.kword{font-family:'Fredoka','Arial Rounded MT Bold',sans-serif;font-weight:700;font-size:clamp(44px,15vw,84px);line-height:1;letter-spacing:1px;transform:rotate(var(--rot));text-shadow:0 4px 0 rgba(0,0,0,.35),0 0 24px rgba(255,255,255,.35);-webkit-text-stroke:2px #fff;animation:kwordIn .45s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes kwordIn{0%{transform:scale(.1) rotate(-25deg);opacity:0}100%{transform:scale(1) rotate(var(--rot));opacity:1}}
+@keyframes kwordOut{to{transform:scale(1.6) rotate(var(--rot));opacity:0}}
+.kball{position:absolute;bottom:-150px;width:64px;height:140px;animation:kfloat 1.5s ease-out forwards}
+.kball i{position:absolute;top:0;left:0;width:64px;height:80px;border-radius:50% 50% 48% 48%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.75) 0 10%,var(--bc) 30%);box-shadow:inset -6px -10px 0 rgba(0,0,0,.12);transition:transform .16s ease-out,opacity .16s}
+.kball::after{content:'';position:absolute;left:31px;top:80px;width:2px;height:60px;background:rgba(255,255,255,.7);transition:opacity .2s}
+.kball.pop i{transform:scale(1.7);opacity:0}.kball.pop::after{opacity:0}
+@keyframes kfloat{to{transform:translateY(calc(-100vh + 60px))}}
 .kend{text-align:center;padding:22px 14px}.kend h2{font-family:'Fredoka',var(--body);margin:4px 0}.kend .big{font-family:'Fredoka',var(--body);font-size:34px;font-weight:700;color:var(--green)}
 
 .card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px;margin:0 0 12px;box-shadow:0 1px 2px rgba(60,40,20,.05)}
@@ -1694,11 +1707,11 @@ function kStart(g){ KS={g,i:0,score:0,ans:null}; if(g==='det') KS.list=kShuffle(
   if(g==='map'){ KS.list=kShuffle(kMapRounds()).slice(0,6); }
   if(g==='orig'){ KS.list=kOrigRounds(); }
   if(g==='tomb'){ KS.list=kTombStart(); KS.typed=''; KS.msg=''; }
-  go('kid-'+g); }
+  go('kid-'+g); kIntro(g); }
 function kTop(t,col){ return `<div class="topbar" style="background:${col}"><button class="back" onclick="go('kids')" aria-label="Back">‹</button><h1>${esc(t)}</h1><span class="kscore">★ ${KS?KS.score:0}</span></div>`; }
 function kProg(){ return `<div class="kprog">${KS.list.map((_,i)=>`<i class="${i<KS.i?'d':i===KS.i?'c':''}"></i>`).join('')}</div>`; }
 function kNext(){ KS.i++; KS.ans=null; KS.opts=null; KS.clue=1; route(); }
-function kEnd(max,ranks){ const nb=kSaveBest(KS.g,KS.score); const r=ranks.find(x=>KS.score>=x[0]*max)||ranks[ranks.length-1];
+function kEnd(max,ranks){ const nb=kSaveBest(KS.g,KS.score); kFinale(KS.g); const r=ranks.find(x=>KS.score>=x[0]*max)||ranks[ranks.length-1];
   return `<div class="card kend"><div style="font-size:54px">${r[2]}</div><h2>${r[1]}</h2><div class="big">${KS.score} / ${max}</div>${nb?'<div class="kbest" style="margin:6px 0">New best score!</div>':''}
     <div class="btns" style="justify-content:center"><button class="btn fill" onclick="kStart('${KS.g}')">Play again</button><button class="btn" onclick="go('kids')">All games</button></div></div>`; }
 function vKidGame(g){
@@ -2021,6 +2034,33 @@ function kTombGuess(){ const r=KS.list[KS.i]; const g=kNorm(KS.typed); if(!g) re
   if(g===full||g===firstLast){ r.pts=r.order.length-r.shown; KS.score+=r.pts; r.done=1; KS.msg=''; }
   else { KS.msg='Not quite. Here’s another letter…'; if(r.shown<r.order.length-1) r.shown++; else { r.shown=r.order.length; r.done=1; r.pts=0; } KS.focus=1; }
   route(); }
+/* ---- Game-show intros and finales: words pop in (and are spoken), then confetti / balloons / fireworks ---- */
+const KFX={tomb:[['NAME!','THAT!!','TOMBSTONE!!!'],'confetti'],det:[['DETECTIVE!','CASE','FILES!!!'],'balloons'],era:[['TIME!','TRAVELER!!!'],'fireworks'],map:[['MAP!','TIME!!','MACHINE!!!'],'fireworks'],orig:[['WHERE','IN THE','WORLD?!!'],'balloons']};
+const KFXCOL=['#ff3b30','#ff9500','#ffcc00','#34c759','#00c7be','#007aff','#af52de','#ff2d92'];
+function kSay(w){ try{ if(!window.speechSynthesis) return; const u=new SpeechSynthesisUtterance(w.replace(/[!?]+/g,'!').toLowerCase()); u.rate=1.05; u.pitch=1.25; u.volume=1; speechSynthesis.speak(u);}catch(e){} }
+function kFxLayer(dark){ const o=document.createElement('div'); o.className='kfx'+(dark?' dark':''); o.innerHTML='<canvas></canvas><div class="kfxw"></div>'; document.body.appendChild(o);
+  const c=o.querySelector('canvas'); c.width=innerWidth*devicePixelRatio; c.height=innerHeight*devicePixelRatio; c.style.width=innerWidth+'px'; c.style.height=innerHeight+'px'; return o; }
+function kParticles(c,kind,dur,done){ const x=c.getContext('2d'), R=devicePixelRatio, W=c.width, H=c.height; let P=[], t0=performance.now();
+  const burst=(cx,cy,n,sp,sz,grav)=>{ for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2, v=sp*(.35+Math.random()*.65); P.push({x:cx,y:cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v-(kind==='confetti'?sp*.6:0),g:grav,s:sz*(.6+Math.random()*.8),c:KFXCOL[i%KFXCOL.length],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:1,shape:Math.random()<.5}); } };
+  if(kind==='confetti'){ burst(W*.5,H*.55,170,24*R,9*R,.55*R); burst(W*.15,H*.9,70,20*R,8*R,.5*R); burst(W*.85,H*.9,70,20*R,8*R,.5*R); }
+  let rockets=kind==='fireworks'?[0,350,700,1000,1250].map((d,i)=>({at:d,x:W*(.2+.6*Math.random()),y:H*(.18+.3*Math.random()),done:0})):[];
+  (function frame(now){ const el=now-t0; x.clearRect(0,0,W,H);
+    rockets.forEach(r=>{ if(!r.done&&el>r.at){ r.done=1; burst(r.x,r.y,110,13*R,5*R,.1*R); } });
+    P.forEach(p=>{ p.vx*=.985; p.vy=p.vy*.985+p.g; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; if(kind==='fireworks') p.life-=.012; x.globalAlpha=Math.max(0,p.life); x.fillStyle=p.c;
+      if(kind==='fireworks'){ x.shadowBlur=12*R; x.shadowColor=p.c; x.beginPath(); x.arc(p.x,p.y,p.s*.75,0,7); x.fill(); x.shadowBlur=0; }
+      else { x.save(); x.translate(p.x,p.y); x.rotate(p.r); p.shape?x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2):(x.beginPath(),x.arc(0,0,p.s/2.5,0,7),x.fill()); x.restore(); } });
+    x.globalAlpha=1; if(el<dur) requestAnimationFrame(frame); else done&&done(); })(t0);
+  return burst; }
+function kBalloons(o,dur){ const box=o.querySelector('.kfxw'); const c=o.querySelector('canvas'); const burst=kParticles(c,'confetti-lite',dur); const R=devicePixelRatio;
+  for(let i=0;i<9;i++){ const b=document.createElement('div'); b.className='kball'; b.innerHTML='<i></i>'; b.style.left=(6+i*10.5+Math.random()*3)+'%'; b.style.setProperty('--bc',KFXCOL[i%KFXCOL.length]); b.style.animationDelay=(Math.random()*.35)+'s'; box.appendChild(b);
+    setTimeout(()=>{ const r=b.firstChild.getBoundingClientRect(); b.classList.add('pop'); burst((r.left+r.width/2)*R,(r.top+r.height/2)*R,26,9*R,6*R,.35*R); },700+i*110+Math.random()*250); } }
+function kEffect(o,kind,dur){ if(kind==='balloons') kBalloons(o,dur); else kParticles(o.querySelector('canvas'),kind,dur); }
+function kShow(words,kind,opts){ opts=opts||{}; const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches; const o=kFxLayer(!opts.light); const w=o.querySelector('.kfxw');
+  const gap=reduce?250:850; words.forEach((wd,i)=>setTimeout(()=>{ const s=document.createElement('div'); s.className='kword'; s.textContent=wd; s.style.fontSize=Math.min(84,Math.floor(innerWidth*0.92/(wd.length*0.66)))+'px'; s.style.color=KFXCOL[(i*3+1)%KFXCOL.length]; s.style.setProperty('--rot',[-6,4,-3,5][i%4]+'deg'); w.appendChild(s); if(i>0||!opts.saidFirst) kSay(wd); },i*gap));
+  const tFx=words.length*gap+(reduce?0:250); if(kind==='fireworks'&&!reduce) opts.hold=(opts.hold||1500)+900; setTimeout(()=>{ kEffect(o,kind,reduce?400:(kind==='fireworks'?2300:1900)); if(kind==='fireworks'){ o.querySelectorAll('.kword').forEach(x=>x.style.animation='kwordOut .7s ease forwards'); setTimeout(()=>o.classList.add('clear'),1300); } else o.classList.add('clear'); },tFx);
+  setTimeout(()=>{ o.classList.add('gone'); setTimeout(()=>o.remove(),600); },tFx+(reduce?500:(opts.hold||1500))); }
+function kIntro(g){ const f=KFX[g]; if(!f) return; kSay(f[0][0]); kShow(f[0],f[1],{saidFirst:1}); }
+function kFinale(g){ if(KS&&KS.fin) return; if(KS) KS.fin=1; const f=KFX[g]||[[],'confetti']; setTimeout(()=>kShow(['GREAT','JOB!!!'],f[1],{light:1,hold:2200}),250); }
 
 function route(){
   app.onclick=null; if(MAP){MAP.remove();MAP=null}

@@ -750,6 +750,22 @@ button{font:inherit;color:inherit}
 .smap{border:0;background:none;color:var(--clay);font-weight:700;font-size:13.5px;padding:2px 0;cursor:pointer}
 .helpbtn{background:linear-gradient(135deg,#7a3b22 0%,#9a5a2e 55%,#5a4a2a 100%);box-shadow:0 3px 0 #4e2615,0 6px 14px rgba(40,30,10,.18);margin-top:18px}
 .hq h3{font-size:21px}.hfix{background:#f3ead6;border-left:3px solid var(--clay);border-radius:6px;padding:8px 10px;font-size:14.5px;margin:4px 0 2px}
+.smapbox{position:relative;border:3px double #6b4e2a;border-radius:4px;overflow:hidden;box-shadow:0 2px 8px rgba(60,40,15,.25);cursor:zoom-in;background:#e3d6b4}
+.smapsvg{display:block;width:100%;height:auto;font-family:'IM Fell English',Georgia,serif}
+.smapsvg .seal{cursor:pointer}.smapsvg .seal text{fill:#f6e7bf;font:700 12px 'Source Sans 3',sans-serif;pointer-events:none}.smapsvg .seal.on circle{stroke:#fff;stroke-width:3}
+.smapsvg .plab{font-size:12.5px;font-style:italic;fill:#3f2d18;paint-order:stroke;stroke:#f1e5c6;stroke-width:3px}
+.smapbox .plab{display:none}
+.smapsvg .reg{font-size:17px;letter-spacing:4px;fill:#7a5a32;opacity:.75}.smapsvg .sea{font-size:15px;letter-spacing:6px;fill:#4f6b6a;font-style:italic}.smapsvg .sea2{font-size:11px;fill:#4f6b6a;font-style:italic}
+.smapsvg .cart{font-size:16px;fill:#3f2d18}.smapsvg .cart2{font-size:11px;fill:#6b4e2a;letter-spacing:2px}.smapsvg .rose text{fill:#3f2d18;font-family:'IM Fell English',Georgia,serif}
+.smapen{position:absolute;right:8px;top:8px;background:rgba(243,232,204,.92);border:1px solid #6b4e2a;border-radius:999px;font-size:12px;padding:2px 9px;color:#3f2d18}
+.smaplist{display:grid;grid-template-columns:1fr;gap:4px;margin-top:6px}.smaplist button{display:flex;gap:9px;align-items:center;text-align:left;background:#fffaf0;border:1px solid #e1d4b8;border-radius:10px;padding:6px 9px;font:inherit;color:inherit;cursor:pointer}
+.smaplist b{font-size:14.5px}.smaplist small{display:block;color:var(--muted);font-size:12px}.smaplist button>div{flex:1}
+.sn2{flex:none;width:24px;height:24px;border-radius:50%;background:#6b4e2a;color:#f6e7bf;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;border:1.5px solid #e9c97f}.sn2.road{background:#8c2f1c}
+.smapcard{display:flex;gap:10px;align-items:flex-start;background:#f3e8cc;border:1px solid #c9b48a;border-radius:10px;padding:10px;margin-bottom:6px}
+.smapov{position:fixed;inset:0;z-index:2000;background:#2b2116;display:flex;flex-direction:column}
+.smapbar{display:flex;align-items:center;justify-content:space-between;color:#f3e8cc;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;font-family:'IM Fell English',Georgia,serif;font-size:19px}
+.smapbar button{background:none;border:1px solid #f3e8cc;color:#f3e8cc;border-radius:50%;width:34px;height:34px;font-size:16px}
+.smapscroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}.smapscroll .smapsvg{max-width:none}
 .sjoint{text-align:center;color:#b08d4c;font-size:15px;margin:8px 0 14px}
 
 .tabs .kidtab{flex-direction:row;align-items:center;justify-content:center;gap:0;padding:6px 0 8px;font-family:'Fredoka','Arial Rounded MT Bold','Trebuchet MS',sans-serif;font-size:21px;font-weight:700;line-height:1}
@@ -1832,7 +1848,73 @@ function kMapPick(i){ const {s,r}=KS.list[KS.i]; KS.ans=i; if(KS.opts[i]===kAt(s
 /* ---------- The Story: one narrative weaving the families together, built on the records ---------- */
 function sp(id,label){ const p=P[id]; if(!p) return esc(label); return `<a class="slink" onclick="go('p-${id}')">${esc(label||p.n)}</a>${gtag(p)}`; }
 function sr(id,label){ return `<a class="srec" onclick="go('r-${id}')">${esc(label)}</a>`; }
-function smap(pl,label){ return PL[pl]?`<button class="smap" onclick="go('map-${pl}')">📍 ${esc(label||PL[pl].label)} ›</button>`:''; }
+function smap(pl,label){ return PL[pl]?`<button class="smap" onclick="go('map-${pl}')">📍 ${esc(label||PL[pl].label)} ›</button>`:''; }/* ---- Story map: a rustic, hand-drawn style map of every place in the story ---- */
+const SMAP=[ // [n, label, lon, lat, years, families, chapter, app place id, label side]
+ [1,'Gravesend',-73.972,40.597,'1645–1665','Stout · Bowne · Grover',1,'','r'],
+ [2,'Flatlands',-73.925,40.622,'1657–1719','Brouwer (Brewer)',7,'','r'],
+ [3,'Portland Point · Navesink',-74.0005,40.4135,'1664–1670','Bowne · Stout · Grover',3,'portlandpt','r','Portland Point'],
+ [4,'Middletown',-74.118,40.394,'1667–1756','Layton · Bowne · Stout · Grover',4,'mtvillage','t'],
+ [5,'Freehold & the Great Meadow',-74.274,40.26,'1690–1761','Layton · Williams · Stout',5,'freehold','t'],
+ [6,'Crosswicks',-74.649,40.15,'1688–1737','Bowne · Stout · Borden · Williams',6,'crosswicks','t'],
+ [7,'Upper Freehold · Doctors Creek',-74.53,40.165,'1730–1762','Williams · Layton · Britton',6,'upperfreehold','b','Upper Freehold'],
+ [8,'Burlington',-74.865,40.071,'1685–1690','Wolcott',9,'burlington','b'],
+ [9,'Adelphia · Long Brook',-74.246,40.217,'1724–1801','Brewer · Cooper · Layton',7,'adelphia','r'],
+ [10,'Shark River',-74.059,40.192,'1742–1850','Newman',9,'sharkriver','r'],
+ [11,'Wreck Pond',-74.039,40.141,'1801–1848','Newman',9,'wreckpond','r'],
+ [12,'Miery Branch · Southard (Bethel)',-74.224,40.134,'1788–1900','Williams · Layton · Newman',8,'miery','b','Southard (Bethel)'],
+ [13,'Harmony',-74.30,40.135,'1844–1859','Newman',9,'harmony','t'],
+ [14,'Burnt Tavern',-74.42,40.162,'1840s–1870s','Wolcott',9,'burnt','t'],
+ [15,'Point Pleasant',-74.068,40.083,'1900 →','Williams',10,'ptpleasant','r']];
+const SMAP_ROAD=[1,3,4,5,6,7,9,12,15], SMAP_SIDE=[[2,4],[8,14,12],[10,11,12],[13,12]];
+function smapSvg(){
+  const lon0=-74.98,lon1=-73.72,lat0=39.98,lat1=40.80,k=560/((lon1-lon0)*Math.cos(40.35*Math.PI/180)), W=560, H=Math.round((lat1-lat0)*k);
+  const X=lon=>((lon-lon0)*Math.cos(40.35*Math.PI/180)*k), Y=lat=>((lat1-lat)*k);
+  const land=JSON.parse(document.getElementById('land').textContent);
+  const ring=r=>'M'+r.map(([a,b])=>X(a).toFixed(1)+','+Y(b).toFixed(1)).join('L')+'Z';
+  let lp=land.coordinates.map(poly=>poly.map(ring).join('')).join('');
+  const LI=[[-74.042,40.613],[-74.03,40.64],[-74.012,40.665],[-73.975,40.705],[-73.96,40.74],[-73.80,40.80],[-73.70,40.80],[-73.70,40.585],[-73.88,40.575],[-73.94,40.572],[-74.012,40.576],[-74.03,40.59]];
+  const SI=[[-74.255,40.505],[-74.215,40.556],[-74.20,40.63],[-74.16,40.645],[-74.07,40.64],[-74.055,40.60],[-74.10,40.56],[-74.20,40.51]];
+  const MAN=[[-74.02,40.70],[-73.97,40.71],[-73.93,40.80],[-73.96,40.80],[-74.01,40.75]];
+  lp+=ring(LI)+ring(SI)+ring(MAN);
+  const P={}; SMAP.forEach(s=>P[s[0]]={x:X(s[2]),y:Y(s[3]),s});
+  const curve=ids=>ids.map((id,i)=>{ const p=P[id]; if(!i) return `M${p.x.toFixed(1)},${p.y.toFixed(1)}`; const q=P[ids[i-1]], mx=(q.x+p.x)/2+(p.y-q.y)*.12, my=(q.y+p.y)/2-(p.x-q.x)*.12; return `Q${mx.toFixed(1)},${my.toFixed(1)} ${p.x.toFixed(1)},${p.y.toFixed(1)}`; }).join(' ');
+  const lab=s=>{ const p=P[s[0]], d=13, a={r:[d,4,'start'],l:[-d,4,'end'],t:[0,-d+1,'middle'],b:[0,d+9,'middle']}[s[8]]; return `<text class="plab" x="${(p.x+a[0]).toFixed(1)}" y="${(p.y+a[1]).toFixed(1)}" text-anchor="${a[2]}">${esc(s[9]||s[1])}</text>`; };
+  const rose=`<g transform="translate(${W-40},${H-46}) scale(.8)" class="rose"><circle r="30" fill="none" stroke="#7a5a32" stroke-width="1"/><circle r="24" fill="none" stroke="#7a5a32" stroke-width=".6" stroke-dasharray="2 2"/>
+    <path d="M0,-38 L6,0 L0,38 L-6,0Z" fill="#7a5a32"/><path d="M-38,0 L0,6 L38,0 L0,-6Z" fill="#a8885a"/><path d="M0,-38 L6,0 L0,0Z" fill="#3f2d18"/><text y="-42" text-anchor="middle" font-size="13">N</text></g>`;
+  return `<svg viewBox="0 0 ${W} ${H}" class="smapsvg" xmlns="http://www.w3.org/2000/svg">
+   <defs><pattern id="wave" width="26" height="12" patternUnits="userSpaceOnUse"><path d="M0 6 q6.5 -5 13 0 t13 0" fill="none" stroke="#9fb0a8" stroke-width=".7" opacity=".55"/></pattern>
+    <radialGradient id="vig" cx="50%" cy="50%" r="75%"><stop offset="60%" stop-color="#5a3d1c" stop-opacity="0"/><stop offset="100%" stop-color="#5a3d1c" stop-opacity=".45"/></radialGradient>
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter></defs>
+   <rect width="${W}" height="${H}" fill="#e3d6b4"/><rect width="${W}" height="${H}" fill="url(#wave)"/>
+   <path d="${lp}" fill="#f1e5c6" stroke="#6b4e2a" stroke-width="1.3" filter="url(#rough)"/>
+   <path d="${lp}" fill="none" stroke="#a88b5c" stroke-width="5" opacity=".18"/>
+   <text class="sea" x="${X(-73.86)}" y="${Y(40.30)}" transform="rotate(-80 ${X(-73.86)} ${Y(40.30)})">ATLANTIC  OCEAN</text>
+   <text class="reg" x="${X(-74.62)}" y="${Y(40.40)}">NEW · JERSEY</text>
+   <text class="reg" x="${X(-73.86)}" y="${Y(40.69)}" text-anchor="middle" font-size="12">LONG ISLAND</text>
+   <text class="sea2" x="${X(-74.11)}" y="${Y(40.47)}">Raritan Bay</text>
+   <text class="sea2" x="${X(-74.66)}" y="${Y(40.03)}" transform="rotate(-38 ${X(-74.66)} ${Y(40.03)})">Delaware River</text>
+   ${SMAP_SIDE.map(ids=>`<path d="${curve(ids)}" fill="none" stroke="#7a5a32" stroke-width="1.6" stroke-dasharray="1 5" stroke-linecap="round"/>`).join('')}
+   <path d="${curve(SMAP_ROAD)}" fill="none" stroke="#8c2f1c" stroke-width="2.6" stroke-dasharray="9 5" stroke-linecap="round" opacity=".9"/>
+   ${SMAP.map(s=>`<g class="seal" onclick="smapPick(${s[0]})" transform="translate(${P[s[0]].x.toFixed(1)},${P[s[0]].y.toFixed(1)})"><circle r="11" fill="${SMAP_ROAD.includes(s[0])?'#8c2f1c':'#6b4e2a'}" stroke="#e9c97f" stroke-width="1.6"/><text y="4" text-anchor="middle">${s[0]}</text></g>`).join('')}
+   ${SMAP.map(lab).join('')}
+   ${rose}
+   <g transform="translate(14,14)"><rect width="196" height="48" rx="3" fill="#f3e8cc" stroke="#6b4e2a" stroke-width="1.2"/><rect x="4" y="4" width="188" height="40" fill="none" stroke="#6b4e2a" stroke-width=".6"/>
+    <text x="98" y="21" text-anchor="middle" class="cart">The Families’ Road</text><text x="98" y="36" text-anchor="middle" class="cart2">1645 – 1956</text></g>
+   <rect width="${W}" height="${H}" fill="url(#vig)" pointer-events="none"/></svg>`;
+}
+function smapBlock(){ return `<div class="schap smapwrap"><div class="skick">WHERE IT ALL HAPPENED</div><h3>The families’ road</h3>
+   <div class="smapbox" onclick="smapBig()">${smapSvg()}<span class="smapen">⤢ Tap to enlarge</span></div>
+   <div class="tiny muted" style="margin:6px 0 8px">Red dashes follow the main line from Gravesend to Point Pleasant. Dotted paths show the Brouwers, Wolcotts and Newmans joining it. Tap a number for details.</div>
+   <div id="smapinfo"></div>
+   <div class="smaplist">${SMAP.map(s=>`<button onclick="smapPick(${s[0]})"><span class="sn2 ${SMAP_ROAD.includes(s[0])?'road':''}">${s[0]}</span><div><b>${esc(s[1])}</b><small>${esc(s[4])} · ${esc(s[5])}</small></div></button>`).join('')}</div></div>`; }
+function smapPick(n){ const s=SMAP.find(x=>x[0]===n); const el=document.getElementById('smapinfo'); if(!el) return;
+  document.querySelectorAll('.seal').forEach(g=>g.classList.toggle('on',+g.querySelector('text').textContent===n));
+  el.innerHTML=`<div class="smapcard"><div class="sn2 ${SMAP_ROAD.includes(n)?'road':''}">${n}</div><div><b>${esc(s[1])}</b><div class="tiny">${esc(s[4])} · ${esc(s[5])}</div>
+    <div class="btns" style="margin-top:6px"><button class="btn" onclick="document.querySelectorAll('.schap')[${s[6]-1}].scrollIntoView({behavior:'smooth',block:'start'})">Read chapter ${s[6]} ›</button>${s[7]&&PL[s[7]]?`<button class="btn" onclick="go('map-${s[7]}')">Records here ›</button>`:''}</div></div></div>`;
+  const ov=document.querySelector('.smapov'); if(ov){ ov.remove(); el.scrollIntoView({behavior:'smooth',block:'center'}); } }
+function smapBig(){ const o=document.createElement('div'); o.className='smapov'; o.innerHTML=`<div class="smapbar"><b>The families’ road</b><button onclick="this.closest('.smapov').remove()">✕</button></div><div class="smapscroll">${smapSvg()}</div>`; document.body.appendChild(o);
+  const sc=o.querySelector('.smapscroll'), sv=sc.querySelector('svg'), vb=sv.viewBox.baseVal; sv.style.width=Math.max(innerWidth,(innerHeight-64)*vb.width/vb.height)+'px'; requestAnimationFrame(()=>{ sc.scrollLeft=(sc.scrollWidth-sc.clientWidth)*.55; sc.scrollTop=(sc.scrollHeight-sc.clientHeight)*.45; }); }
+
 function vStory(){
   setTab('home');
   const CH=[
@@ -1877,6 +1959,7 @@ function vStory(){
       <p>This history follows several families that started apart and came together. Every name below opens that person's page, and every chip opens the record behind the sentence. Where the story rests on tradition or a working hypothesis, it says so.</p></div>
     ${CH.map((c,i)=>`<div class="schap"><div class="snum">${i+1}</div><div class="skick">${esc(c[0])}</div><h3>${esc(c[1])}</h3><p>${c[2]}</p>${c[3]?`<p>${c[3]}</p>`:''}
       <div class="schips">${c[4].map(r=>sr(r[0],r[1])).join('')}</div>${c[5]?smap(c[5]):''}</div>`).join('<div class="sjoint">✦</div>')}
+    <div class="sjoint">✦</div>${smapBlock()}
     <div class="tiny muted" style="margin:10px 4px 18px;text-align:center">Written from the six research workbooks and the compiler's documents. Proof grades are on each person's page.</div></div>`;
 }
 /* ---------- Help Wanted: the open questions that matter most, written for family members ---------- */

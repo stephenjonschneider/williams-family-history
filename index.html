@@ -856,6 +856,14 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .linecard{display:block;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--sage);border-radius:10px;padding:10px 12px;cursor:pointer}
 .linecard b{font-family:var(--head);font-weight:400;font-size:19px;color:var(--green);display:block}
 .linecard b.lc3{font-size:min(19px,4.15vw);letter-spacing:-.2px;white-space:nowrap}
+.mecall{display:block;width:100%;text-align:left;border:2px solid #d9a441;background:linear-gradient(135deg,#2f4a33,#3f6b45);color:#f6f0e2;border-radius:14px;padding:13px 15px 12px;margin:12px 0 14px;cursor:pointer;position:relative;animation:meglow 2.4s ease-in-out infinite}
+.mecall .mck{display:block;font-size:11px;letter-spacing:.16em;font-weight:700;color:#f0c35a;margin-bottom:6px}
+.mecall .mcrow{display:flex;gap:11px;align-items:center}.mecall svg{flex:0 0 auto;color:#f0c35a}
+.mecall b{display:block;font-family:var(--head);font-weight:400;font-size:22px;line-height:1.15;margin-bottom:3px}
+.mecall .mcs{display:block;font-size:13.5px;line-height:1.35;opacity:.92}
+.mecall .mcgo{display:inline-block;margin-top:10px;background:#f0c35a;color:#2b2416;font-weight:700;font-size:14.5px;border-radius:999px;padding:7px 15px}
+@keyframes meglow{0%,100%{box-shadow:0 0 0 0 rgba(217,164,65,.55)}50%{box-shadow:0 0 0 7px rgba(217,164,65,0)}}
+@media (prefers-reduced-motion:reduce){.mecall{animation:none}}
 .cta{display:flex;align-items:center;gap:10px;background:var(--green);color:#f6f0e2;border-radius:10px;padding:8px 12px;margin:10px 0;cursor:pointer;border:0;width:100%;text-align:left}
 .cta b{font-family:var(--head);font-weight:400;font-size:16px;display:block}
 .cta span{font-size:12.5px;opacity:.9}
@@ -1212,10 +1220,11 @@ function vHome(){
       <div class="photo" onclick="go('p-${fp('Catherine Louisa Newman',1840)}')">${photo(1)}</div>
       <div class="photo" onclick="go('p-${fp('Harry Franklin Williams',1900)}')">${photo(2)}</div>
     </div>
+    ${ME&&ME.you?'':`<button class="mecall" onclick="go('me')"><span class="mck">START HERE</span><span class="mcrow"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><span><b>Put yourself in the tree</b><span class="mcs">Takes a minute. Then every person in the app shows exactly how they’re related to you, and the generation tags count up from you.</span></span></span><span class="mcgo">Find your place ›</span></button>`}
     <div class="stats"><div class="stat"><b>${nPeople.toLocaleString()}</b><span>people</span></div><div class="stat tap" onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:${nRecNew?'true':'false'}};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i class="statnew">+${nRecNew} new</i>`:''}</div><div class="stat tap" onclick="go('pics')"><b>${NPHOTO}</b><span>photos</span>${nPicNew?`<i class="statnew">+${nPicNew} new</i>`:''}</div><div class="stat"><b>${nMapped.toLocaleString()}</b><span>on the map</span></div><div class="stat"><b>${FAMS.length}</b><span>family lines</span></div></div>
     <button class="storybtn" onclick="go('story')"><span class="sbk">THE STORY</span><b>How the families became one</b><span class="sbs">Gravesend · Monmouth · Crosswicks · Adelphia · the Metedeconk — 1640s to 1956</span><span class="sbgo">Read ›</span></button>
     <button class="storybtn landbtn" onclick="go('land')"><span class="sbk">LOCATING THE LAND</span><b>Where were the farms?</b><span class="sbs">Old surveys matched to today's map, the Williams homestead and the Newman farm</span><span class="sbgo">Explore ›</span></button>
-    <button class="cta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>${ME&&ME.you?'You’re in the tree':'Find your place in the tree'}</b><span>${ME&&ME.you?'Relationships are shown relative to you. Tap to change.':'Tell the app how you descend, and every person will show how they’re related to you.'}</span></div></button>
+    ${ME&&ME.you?`<button class="cta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>You’re in the tree</b><span>Relationships are shown relative to you. Tap to change.</span></div></button>`:''}
     <h3 class="sec">Start with</h3>
     <div class="card" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">The Williams, Layton, Newman and Wolcott lines all meet in their children; the Bowne, Grover and Stout families come in through the Laytons.</div></div>
     <h3 class="sec">From the archives <span class="tiny muted" style="font-family:var(--body);text-transform:none;letter-spacing:0">· swipe ›</span></h3>

@@ -999,7 +999,15 @@ details.rs summary{cursor:pointer;font-weight:600;color:var(--green)}
 .bl-rd{font-size:10.5px;font-weight:600;letter-spacing:.3px;color:#6b5f4c;text-transform:uppercase;text-shadow:0 0 3px #f4f0e3,0 0 3px #f4f0e3}
 .zmid .plabel.minor,.zlow .plabel.mid{display:none}
 .plabel.major{font-size:14px;font-weight:700;color:#5a4a32}
-.maplegend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;margin:8px 2px}
+.maplegend{display:block;font-size:13px;margin:8px 2px}
+.maplegend .lghead{display:flex;justify-content:space-between;align-items:center;color:var(--muted,#7a7262);font-size:12px;margin:2px 2px 6px}
+.maplegend .lgall{font:inherit;font-size:12px;border:1px solid #9c3b2e;color:#9c3b2e;background:transparent;border-radius:12px;padding:2px 10px;cursor:pointer}
+.maplegend .lgrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
+.maplegend .lgt{width:100%;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#7a7262)}
+.maplegend .lg{font:inherit;font-size:13px;display:inline-flex;align-items:center;gap:6px;border:1px solid #d6ccb6;background:#fffdf6;border-radius:14px;padding:4px 10px 4px 8px;cursor:pointer;color:inherit}
+.maplegend .lg.off{opacity:.45;background:transparent;text-decoration:line-through}
+.maplegend .lg:disabled{opacity:.35;cursor:default}
+.maplegend .lgnote{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted,#7a7262);margin-left:2px}
 .dot{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:4px}
 .leaflet-popup-content{margin:10px 12px;font-size:14px;max-height:260px;overflow:auto}
 .leaflet-popup-content a{display:block;padding:3px 0;text-decoration:none}
@@ -1520,6 +1528,15 @@ function vRecord(id){
 
 /* map */
 let MAP=null, mState={f:'',ids:null,label:''}, MCARRY=null;
+/* map legend toggles: kept while on the map page (family changes, back from a pin), reset on a fresh visit */
+const MHIDE=new Set();
+const MLEG=[['Records',[['lived','<span class="dot" style="background:#3f6b3a"></span>','Lived or held land'],['named','<span class="dot" style="background:#fffdf6;border:2px solid #3f6b3a;box-sizing:border-box"></span>','Named or visiting only']]],
+ ['How exact',[['exact','<span class="dot" style="background:#e0201b"></span>','Exact location'],['site','<span class="dot" style="background:#9c3b2e"></span>','Identified site'],['place','<span class="dot" style="background:#3f6b3a"></span>','Named place (approx.)'],['township','<span class="dot" style="background:transparent;border:2px dashed #8a7452;box-sizing:border-box"></span>','Township only'],['court','<span class="dot" style="background:#6b6f73"></span>','Court house']]],
+ ['Also on the map',[['homes','<span class="dot" style="background:#7a5a32"></span>','🏠 Family homes'],['gather','<span class="dot" style="background:#6b3a7a"></span>','⛪ Where they gathered'],['photos','<span class="dot" style="background:#b5642c"></span>','📷 Photos of places']]]];
+function mLegend(){ const extra=!mState.ids&&!mState.f;
+  return `<div class="maplegend" id="mlg"><div class="lghead"><span>Tap a key to show or hide it</span>${MHIDE.size?'<button class="lgall" data-g="*">Show all</button>':''}</div>`+MLEG.map(([h,items])=>{
+    const dis=h==='Also on the map'&&!extra;
+    return `<div class="lgrow"><div class="lgt">${h}</div>${items.map(([k,dot,l])=>`<button class="lg${MHIDE.has(k)?' off':''}" data-g="${k}"${dis?' disabled':''} aria-pressed="${!MHIDE.has(k)}">${dot}${l}</button>`).join('')}${h==='Records'?'<span class="lgnote"><span class="dot" style="background:#3f6b3a;box-shadow:0 0 0 2px #fffdf6,0 0 0 3.5px #3f6b3a"></span>ringed = both</span>':''}${dis?'<div class="lgnote" style="width:100%">Shown when All families is selected.</div>':''}</div>`;}).join('')+'</div>'; }
 /* remember where the map was (view, open bubble, scroll in its list) so Back returns to the same spot */
 const MVIEW={};
 function mapMemory(key,markers){ const v=MVIEW[key]; let restored=false;
@@ -1556,22 +1573,24 @@ const TIERTXT={exact:'exact location',site:'identified site',place:'approximate 
 function vMap(focus){
   setTab('map');
   app.innerHTML=topBar('Map',!!focus||!!mState.ids)+`<div class="wrap">${mState.ids?`<div class="card small" style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:8px"><div style="flex:1"><b>${esc(mState.label)}</b> · ${mState.ids.size} mapped record${mState.ids.size===1?'':'s'}</div><button class="chip" id="mclr">Show all</button></div>`:''}<div class="chips" id="mf">${['',...FAMS].map(f=>`<button class="chip ${mState.f===f?'on':''}" data-f="${f}">${f||'All'}</button>`).join('')}</div><div id="map"></div>
-  <div class="maplegend"><span><span class="dot" style="background:#3f6b3a"></span>Lived or held land</span><span><span class="dot" style="background:#fffdf6;border:2px solid #3f6b3a;box-sizing:border-box"></span>Named or visiting only</span><span><span class="dot" style="background:#3f6b3a;box-shadow:0 0 0 2px #fffdf6,0 0 0 3.5px #3f6b3a"></span>Both</span><span><span class="dot" style="background:#e0201b"></span>Exact location</span><span><span class="dot" style="background:#9c3b2e"></span>Identified site</span><span><span class="dot" style="background:#3f6b3a"></span>Named place (approx.)</span><span><span class="dot" style="background:transparent;border:2px dashed #8a7452"></span>Township only</span><span><span class="dot" style="background:#6b6f73"></span>Court house (court records)</span></div>
+  ${mLegend()}
   <div class="card tiny muted">Pins are placed from the Locality column of each abstract. Most are approximate: a named brook, village or township, not a surveyed parcel. Exact parcels can be added as they are plotted. Base map: modern roads, streams and water from U.S. Census TIGER/Line 2024. Zoom in for local roads and stream names.</div></div>`;
   const mc=document.getElementById('mclr'); if(mc) mc.onclick=()=>{mState.ids=null;vMap(focus)};
+  document.getElementById('mlg').onclick=e=>{const b=e.target.closest('[data-g]'); if(!b||b.disabled) return; const k=b.dataset.g; if(MAP) MCARRY={c:MAP.getCenter(),z:MAP.getZoom()};
+    if(k==='*') MHIDE.clear(); else if(MHIDE.has(k)) MHIDE.delete(k); else MHIDE.add(k); vMap(focus); };
   document.getElementById('mf').onclick=e=>{const b=e.target.closest('[data-f]');if(b){ if(MAP) MCARRY={c:MAP.getCenter(),z:MAP.getZoom()}; mState.f=b.dataset.f;vMap(focus)}};
   if(typeof L==='undefined'){document.getElementById('map').innerHTML='<div class="empty">Map could not load.</div>';return}
   const pinR=mkMap();
-  const recs=D.records.filter(r=>r.pl&&(!mState.f||inF(r,mState.f))&&(!mState.ids||mState.ids.has(r.id)));
+  const recs=D.records.filter(r=>r.pl&&(!mState.f||inF(r,mState.f))&&(!mState.ids||mState.ids.has(r.id))&&!MHIDE.has(recTie(r)==='home'?'lived':'named')&&!(PL[r.pl]&&MHIDE.has(PL[r.pl].tier)));
   const by={}; recs.forEach(r=>(by[r.pl]=by[r.pl]||[]).push(r));
   const col={exact:'#e0201b',site:'#9c3b2e',place:'#3f6b3a',township:'#a08c6c',court:'#6b6f73'};
   let focusMarker=null; const MK={};
   const TO={township:0,court:1,place:2,site:3,exact:4};
-  if(!mState.ids&&!mState.f){ (D.homes||[]).forEach(h=>{ const hm=L.circleMarker(h.ll,{pane:'pins',renderer:pinR,radius:7,color:'#fff',weight:2,fillColor:'#7a5a32',fillOpacity:.95}).addTo(MAP);
+  if(!mState.ids&&!mState.f){ if(!MHIDE.has('homes')) (D.homes||[]).forEach(h=>{ const hm=L.circleMarker(h.ll,{pane:'pins',renderer:pinR,radius:7,color:'#fff',weight:2,fillColor:'#7a5a32',fillOpacity:.95}).addTo(MAP);
       hm.bindTooltip('🏠 '+h.a.split(',')[0],{permanent:true,direction:'right',className:'plabel minor',pane:'pins',offset:[7,0]}); hm.on('click',()=>{ if(h.pic) go('pic-'+h.pic); else if(h.ppl[0]) go('p-'+h.ppl[0]); }); });
-    Object.entries(GATHER).forEach(([k,G])=>{ [[G.ll,G.pin||G.title.split(/[,&]/)[0].trim()],...(G.pins||[])].forEach(([ll,lab])=>{ const gm=L.circleMarker(ll,{pane:'pins',renderer:pinR,radius:8,color:'#fff',weight:2.2,fillColor:G.park?'#3f7a3a':'#6b3a7a',fillOpacity:.95}).addTo(MAP);
+    if(!MHIDE.has('gather')) Object.entries(GATHER).forEach(([k,G])=>{ [[G.ll,G.pin||G.title.split(/[,&]/)[0].trim()],...(G.pins||[])].forEach(([ll,lab])=>{ const gm=L.circleMarker(ll,{pane:'pins',renderer:pinR,radius:8,color:'#fff',weight:2.2,fillColor:G.park?'#3f7a3a':'#6b3a7a',fillOpacity:.95}).addTo(MAP);
       gm.bindTooltip(G.icon+' '+lab,{permanent:true,direction:'right',className:'plabel minor',pane:'pins',offset:[8,0]}); gm.on('click',()=>go('gather-'+k)); }); }); }
-  if(!mState.ids&&!mState.f) (D.pics||[]).filter(q=>q.ll).forEach(q=>{ const pm=L.circleMarker(q.ll,{pane:'pins',renderer:pinR,radius:8,color:'#fff',weight:2.2,fillColor:'#b5642c',fillOpacity:.95}).addTo(MAP);
+  if(!mState.ids&&!mState.f&&!MHIDE.has('photos')) (D.pics||[]).filter(q=>q.ll).forEach(q=>{ const pm=L.circleMarker(q.ll,{pane:'pins',renderer:pinR,radius:8,color:'#fff',weight:2.2,fillColor:'#b5642c',fillOpacity:.95}).addTo(MAP);
     pm.bindTooltip('📷 '+(q.lab||q.t),{permanent:true,direction:'right',className:'plabel minor',pane:'pins',offset:[8,0]}); pm.on('click',()=>go('pic-'+q.id)); });
   D.places.slice().sort((a,b)=>TO[a.tier]-TO[b.tier]).forEach(pl=>{const rs=by[pl.id]; if(!rs) return;
     const nh=rs.filter(r=>recTie(r)==='home').length, nr=rs.length-nh;
@@ -2431,6 +2450,7 @@ function route(){
   setTimeout(layerTidy,900);
   const h=decodeURIComponent(location.hash.slice(1)||'home');
   const back=RETURNING; RETURNING=false; CURKEY='';
+  if((h==='map'||h.startsWith('map-'))&&!back) MHIDE.clear();
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
   else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));

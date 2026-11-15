@@ -1612,6 +1612,7 @@ function vMap(focus){
   const zc=()=>{const z=MAP.getZoom(),c=MAP.getContainer().classList;c.toggle('zlow',z<12);c.toggle('zmid',z<13)}; MAP.on('zoomend',zc); zc();
   const mkey='map|'+(focus||'')+'|'+mState.f+'|'+(mState.ids?mState.label+mState.ids.size:'');
   if(MCARRY){ MVIEW[mkey]={c:MCARRY.c,z:MCARRY.z}; MCARRY=null; }
+  if(PFOCUS){ const ll=PFOCUS; PFOCUS=null; MAP.setView(ll,17); setTimeout(()=>MAP.invalidateSize(),60); return; }
   if(mapMemory(mkey,MK)){ setTimeout(()=>MAP.invalidateSize(),60); return; }
   if(mState.ids&&!focus){ const pts=[...new Set(recs.map(r=>r.pl))].map(k=>PL[k]).filter(Boolean).map(pl=>[pl.lat,pl.lon]); if(pts.length===1) MAP.setView(pts[0],13); else if(pts.length) MAP.fitBounds(pts,{padding:[30,30],maxZoom:13}); }
   if(focusMarker){MAP.setView(focusMarker.getLatLng(),PL[focus]&&PL[focus].tier==='exact'?16:13);setTimeout(()=>focusMarker.openPopup(),200)}
@@ -1681,11 +1682,18 @@ function vPics(){ setTab('home'); if(!PCATS.some(c=>c[0]===picState)) picState='
   picGrid();
   document.getElementById('picq').oninput=e=>{picQ=e.target.value; picGrid();};
   document.getElementById('phf').onclick=e=>{const b=e.target.closest('[data-k]'); if(b){picState=b.dataset.k; picQ=''; document.getElementById('picq').value=''; picGrid();}}; }
+/* where a picture sits on the map: its own pin, a family-home pin, or its story's pin */
+function picLL(q){ if(q.ll) return {ll:q.ll,lab:q.lab||''};
+  const h=(D.homes||[]).find(h=>h.pic===q.id); if(h) return {ll:h.ll,lab:h.a.split(',')[0]};
+  if(q.go&&q.go.startsWith('gather-')){ const G=GATHER[q.go.slice(7)]; if(G) return {ll:G.ll,lab:G.pin||G.title.split(/[,&]/)[0].trim()}; }
+  return null; }
+let PFOCUS=null;
+function picToMap(id){ const x=picLL(PIC[id]); if(!x) return; PFOCUS=x.ll; mState.f=''; mState.ids=null; go('map'); }
 function vPic(id){const q=PIC[id]; if(!q) return vHome(); setTab('people'); const pl=q.pl&&PL[q.pl];
   app.innerHTML=topBar(PKIND[q.k]||'Picture',true)+`<div class="wrap"><div class="card recbody"><div class="rtype">${esc(PKIND[q.k]||'')}${q.y?' · '+q.y:''}</div><div class="pname" style="font-size:22px">${esc(q.t)}${isNew(q)?' '+NEWB:''}</div>
    <a href="${q.src}" target="_blank" rel="noopener"><img class="docimg" src="${q.src}" alt=""></a><div class="figcap" style="margin:-4px 0 10px">Tap the image to open it full size.</div>
    <div class="small">${esc(q.cap)}</div>${q.cr?`<div class="credit">🙏 ${esc(q.cr)}</div>`:''}${q.note?`<div class="small muted" style="margin-top:8px">${esc(q.note)}</div>`:''}
-   ${pl?`<div style="margin:10px 0"><button class="btn" onclick="go('map-${pl.id}')">📍 ${esc(pl.label)}</button></div>`:''}
+   ${pl?`<div style="margin:10px 0"><button class="btn" onclick="go('map-${pl.id}')">📍 ${esc(pl.label)}</button></div>`:(picLL(q)?`<div style="margin:10px 0"><button class="btn" onclick="picToMap('${q.id}')">📍 On the map${picLL(q).lab?': '+esc(picLL(q).lab):''}</button></div>`:'')}
    ${q.go&&q.go.startsWith('gather-')&&GATHER[q.go.slice(7)]?`<div style="margin:10px 0"><button class="btn fill" onclick="go('${q.go}')">${GATHER[q.go.slice(7)].icon} Read the story: ${esc(GATHER[q.go.slice(7)].title)} ›</button></div>`:''}
    ${q.ppl.length?`<h3 class="sec" style="margin-top:12px">People in the picture or record</h3><div class="mini">${q.ppl.map(x=>pcard(x)).join('')}</div>`:''}
    ${(q.rec||[]).length?`<h3 class="sec">Related records</h3>${q.rec.map(r=>R[r]).filter(Boolean).map(r=>rrow(r)).join('')}`:''}

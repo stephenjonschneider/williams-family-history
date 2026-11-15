@@ -2103,7 +2103,7 @@ function vHelp(){
   app.innerHTML=topBar('Help Wanted',true)+`<div class="wrap story">
     <div class="shead"><div class="kicker">OPEN QUESTIONS</div><h2>Can you help?</h2>
       <p>These are the links in the family's lines that still need proof, most important first. Each one sets out where the research stands, why the current theory is what it is, what already supports it, and the kind of record that would settle it. Read up, then see if you have the missing piece.</p>
-      <button class="btn fill" style="margin-top:10px" onclick="helpShare()">Share this list ›</button></div>
+      <div class="btns" style="justify-content:center;margin-top:10px"><button class="btn fill" onclick="helpShare()">Share this list ›</button>${HELP_CONTACT.email?`<a class="btn fill" href="mailto:${HELP_CONTACT.email}?subject=${encodeURIComponent('Williams Family History: something to share')}">Email the compiler ›</a>`:''}</div></div>
     ${Q.map((q,i)=>`<div class="schap hq"><div class="snum">${i+1}</div><div class="skick">${badge(q.g,LB[q.g])} <span class="muted" style="font-size:11px;letter-spacing:0;text-transform:none;font-weight:400">${esc(q.ref)}</span></div>
       <h3>${esc(q.t)}</h3>
       <div class="hsec"><b>Where we stand</b><p>${q.stand}</p></div>

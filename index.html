@@ -2450,7 +2450,7 @@ function vGatherStory(k){ const G=GATHER[k]; if(!G) return vGather(); setTab('ho
 /* ---------- visit counts (GoatCounter: no cookies, no personal data) ----------
    Each screen is counted as its own page. Visiting the app with #count-off (or the button on the Help page)
    stops counting on that device; #count-on starts it again. */
-const GC_CODE='';   // the compiler's GoatCounter site code, e.g. 'williamsfamily'
+const GC_CODE='williamsfamily';   // the compiler's GoatCounter site code, e.g. 'williamsfamily'
 function gcOff(){ try{ return localStorage.getItem('wfh-nocount')==='1' }catch(e){ return false } }
 function gcSet(off){ try{ off?localStorage.setItem('wfh-nocount','1'):localStorage.removeItem('wfh-nocount') }catch(e){} }
 (function(){ const h=location.hash; if(h==='#count-off'){ gcSet(true); history.replaceState(null,'','#home'); } else if(h==='#count-on'){ gcSet(false); history.replaceState(null,'','#home'); } })();

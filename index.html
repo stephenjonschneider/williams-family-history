@@ -1946,7 +1946,7 @@ function smapSvg(){
     <radialGradient id="vig" cx="50%" cy="50%" r="75%"><stop offset="60%" stop-color="#5a3d1c" stop-opacity="0"/><stop offset="100%" stop-color="#5a3d1c" stop-opacity=".45"/></radialGradient>
     <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter></defs>
    <image href="docs/story/road.jpg" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="none"/>
-   <text class="reg" x="${X(-74.78)}" y="${Y(40.47)}" text-anchor="middle">NEW · JERSEY</text>
+   <text class="reg" x="${X(-74.60)}" y="${Y(40.57)}" text-anchor="middle">NEW · JERSEY</text>
    <text class="reg" x="${X(-74.93)}" y="${Y(40.26)}" text-anchor="middle" style="font-size:10px" transform="rotate(-62 ${X(-74.93)} ${Y(40.26)})">PENSYLVANIA</text>
    <text class="sea2" x="${X(-74.835)}" y="${Y(40.115)}" text-anchor="middle" transform="rotate(-28 ${X(-74.835)} ${Y(40.115)})">Delaware River</text>
    <text class="reg" x="${X(-73.84)}" y="${Y(40.70)}" text-anchor="middle" style="font-size:12px">LONG</text><text class="reg" x="${X(-73.84)}" y="${Y(40.70)+15}" text-anchor="middle" style="font-size:12px">ISLAND</text>
@@ -1967,7 +1967,7 @@ function smapSvg(){
 }
 function smapBlock(){ return `<div class="schap smapwrap"><div class="skick">WHERE IT ALL HAPPENED</div><h3>The families’ road</h3>
    <div class="smapbox" onclick="smapBig()">${smapSvg()}<span class="smapen">⤢ Tap to enlarge</span></div>
-   <div class="tiny muted" style="margin:6px 0 8px">Red dashes follow the main line from Gravesend to Point Pleasant. Dotted paths show the Brouwers, Wolcotts and Newmans joining it. Tap a number for details. Background: John Hills, “A Map of Monmouth County” (1781), Library of Congress, with New York harbor, Long Island and the Delaware drawn in to match.</div>
+   <div class="tiny muted" style="margin:6px 0 8px">Red dashes follow the main line from Gravesend to Point Pleasant. Dotted paths show the Brewers (Brouwers), Wolcotts and Newmans joining it. Tap a number for details. Background: John Hills, “A Map of Monmouth County” (1781), Library of Congress, with New York harbor, Long Island and the Delaware drawn in to match.</div>
    <div id="smapinfo"></div>
    <div class="smaplist">${SMAP.map(s=>`<button onclick="smapPick(${s[0]})"><span class="sn2 ${SMAP_ROAD.includes(s[0])?'road':''}">${s[0]}</span><div><b>${esc(s[1])}</b><small>${esc(s[4])} · ${esc(s[5])}</small></div></button>`).join('')}</div></div>`; }
 function smapPick(n){ const s=SMAP.find(x=>x[0]===n); const el=document.getElementById('smapinfo'); if(!el) return;

@@ -1148,7 +1148,7 @@ function setTab(t){document.querySelectorAll('#tabs button').forEach(b=>b.classL
 function go(h){ if(location.hash==='#'+h) route(); else location.hash=h; }
 function goBack(){ if(NAVN>0) history.back(); else go('home'); }
 function topBar(title,back,right){return `<div class="topbar">${back?'<button class="back" onclick="goBack()" aria-label="Back">‹</button>':''}<h1>${esc(title)}</h1>${right||''}</div>`}
-function prow(id,extra){const p=P[id]; return `<div class="row sup"${supAttr(p)} onclick="go('p-${id}')"><div class="main"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(years(p))}${extra?' · '+extra:''}</div></div>${p.flag?'<span class="badge flag" title="Compiler’s flag: link to the next generation needs more proof">needs proof</span>':''}</div>`}
+function prow(id,extra){const p=P[id]; return `<div class="row sup"${supAttr(p)} onclick="go('p-${id}')"><div class="main"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(years(p))}${extra?' · '+extra:''}</div></div>${p.flag?'<span class="badge flag" title="Compiler’s flag: the link from this person to their child needs more proof">needs proof to child</span>':''}</div>`}
 function pcard(id,sub){const p=P[id]; return `<div class="pc sup"${supAttr(p)} onclick="go('p-${id}')"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(sub||years(p))}</div></div>`}
 const BANDS=[[80,'Very strongly supported','#2f6b35'],[60,'Well supported','#5f9a4a'],[40,'Partly supported','#a8a23a'],[20,'Thin support','#d08a3c'],[1,'Little support','#c96a55'],[0,'No independent support yet','#b4ab9c']];
 function band(sc){ if(sc==null) return null; for(const b of BANDS) if(sc>=b[0]) return {min:b[0],label:b[1],color:b[2]}; return null }
@@ -1198,7 +1198,7 @@ function vStr(f){
     <div class="tiny muted" style="margin:2px 2px 0">${f} line, G${sgv(P[all[0]])}–G${sgv(P[up[nUp-1]])}: ${cnt(['proved','documented'])} documented · ${cnt(['strong'])} strong · ${cnt(['probable','compiled'])} probable or compiled · ${cnt(['hypothesis','open','tree'])} hypothesis, open or unproven${cnt(['user'])?` · ${cnt(['user'])} user`:''}</div>`;
   const row=(id,muted)=>{const p=P[id]; const b=band(p.sc);
     return `<div class="srow${muted?' mute':''}" onclick="go('p-${id}')"><span class="sg" style="background:${b?b.color:'#bbb'}">G${sgv(p)}</span>
-      <div class="sn"><div class="t">${esc(ME&&ME.you&&id===ME.you?'You':(!(ME&&ME.you&&P[ME.you])&&id===D.root?'The compiler':(p.living?'Living':p.n)))}${p.flag?' <span class="badge flag" style="font-size:10.5px">needs proof</span>':''}</div><div class="s">${esc(years(p))}${p.sc!=null&&!p.living?` · support ${p.sc}/100`:''}</div></div><span class="chev">›</span></div>`;};
+      <div class="sn"><div class="t">${esc(ME&&ME.you&&id===ME.you?'You':(!(ME&&ME.you&&P[ME.you])&&id===D.root?'The compiler':(p.living?'Living':p.n)))}${p.flag?' <span class="badge flag" style="font-size:10.5px">needs proof to child</span>':''}</div><div class="s">${esc(years(p))}${p.sc!=null&&!p.living?` · support ${p.sc}/100`:''}</div></div><span class="chev">›</span></div>`;};
   const con=(child,muted)=>{const L=lnk(child); return `<div class="scon${muted?' mute':''}"><svg width="34" height="34"><line x1="17" y1="0" x2="17" y2="34" stroke="${SC[L.lv]}" stroke-width="4" ${SD[L.lv]?`stroke-dasharray="${SD[L.lv]}"`:''} stroke-linecap="round"/></svg>${badge(L.lv,L.s)}</div>`;};
   let h=''; all.forEach((id,i)=>{ const muted=i>=nUp; if(i>0) h+=con(id,i>nUp-1&&i>=nUp); if(i===nUp) h=h; h+=(i===nUp?`<div class="sjoin">Below: the line continues down to ${ME&&ME.you&&P[ME.you]?'you':'the compiler'}</div>`:'')+row(id,muted); });
   app.innerHTML=topBar('Strength of each line',true)+`<div class="wrap">
@@ -1264,7 +1264,7 @@ function vHome(){
       <div class="bandkey">${BANDS.map(b=>`<div class="tapk" onclick="peopleBy('band:${b[0]}')"><span class="dot" style="background:${b[2]}"></span>${b[1]} ›</div>`).join('')}</div>
       <div class="tiny muted">${(()=>{const dl=D.people.filter(p=>p.G&&!p.living&&p.sc!=null);const c=BANDS.map(b=>dl.filter(p=>band(p.sc).min===b[0]).length);return 'Direct line ('+dl.length+' people): '+BANDS.map((b,i)=>c[i]+' '+b[1].toLowerCase()).join(' · ')})()}</div></div>
     <div class="card small"><b>Proof of each parent link.</b> Every link is judged on its own evidence, from the workbooks’ parent basis and from records naming parent and child together. An open link lower in the line does not pull down documented links above it.
-      <div class="legend">${['documented','strong','probable','compiled','hypothesis','open','tree'].map(k=>`<span class="tapk" onclick="peopleBy('lv:${k}')">${badge(k)}</span>`).join('')}<span class="tapk" onclick="peopleBy('flagdl')"><span class="badge flag">needs proof</span></span></div><div class="tiny muted" style="margin:-2px 0 6px">Tap a mark to list the direct-line people who carry it.</div>
+      <div class="legend">${['documented','strong','probable','compiled','hypothesis','open','tree'].map(k=>`<span class="tapk" onclick="peopleBy('lv:${k}')">${badge(k)}</span>`).join('')}<span class="tapk" onclick="peopleBy('flagdl')"><span class="badge flag">needs proof to child</span></span></div><div class="tiny muted" style="margin:-2px 0 6px">Tap a mark to list the direct-line people who carry it.</div>
       Each parent link in the direct line carries the compiler’s current assessment from the research workbooks. <b>G-tags</b> (G5, G8…) count generations up from ${ME&&ME.you?'you (G1), as set in Find your place':'the compiler (G1) until you set your own place in Find your place; then they count up from you'}. Living relatives appear only as “Living”.
       <div style="margin-top:10px"><b>What are the documents?</b> Deeds, mortgages, surveys, wills and estate papers, court cases, church and Quaker records, censuses and tax lists, newspapers, certificates, maps and more. <a href="#sources">See all the source categories ›</a></div>
     </div>
@@ -1283,11 +1283,11 @@ function userOnly(p){ if(!p) return false; if(p.virt) return true; const hasRec=
   if(p.living) return !hasRec; return !hasRec && !(p.src||[]).some(x=>!/^(compiler|entered on this device)$/i.test(x)); }
 function lvOf(p){ return userOnly(p)?'user':((p.ps&&p.ps.lv)||'tree'); }
 function pFilterLabel(f){ if(f.startsWith('band:')){const b=BANDS.find(x=>x[0]===+f.slice(5)); return b?'Support: '+b[1]:''}
-  if(f==='flagdl') return 'Needs proof (compiler’s flag) — direct line';
+  if(f==='flagdl') return 'Needs proof to child (compiler’s flag) — direct line';
   if(f.startsWith('lv:')){const v=f.slice(3); return 'Parent link: '+LVL[v]+' — each person listed is the child of that link'} return ''; }
 function vPeople(){
   setTab('people');
-  app.innerHTML=topBar('People',false,`<button class="tbtn" onclick="picState='people';picQ='';go('pics')">Photos ›</button>`)+`<div class="wrap"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
+  app.innerHTML=topBar('People',false,`<button class="tbtn" onclick="picState='people';picQ='';go('pics')">Photos ›</button>`)+`<div class="wrap"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof to child']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
   const draw=()=>{
     const q=pState.q.trim().toLowerCase(); let L=Object.values(P).filter(p=>!p.virt);
     if(pState.f==='dl'||pState.f==='weak'||pState.f==='strong') L=L.filter(p=>p.G&&!p.living); if(pState.f==='flag') L=L.filter(p=>p.flag);
@@ -1338,7 +1338,7 @@ function vPerson(id){
   const facts=p.living?`<dl class="facts"><dt>Status</dt><dd>Living${p.ly?' · born '+p.ly:''}</dd></dl>`:
    `<dl class="facts">${p.b||p.bp?`<dt>Born</dt><dd>${esc(p.b||'')}${p.bp?`<span class="muted">${p.b?', ':''}${esc(p.bp)}</span>`:''}</dd>`:''}${p.d&&p.d!=='Deceased'||p.dp?`<dt>Died</dt><dd>${esc(p.d&&p.d!=='Deceased'?p.d:'')}${p.dp?`<span class="muted">${p.d&&p.d!=='Deceased'?', ':''}${esc(p.dp)}</span>`:''}</dd>`:''}${p.note?`<dt>Note</dt><dd>${esc(p.note)}</dd>`:''}${(p.fx||[]).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`;
   const ps=p.ps&&p.par.length?`<div style="margin-top:10px">${badge(p.ps.lv,'Parents: '+p.ps.s)}${p.ps.note?`<div class="note">${esc(p.ps.note)}</div>`:''}</div>`:'';
-  const flag=p.flag?`<div style="margin-top:8px"><span class="badge flag">needs proof</span> <span class="small muted">Compiler’s flag: the link from this person to the next generation needs more proof.</span></div>`:'';
+  const flag=p.flag?`<div style="margin-top:8px"><span class="badge flag">needs proof to child</span> <span class="small muted">Compiler’s flag: the link from this person to the next generation needs more proof.</span></div>`:'';
   const rs=(p.rs||[]).map(r=>`<details class="rs" ${p.G?'open':''}><summary>${esc(fname(r.fam))} workbook · ${esc(r.pid)}${r.line?' · '+esc(r.line):''}</summary>
      ${r.cc?`<div class="kv cc"><b>Current conclusion</b><span class="long">${esc(r.cc)}</span></div>`:''}${r.name?`<div class="kv"><b>Name in the research</b>${esc(r.name)}</div>`:''}${r.label?`<div class="kv"><b>Who</b>${esc(r.label)}</div>`:''}${r.dates?`<div class="kv"><b>Dates</b>${esc(r.dates)}</div>`:''}${r.par?`<div class="kv"><b>Parents (basis)</b>${esc(r.par)}</div>`:''}${r.spouse?`<div class="kv"><b>Spouse</b>${esc(r.spouse)}</div>`:''}${r.res?`<div class="kv"><b>Residence</b>${esc(r.res)}</div>`:''}${r.proof?`<div class="kv"><b>Proof status</b>${esc(r.proof)}</div>`:''}${r.notes?`<div class="kv"><b>Research log</b><span class="long">${esc(r.notes)}</span></div>`:''}</details>`).join('');
   const recs=(p.rec||[]).map(x=>R[x]).filter(Boolean).sort((a,b)=>String(a.sd).localeCompare(String(b.sd)));
@@ -1363,7 +1363,7 @@ function vPerson(id){
 
 /* ancestors / descendants outline */
 function nodeCard(id,hasTog,open,key){const p=P[id];
-  return `<div class="nodecard sup ${p.G?'dl':''}"${supAttr(p)}>${hasTog?`<button class="tog" data-k="${key}">${open?'−':'+'}</button>`:'<span style="width:30px;flex:none"></span>'}<div class="main" onclick="go('p-${id}')"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(years(p))}${p.flag?' · <span style="color:#9a5a2a">needs proof</span>':''}</div></div></div>`}
+  return `<div class="nodecard sup ${p.G?'dl':''}"${supAttr(p)}>${hasTog?`<button class="tog" data-k="${key}">${open?'−':'+'}</button>`:'<span style="width:30px;flex:none"></span>'}<div class="main" onclick="go('p-${id}')"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(years(p))}${p.flag?' · <span style="color:#9a5a2a">needs proof to child</span>':''}</div></div></div>`}
 let openSet=new Set();
 function vAnc(id){
   if(!P[id]) return vHome(); setTab('tree');
@@ -1421,7 +1421,7 @@ function vChart(id){
     const dash=lv==='open'||lv==='probable'||lv==='compiled'?'6 4':lv==='hypothesis'?'3 4':lv==='tree'?'2 4':lv==='user'?'3 3':'';
     svg+=`<path d="M${x1} ${cy} H${xm} V${ym} H${x2}" fill="none" stroke="${LC[lv]||'#b9b2a5'}" stroke-width="2" ${dash?`stroke-dasharray="${dash}"`:''}/>`;});
   svg+='</svg>';
-  const plates=nodes.map(n=>{const p=P[n.id]; return `<div class="plate sup ${p.G?'dl':''} ${n.d===0?'root':''}" data-id="${n.id}" style="left:${n.d*GX}px;top:${n.y}px;${supCss(p)}"><div class="pn">${esc(p.n)}</div><div class="py">${esc(years(p))}${p.flag?' · <span style="color:#9a5a2a">needs proof</span>':''}</div>${p.G?`<span class="pg">G${p.G}</span>`:''}${n.more?`<button class="pmore" data-root="${n.id}" aria-label="Continue this line">›</button>`:''}</div>`}).join('');
+  const plates=nodes.map(n=>{const p=P[n.id]; return `<div class="plate sup ${p.G?'dl':''} ${n.d===0?'root':''}" data-id="${n.id}" style="left:${n.d*GX}px;top:${n.y}px;${supCss(p)}"><div class="pn">${esc(p.n)}</div><div class="py">${esc(years(p))}${p.flag?' · <span style="color:#9a5a2a">needs proof to child</span>':''}</div>${p.G?`<span class="pg">G${p.G}</span>`:''}${n.more?`<button class="pmore" data-root="${n.id}" aria-label="Continue this line">›</button>`:''}</div>`}).join('');
   const ci=document.getElementById('ci'), cw=document.getElementById('cw');
   ci.style.width=maxX+'px'; ci.style.height=(maxY+20)+'px'; ci.innerHTML=svg+plates;
   let s=1,tx=10,ty=10; const apply=()=>{ci.style.transform=`translate(${tx}px,${ty}px) scale(${s})`};

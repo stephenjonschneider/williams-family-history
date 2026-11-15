@@ -961,7 +961,9 @@ details.rs summary{cursor:pointer;font-weight:600;color:var(--green)}
 .legend{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 /* support shading */
 .sup{position:relative;overflow:hidden}
-.sup::after{content:"";position:absolute;left:0;bottom:0;height:4px;width:var(--sw,0%);background:var(--sc,#ccc)}
+.lvk{display:inline-flex;flex-direction:column;gap:3px}.lvk i{display:block;height:4px;border-radius:2px}
+.barkey{display:flex;gap:10px;align-items:center;margin:0 0 10px}.barkey .sup{flex:none;width:96px;border:1px solid #ddd3c0;border-radius:8px;padding:6px 10px 9px;font-weight:600}
+.sup::after{content:"";position:absolute;left:0;bottom:0;height:4px;width:var(--pw,0%);background:var(--pc,transparent)}
 .supbar{height:12px;border-radius:6px;background:#ece5d6;overflow:hidden;margin:6px 0 4px}
 .supbar i{display:block;height:100%;border-radius:6px}
 .why{margin:6px 0 0;padding:0;list-style:none;font-size:14px}
@@ -1152,9 +1154,17 @@ function prow(id,extra){const p=P[id]; return `<div class="row sup"${supAttr(p)}
 function pcard(id,sub){const p=P[id]; return `<div class="pc sup"${supAttr(p)} onclick="go('p-${id}')"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(sub||years(p))}</div></div>`}
 const BANDS=[[80,'Very strongly supported','#2f6b35'],[60,'Well supported','#5f9a4a'],[40,'Partly supported','#a8a23a'],[20,'Thin support','#d08a3c'],[1,'Little support','#c96a55'],[0,'No independent support yet','#b4ab9c']];
 function band(sc){ if(sc==null) return null; for(const b of BANDS) if(sc>=b[0]) return {min:b[0],label:b[1],color:b[2]}; return null }
-function supCss(p){ const b=band(p.sc); if(!b) return ''; const w=Math.max(p.sc,3);
-  return `--sw:${w}%;--sc:${b.color};background:linear-gradient(90deg,${b.color}33 0 ${w}%,transparent ${w}%),#fff;`; }
-function supAttr(p){ const b=band(p.sc); if(!b) return ''; return ` style="${supCss(p)}" title="Support ${p.sc}/100 — ${b.label}"`; }
+/* two marks on every name: the wide shading = support for the person (0-100);
+   the thin line along the bottom = the grade of the link to their parents (longer and greener = better proved) */
+const PW={documented:100,strong:82,probable:62,compiled:48,hypothesis:34,open:20,tree:10,user:26};
+function proofOf(p){ if(!p||p.living||!(p.par||[]).some(y=>P[y])) return null; return lvOf(p); }
+function supCss(p){ const b=band(p.sc), lv=proofOf(p); let css='';
+  if(b){ const w=Math.max(p.sc,3); css+=`background:linear-gradient(90deg,${b.color}33 0 ${w}%,transparent ${w}%),#fff;`; }
+  if(lv) css+=`--pw:${PW[lv]||10}%;--pc:${SC[lv]||'#ccc'};`;
+  return css; }
+function supAttr(p){ const b=band(p.sc), lv=proofOf(p); if(!b&&!lv) return '';
+  const tip=[b?`Support ${p.sc}/100 — ${b.label}`:'',lv?`Link to parents: ${LVL[lv]}`:''].filter(Boolean).join(' · ');
+  return ` style="${supCss(p)}" title="${tip}"`; }
 function badge(lv,text){return `<span class="badge lv-${lv}">${esc(text||LVL[lv])}</span>`}
 
 
@@ -1260,11 +1270,11 @@ function vHome(){
     <h3 class="sec">The family lines</h3>
     <div class="lines">${FAMS.map(f=>`<div class="linecard" onclick="go('anc-${lineStart[f]}')"><b${f==='Bowne'?' class="lc3"':''}>${f==='Bowne'?'Bowne·Grover·Stout':fname(f)}</b><div class="small muted">${blurbs[f]}</div><div class="tiny muted" style="margin-top:4px">${counts[f]} records · see ancestors ›</div></div>`).join('')}</div><div class="tiny muted" style="margin:6px 2px 0">Family totals ${FAMS.reduce((a,f)=>a+counts[f],0).toLocaleString()} (shared records in each) · ${nRec.toLocaleString()} unique</div>
     <h3 class="sec">How to read the marks</h3>
-    <div class="card small"><b>Support shading.</b> Every name carries a bar showing how well it is backed by evidence independent of the online family tree: records in the research abstracts, the compiler’s proof assessments, and outside sources checked. Less-proven and theoretical names are included on purpose, so the family can see what still needs work.
+    <div class="card small"><div class="barkey"><div class="sup" style="background:linear-gradient(90deg,#5f9a4a33 0 70%,transparent 70%),#fff;--pw:82%;--pc:#5f9a4a"><span>Name</span></div><div class="tiny"><b>Wide shading</b> = support for the person · <b>thin line along the bottom</b> = proof of the link to their parents</div></div><b>Support shading.</b> Every name carries a bar showing how well it is backed by evidence independent of the online family tree: records in the research abstracts, the compiler’s proof assessments, and outside sources checked. Less-proven and theoretical names are included on purpose, so the family can see what still needs work.
       <div class="bandkey">${BANDS.map(b=>`<div class="tapk" onclick="peopleBy('band:${b[0]}')"><span class="dot" style="background:${b[2]}"></span>${b[1]} ›</div>`).join('')}</div>
       <div class="tiny muted">${(()=>{const dl=D.people.filter(p=>p.G&&!p.living&&p.sc!=null);const c=BANDS.map(b=>dl.filter(p=>band(p.sc).min===b[0]).length);return 'Direct line ('+dl.length+' people): '+BANDS.map((b,i)=>c[i]+' '+b[1].toLowerCase()).join(' · ')})()}</div></div>
-    <div class="card small"><b>Proof of each parent link.</b> Every link is judged on its own evidence, from the workbooks’ parent basis and from records naming parent and child together. An open link lower in the line does not pull down documented links above it.
-      <div class="legend">${['documented','strong','probable','compiled','hypothesis','open','tree'].map(k=>`<span class="tapk" onclick="peopleBy('lv:${k}')">${badge(k)}</span>`).join('')}<span class="tapk" onclick="peopleBy('flagdl')"><span class="badge flag">needs proof to child</span></span></div><div class="tiny muted" style="margin:-2px 0 6px">Tap a mark to list the direct-line people who carry it.</div>
+    <div class="card small"><b>Proof of each parent link.</b> Shown as the thin line along the bottom of each name: full and green for Documented, shorter and warmer as the grade drops, a short red stub for Open. No line means no parents are recorded yet. Every link is judged on its own evidence, from the workbooks’ parent basis and from records naming parent and child together. An open link lower in the line does not pull down documented links above it.
+      <div class="legend">${['documented','strong','probable','compiled','hypothesis','open','tree'].map(k=>`<span class="tapk lvk" onclick="peopleBy('lv:${k}')">${badge(k)}<i style="width:${PW[k]}%;background:${SC[k]}"></i></span>`).join('')}<span class="tapk" onclick="peopleBy('flagdl')"><span class="badge flag">needs proof to child</span></span></div><div class="tiny muted" style="margin:-2px 0 6px">Tap a mark to list the direct-line people who carry it.</div>
       Each parent link in the direct line carries the compiler’s current assessment from the research workbooks. <b>G-tags</b> (G5, G8…) count generations up from ${ME&&ME.you?'you (G1), as set in Find your place':'the compiler (G1) until you set your own place in Find your place; then they count up from you'}. Living relatives appear only as “Living”.
       <div style="margin-top:10px"><b>What are the documents?</b> Deeds, mortgages, surveys, wills and estate papers, court cases, church and Quaker records, censuses and tax lists, newspapers, certificates, maps and more. <a href="#sources">See all the source categories ›</a></div>
     </div>

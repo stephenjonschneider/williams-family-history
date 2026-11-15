@@ -809,7 +809,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .kgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kflag{flex-direction:column;gap:4px;text-align:center;justify-content:center;padding:14px 8px;margin:0}.kflag>span{font-size:40px}
 .kstonecard{padding:10px 10px 12px;background:#eef3f6}.kstone{display:block;width:100%;max-width:320px;margin:0 auto}
 .ktx{font-family:'IM Fell English',Georgia,serif;fill:#4e4b45}
-.ktl{font-family:'IM Fell English',Georgia,serif;fill:#8b877e;font-weight:700}.ktl.on{fill:#3c3a35;animation:kpop .4s ease}
+.ktl{font-family:'IM Fell English',Georgia,serif;fill:#8b877e;font-weight:700}.ktl.on{fill:#3c3a35}.ktl.pop{animation:kpop .4s ease;transform-box:fill-box}
 .kclue2{text-align:center;font-size:13.5px;color:var(--muted);margin-top:6px}
 .kguess{display:flex;gap:8px;margin:8px 0}.kguess input{flex:1;min-width:0;font:inherit;font-size:16px;padding:10px 12px;border:2px solid #cfc6b4;border-radius:12px;background:#fff}
 .kmsg{text-align:center;color:#b5452e;font-weight:600;margin:2px 0 6px}
@@ -2192,7 +2192,7 @@ function kTombSvg(r){
   // first name(s) on one line, surname on the next
   lines=words.length===3?[words[0]+' '+words[1],words[2]]:[words[0],words[1]];
   let off=0; const rows=lines.map(l=>{ const start=r.n.indexOf(l,off); off=start+l.length; return [...l].map((c,i)=>[c,start+i]); });
-  const tile=(c,gi,x,y,fs)=>/\p{L}/u.test(c)?`<text x="${x}" y="${y}" font-size="${fs}" text-anchor="middle" class="ktl ${all||shown.has(gi)?'on':''}">${all||shown.has(gi)?esc(c.toUpperCase()):'_'}</text>`:'';
+  const tile=(c,gi,x,y,fs)=>/\p{L}/u.test(c)?`<text id="ktl${gi}" x="${x}" y="${y}" font-size="${fs}" text-anchor="middle" class="ktl ${all||shown.has(gi)?'on':''}">${all||shown.has(gi)?esc(c.toUpperCase()):'_'}</text>`:'';
   const body=rows.map((row,ri)=>{ const fs=row.length>11?19:row.length>8?23:27, w=fs*.82, x0=150-(row.length-1)*w/2, y=150+ri*48;
     return row.map(([c,gi],i)=>tile(c,gi,x0+i*w,y,fs)).join(''); }).join('');
   return `<svg viewBox="0 0 300 356" class="kstone">${kStone(r.shape)}
@@ -2209,7 +2209,8 @@ function kTombRun(delay){ kTombStop(); const r=KS.list[KS.i]; if(!r||r.done) ret
 function kTombTick(){ KTT=null; const r=KS.list[KS.i]; const box=document.getElementById('ktombbox');
   if(!r||r.done||r.mode!=='run'||!box||box.dataset.i!=String(KS.i)) return;   // left the game or the stone changed
   r.shown++; if(r.shown>=r.order.length){ r.done=1; r.pts=0; r.mode=''; route(); return; }
-  box.innerHTML=kTombSvg(r); const left=r.order.length-r.shown; const w=document.getElementById('kworth'); if(w) w.innerHTML=`Worth <b>${left}</b> point${left===1?'':'s'} right now`;
+  const gi=r.order[r.shown-1], el=document.getElementById('ktl'+gi); if(el){ el.textContent=r.n[gi].toUpperCase(); el.classList.add('on','pop'); } else box.innerHTML=kTombSvg(r);
+  const left=r.order.length-r.shown; const w=document.getElementById('kworth'); if(w) w.innerHTML=`Worth <b>${left}</b> point${left===1?'':'s'} right now`;
   KTT=setTimeout(kTombTick,1000); }
 function kTomb(){
   const max=KS.list.reduce((a,r)=>a+r.order.length,0);

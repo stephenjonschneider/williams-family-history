@@ -1202,9 +1202,10 @@ function strPick(k){ const cur=(location.hash||'').slice(1); if(cur==='str-'+k){
 /* ---------- archives carousel ---------- */
 function archSlides(){
   const A=[{src:IMG.survey,cap:'The 1788 Miery Branch survey — where the Williams homestead at Southard began.',go:'r-W-0021'},
-           {src:'docs/arch/williams-overhead.jpg',cap:'The whole Williams Metedeconk property, about 149 acres: Daniel Williams’s 1788, 1799 and 1821 surveys compiled over today’s Southard, Howell.',go:'land-williams'},
            {src:'docs/land/n-survey.jpg',cap:'The division survey of the Newman farm at Bailey’s Corner, Wall Township: the lots of Silas, Rhoda and Lummus Newman across the north.',go:'land-newman'},
            {src:'docs/arch/middletown-1678.jpg',cap:'Middletown village, A.D. 1678 — the town lots of William Layton, Joseph Grover, Richard and John Stout and John Bowne (redrafted by James Steen).',go:'r-ARC-0001'}];
+  const mid=A.findIndex(a=>a.src.includes('middletown')); if(mid>1){ const [m]=A.splice(mid,1); A.splice(1,0,m); }
+  A.splice(3,0,{src:'docs/arch/williams-overhead.jpg',cap:'The whole Williams Metedeconk homestead, about 118 acres: the 1788, 1799 and 1821 surveys compiled over today’s Southard, Howell.',go:'land-growth'});
   const seen=new Set();
   (D.pics||[]).filter(q=>q.k==='map'&&q.rec&&q.rec.length).forEach(q=>{ if(seen.has(q.rec[0])) return; seen.add(q.rec[0]); A.push({src:q.src,cap:q.t,go:'pic-'+q.id}); });
   return A;
@@ -2244,6 +2245,16 @@ const LAND={
    ['Following it through the maps','w-1873',`The county maps then show the family on the same spot: a school on the tract in 1851, and in 1873 the Methodist church, the school house and “W.H. Williams Store.”`]],
   after:`Daniel died by December 1801, and his children divided the land in 1832. His son {p7|Daniel} added to it before his death in 1843. Daniel's daughter Mary and her husband Israel Reynolds bought it in 1850 and gave land for the Bethel church in 1864. Her brother William H. H. Williams opened his store there in 1873 and won most of the old tract back by the late 1870s.`,
   recs:[['W-0021','The 1788 survey'],['W-0225','The 1832 partition']]},
+ growth:{title:'How the Homestead Grew',sub:'Miery Branch, Southard · Howell Township · 1788–1843',thumb:'x-sat',
+  q:'40.1334,-74.224', gq:'40.1334,-74.224',
+  intro:`The 1788 house lot was only the beginning. Over the next forty years three surveys, two of them by {p18|Daniel Williams} and one by his son {p7|Daniel}, grew the homestead from 30 acres to about 118.`,
+  steps:[
+   ['1788: the first 30 acres','w-survey',`Daniel asked for 30 acres around the house he was building by the road. The survey was made for Kenneth Hankinson, who held the land right, and Daniel bought the tract from “Capt. Kenneth Hankinson” by a deed of 7 August 1794.`,'W-0021'],
+   ['1799: the farm triples','x-1799',`On 16 March 1799 deputy surveyor John Forman ran a new survey of 87.67 acres for Daniel, on Andrew Bell's right. It began at a black oak at “the north west corner of the said Williams's old tract that he lives on,” at the head of a swamp out of the Miery Branch, a few chains north of his neighbour Joel Emans's house. The old tract sits inside it, marked on the sketch “This the old survey from Mr. Hankinson,” so the new land added was 57.67 acres. Thomas and Joel Emans carried the chain, and Daniel was present.`,'W-0022'],
+   ['1821: thirty acres to the west','x-1821',`On 20 April 1821 Amaniah Gifford surveyed another 30.25 acres, starting from the 1799 beginning corner and running west toward the North Branch. “Daniel Williams, Present” is written at the foot of the sketch. The elder Daniel had died by 1801, so this was his son, about nineteen at the time. Legal title stayed with Andrew Bell until Bell deeded the tract to Daniel Williams of Howell in 1830 for $44.50.`,'W-0023'],
+   ['All three on today\'s map','x-sat',`Laid together over today's satellite view, the three surveys cover about 118 acres (30 + 57.67 + 30.25) on both sides of Route 9 at Southard. The old fields now lie under housing on the west and shopping centres along the highway.`]],
+  after:`In 1832 the court divided the elder Daniel's 87.60 acres (the 1788 and 1799 land) into four lots: two to his son Daniel (27.50 and 18.60 acres), one to Aaron and Catharine Layton (17.50 acres), and one to the children of Mary Skidmore (24 acres). Daniel bought his sister Catharine's lot in 1833, and with the 1821 tract he held about 100 acres when he died in 1843.`,
+  recs:[['W-0021','The 1788 survey'],['W-0022','The 1799 survey'],['W-0023','The 1821 survey'],['W-0226','Andrew Bell to Daniel Williams, 1830'],['W-0225','The 1832 partition'],['W-0227','Catharine Layton\'s lot to Daniel, 1833']]},
  newman:{title:'The Joseph I. Newman Farm',sub:'Bailey’s Corner · Wall Township · 1848',thumb:'n-3layer',
   q:"Allaire Rd and Baileys Corner Rd, Wall Township, NJ", gq:'Allaire Road and Baileys Corner Road, Wall Township, NJ',
   intro:`{p22|Joseph I. Newman} died without a will on 16 April 1846. His son {p14|Silas} took charge of the estate, and in 1848 the 200-acre farm was surveyed and divided among the heirs.`,

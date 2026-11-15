@@ -2115,6 +2115,8 @@ function vHelp(){
       ${contact?`<div class="btns" style="justify-content:center;margin-top:8px">${HELP_CONTACT.form?`<a class="btn fill" href="${HELP_CONTACT.form}" target="_blank" rel="noopener">Send photos & documents ›</a>`:''}${HELP_CONTACT.email?`<a class="btn${HELP_CONTACT.form?'':' fill'}" href="mailto:${HELP_CONTACT.email}?subject=${encodeURIComponent('Williams Family History: something to share')}">Email the compiler ›</a>`:''}</div>${HELP_CONTACT.email?`<p style="text-align:center;margin-top:8px;font-size:14px;word-break:break-all"><a href="mailto:${HELP_CONTACT.email}" style="color:var(--green)">${HELP_CONTACT.email}</a></p><p style="text-align:justify;text-align-last:left;font-size:14px">Attach photos or scans straight to the email (up to about 25 MB per message; send several emails for larger batches). Please say who or what each item shows and who owns the original.</p>`:''}`
         :`<p style="text-align:justify;text-align-last:left">A place to send photos and documents is being set up. Until then, please reach out to the compiler directly.</p>`}
       <p style="text-align:justify;text-align-last:left;margin-top:8px">Want to search yourself? The Monmouth County Archives (Manalapan) holds deeds and mortgages, the NJ State Archives (Trenton) holds original wills and estate files, and FamilySearch has free scans of most Monmouth deed books.</p></div>
+    <div class="schap"><h3>Visit counts</h3><p style="text-align:justify;text-align-last:left;font-size:14px">The app counts visits anonymously, so the compiler can see how many people use it and which pages they open. No cookies are used and nothing about you is recorded.</p>
+      ${GC_CODE?`<div class="btns" style="justify-content:center"><button class="btn" onclick="gcToggle()">${gcOff()?'Count my visits on this device again':'Don’t count my visits on this device'}</button></div>${gcOff()?'<p class="tiny muted" style="text-align:center">Visits on this device are not being counted.</p>':''}`:''}</div>
     <div style="height:18px"></div></div>`;
 }
 function helpShare(){ const u=location.href.split('#')[0]+'#help', t='Williams Family History — open questions: can you help?';
@@ -2445,6 +2447,23 @@ function vGatherStory(k){ const G=GATHER[k]; if(!G) return vGather(); setTab('ho
      <div class="btns" style="margin-top:8px"><a class="btn fill" href="${gm}" target="_blank" rel="noopener">Open in Google Maps ›</a><a class="btn" href="#map">On the family map ›</a></div></div>
    <div style="height:18px"></div></div>`; }
 
+/* ---------- visit counts (GoatCounter: no cookies, no personal data) ----------
+   Each screen is counted as its own page. Visiting the app with #count-off (or the button on the Help page)
+   stops counting on that device; #count-on starts it again. */
+const GC_CODE='';   // the compiler's GoatCounter site code, e.g. 'williamsfamily'
+function gcOff(){ try{ return localStorage.getItem('wfh-nocount')==='1' }catch(e){ return false } }
+function gcSet(off){ try{ off?localStorage.setItem('wfh-nocount','1'):localStorage.removeItem('wfh-nocount') }catch(e){} }
+(function(){ const h=location.hash; if(h==='#count-off'){ gcSet(true); history.replaceState(null,'','#home'); } else if(h==='#count-on'){ gcSet(false); history.replaceState(null,'','#home'); } })();
+if(GC_CODE){ const sc=document.createElement('script'); sc.async=true; sc.src='https://gc.zgo.at/count.js';
+  sc.setAttribute('data-goatcounter','https://'+GC_CODE+'.goatcounter.com/count'); sc.setAttribute('data-goatcounter-settings','{"no_onload": true}');
+  sc.onload=()=>gcCount(); document.head.appendChild(sc); }
+let GCLAST='';
+function gcCount(){ if(!GC_CODE||gcOff()) return; const g=window.goatcounter; if(!g||!g.count) return;
+  const h=decodeURIComponent(location.hash.slice(1)||'home');
+  const path='/'+h; if(path===GCLAST) return; GCLAST=path;
+  let title=document.title; try{ const t=document.querySelector('.topbar h1, .topbar .title, header h1'); if(t) title=t.textContent.trim(); }catch(e){}
+  g.count({path:path,title:title}); }
+function gcToggle(){ gcSet(!gcOff()); route(); }
 function route(){
   LAYERS.length=0; ROUTING=true; app.onclick=null; if(MAP){MAP.remove();MAP=null} ROUTING=false;
   setTimeout(layerTidy,900);
@@ -2459,6 +2478,7 @@ function route(){
   if(back&&y){ window.scrollTo(0,y); requestAnimationFrame(()=>window.scrollTo(0,y)); setTimeout(()=>{ if(window.scrollY<y-5) window.scrollTo(0,y); CURKEY=key; },250); }
   else { if(!h.startsWith('anc-')&&!h.startsWith('desc-')) window.scrollTo(0,0); CURKEY=key; }
   if(back&&y) setTimeout(()=>{CURKEY=key},260); else CURKEY=key;
+  setTimeout(gcCount,400);
 }
 /* Back closes whatever is open on top (enlarged picture, big map, map pin box) before it leaves the page.
    Opening one adds a history entry with the same address; closing it with ✕ quietly takes that entry back off. */

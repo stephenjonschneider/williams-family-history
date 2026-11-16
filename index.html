@@ -1394,7 +1394,7 @@ function vHome(){
     ${archStrip()}
     <h3 class="sec">More to explore</h3>
     <div class="xlist">
-      ${xrow("go('road')",'◷','The road in motion','Watch the ancestors move house to house, 1640s to 1956',NEWB)}
+      ${xrow("go('road')",'◷','The road in motion','Watch the families settle Monmouth, 1660s to 1956',NEWB)}
       ${xrow("go('fan')",'◠','The evidence fan','Every ancestor in one chart, coloured by how well each is proved',NEWB)}
       ${xrow("go('land')",'⌖','Where were the farms?','Old maps and surveys, then and now')}
       ${xrow("go('gather')",'⌂','Where they gathered','Churches, schools, halls & parks')}
@@ -1567,7 +1567,7 @@ function fanPick(id){ const p=P[id], el=document.getElementById('faninfo'); if(!
    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="chip on" onclick="go('p-${id}')">Open page ›</button>${hasPar?`<button class="chip" onclick="TREEP='${id}';go('fan-${id}')">Centre the fan here ›</button>`:''}</div>`; }
 
 /* ---------- the road in motion ---------- */
-let ROADD=null, ROADY=1640, ROADPLAY=false, ROADT=0, ROADSP=2.5;
+let ROADD=null, ROADY=1660, ROADPLAY=false, ROADT=0, ROADSP=2.5;
 /* dots: direct-line ancestors, birth to death, at the places the records put them.
    zones: every record that places a family member (direct line or not) at a place lights a soft patch in the family colour,
    fading in a few years before the record and out over the following decades, so a family's country builds up and fades */
@@ -1589,7 +1589,8 @@ function roadData(){ if(ROADD) return ROADD;
     let h=0; for(const c of p.id) h=(h*31+c.charCodeAt(0))%997; const an=h/997*2*Math.PI;
     out.push({id:p.id,p,pts:Q,s,e,col:famCol(p),dx:Math.cos(an)*.006,dy:Math.sin(an)*.0045});
     lo=Math.min(lo,s); hi=Math.max(hi,e); });
-  ROADD={L:out,Z,lo:Math.floor(Math.min(lo,1640)/10)*10,hi:Math.min(1960,Math.max(hi,1956))}; return ROADD; }
+  ROADD={L:out,Z,lo:1660,   // Monmouth's English settlement begins in the 1660s; the clock starts there
+    hi:Math.min(1960,Math.max(hi,1956))}; return ROADD; }
 /* a move between two places is spread over the three years before the record that shows the new place, eased in and out */
 function roadPos(o,Y){ if(Y<o.s||Y>=o.e+1) return null; const Q=o.pts; let k=-1; for(let i=0;i<Q.length;i++){ if(Q[i].y<=Y) k=i; else break; }
   if(k<0) return [Q[0].lat,Q[0].lon,0]; const a=Q[k], n=Q[k+1];

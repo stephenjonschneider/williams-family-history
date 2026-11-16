@@ -1005,6 +1005,8 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .sstrip{display:flex;gap:2px;height:16px;border-radius:5px;overflow:hidden;margin:2px 0 4px}.sstrip i{flex:1}
 .sstripg{position:relative;height:14px;font-size:11px;color:var(--muted);margin:0 1px}.sstripg span{position:absolute;top:0}
 .sladder{padding:10px 12px}
+.mtog{display:inline-flex;align-items:center;gap:7px;padding:4px 11px 4px 5px}.mtog .sw{position:relative;width:32px;height:18px;border-radius:999px;background:rgba(246,240,226,.3);transition:background .2s}
+.mtog .sw i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#f6f0e2;transition:left .2s}.mtog.on .sw{background:#d9a441}.mtog.on .sw i{left:16px}
 .srow.shl{background:#fff3cf;box-shadow:inset 0 0 0 2px #d9a441}
 .srow{display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:8px;cursor:pointer}.srow:active{background:#f1ede2}
 .srow .sg{flex:0 0 auto;min-width:40px;text-align:center;color:#fff;font-weight:600;font-size:13px;border-radius:7px;padding:5px 4px}
@@ -1233,7 +1235,7 @@ function relLine(id){const r=relation(id); if(!r) return ''; const you=refName()
 const app=document.getElementById('app');
 const TABS=[['home','Home','<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],['story','Story','<path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/>'],['people','People','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5c2.6.2 4.3 2 5 5"/>'],['tree','Tree','<circle cx="12" cy="5" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M12 7.2v4.3M6 15.8V12h12v3.8"/>'],['map','Map','<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'],['kids','Kids','']];
 document.getElementById('tabs').innerHTML=TABS.map(([k,l,s])=>k==='kids'?`<button data-t="kids" class="kidtab" aria-label="Kids">${'K,i,d,s'.split(',').map((c,i)=>`<b style="color:${['#e63b2e','#1f6fd1','#f2a400','#2e9e4f'][i]};transform:rotate(${[-10,7,-5,11][i]}deg) translateY(${[1,-2,2,-1][i]}px)">${c}</b>`).join('')}</button>`:`<button data-t="${k}"><svg viewBox="0 0 24 24">${s}</svg>${l}</button>`).join('');
-document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b){const t=b.dataset.t; if(t==='map') mState.ids=null; if(t==='records') rState.pp=''; go(t==='tree'?(store('wfh-tree')==='fan'?(TREEP&&P[TREEP]?fanGo(TREEP):'fan'):{chart:'chart-',list:'anc-'}[store('wfh-tree')]?{chart:'chart-',list:'anc-'}[store('wfh-tree')]+treeMe():(TREEP&&P[TREEP]?strHash(TREEP):'str-'+(store('wfh-str')||'Williams'))):t)}};
+document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b){const t=b.dataset.t; if(t==='map'){ mState.ids=null; if(store('wfh-mapmode')==='move'){ go('mapmove'); return; } } if(t==='records') rState.pp=''; go(t==='tree'?(store('wfh-tree')==='fan'?(TREEP&&P[TREEP]?fanGo(TREEP):'fan'):{chart:'chart-',list:'anc-'}[store('wfh-tree')]?{chart:'chart-',list:'anc-'}[store('wfh-tree')]+treeMe():(TREEP&&P[TREEP]?strHash(TREEP):'str-'+(store('wfh-str')||'Williams'))):t)}};
 function setTab(t){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
 function go(h){ if(location.hash==='#'+h) route(); else location.hash=h; }
 function goBack(){ if(NAVN>0) history.back(); else go('home'); }
@@ -1584,8 +1586,9 @@ function roadData(){ if(ROADD) return ROADD;
   ROADD={L:out,lo:Math.floor(Math.min(lo,1640)/10)*10,hi:Math.min(1960,Math.max(hi,1956))}; return ROADD; }
 function roadPos(o,Y){ if(Y<o.s||Y>=o.e+1) return null; const Q=o.pts; let k=-1; for(let i=0;i<Q.length;i++){ if(Q[i].y<=Y) k=i; else break; }
   if(k<0) return [Q[0].lat,Q[0].lon,0]; const a=Q[k], n=Q[k+1]; if(n){ const f=Math.max(0,Math.min(1,Y-(n.y-1))); if(f>0) return [a.lat+(n.lat-a.lat)*f,a.lon+(n.lon-a.lon)*f,k]; } return [a.lat,a.lon,k]; }
-function vRoad(){ setTab('story'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
-  app.innerHTML=topBar('The road in motion',true)+`<div class="wrap">
+function mapTog(on){ return `<button class="tbtn mtog${on?' on':''}" onclick="${on?"store('wfh-mapmode','std');go('map')":"store('wfh-mapmode','move');go('mapmove')"}" aria-pressed="${on}" aria-label="Show ancestors in motion"><span class="sw"><i></i></span>In motion</button>`; }
+function vRoad(asMap){ setTab(asMap?'map':'story'); if(asMap) store('wfh-mapmode','move'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
+  app.innerHTML=(asMap?topBar('Map',false,mapTog(true)):topBar('The road in motion',true))+`<div class="wrap">
    <div class="roadtop"><button class="roadplay" id="roadplay" onclick="roadToggle()" aria-label="Play">▶</button><div style="flex:1;min-width:0"><div class="roadyr" id="roadyr">${Math.floor(ROADY)}</div><div class="tiny muted" id="roadct"></div></div></div>
    <input type="range" class="roadslide" id="roadsl" min="${RD.lo}" max="${RD.hi}" step="1" value="${Math.floor(ROADY)}" aria-label="Year">
    <div class="roadnow" id="roadnow"></div>
@@ -1906,7 +1909,7 @@ function recTie(r){ if(r._tie) return r._tie; const ps=(r.ppl||[]).filter(x=>P[x
 const TIERTXT={exact:'exact location',site:'identified site',place:'approximate — named place',township:'approximate — township only',court:'county court house (where the record was made)'};
 function vMap(focus){
   setTab('map');
-  app.innerHTML=topBar('Map',!!focus||!!mState.ids)+`<div class="wrap">${mState.ids?`<div class="card small" style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:8px"><div style="flex:1"><b>${esc(mState.label)}</b> · ${mState.ids.size} mapped record${mState.ids.size===1?'':'s'}</div><button class="chip" id="mclr">Show all</button></div>`:''}<div class="chips" id="mf">${['',...FAMS].map(f=>`<button class="chip ${mState.f===f?'on':''}" data-f="${f}">${f||'All'}</button>`).join('')}</div><div id="map"></div>
+  store('wfh-mapmode','std'); app.innerHTML=topBar('Map',!!focus||!!mState.ids,mapTog(false))+`<div class="wrap">${mState.ids?`<div class="card small" style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:8px"><div style="flex:1"><b>${esc(mState.label)}</b> · ${mState.ids.size} mapped record${mState.ids.size===1?'':'s'}</div><button class="chip" id="mclr">Show all</button></div>`:''}<div class="chips" id="mf">${['',...FAMS].map(f=>`<button class="chip ${mState.f===f?'on':''}" data-f="${f}">${f||'All'}</button>`).join('')}</div><div id="map"></div>
   ${mLegend()}
   <div class="card tiny muted">Pins are placed from the Locality column of each abstract. Most are approximate: a named brook, village or township, not a surveyed parcel. Exact parcels can be added as they are plotted. Base map: modern roads, streams and water from U.S. Census TIGER/Line 2024. Zoom in for local roads and stream names.</div></div>`;
   const mc=document.getElementById('mclr'); if(mc) mc.onclick=()=>{mState.ids=null;vMap(focus)};
@@ -2864,7 +2867,7 @@ function route(){
   const back=RETURNING; RETURNING=false; CURKEY='';
   if((h==='map'||h.startsWith('map-'))&&!back) MHIDE.clear();
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
-  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
+  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='mapmove') vRoad(true); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));
   else if(h.startsWith('r-')) vRecord(h.slice(2)); else if(h.startsWith('map-')) vMap(h.slice(4)); else if(h.startsWith('pmap-')) vPMap(h.slice(5)); else if(h.startsWith('pic-')) vPic(h.slice(4)); else if(h==='pics') vPics(); else if(h==='sources') vSources(); else vHome();
   const key=NAVN+'|'+h, y=back?(SCROLLMEM[key]||0):0;

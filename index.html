@@ -879,6 +879,9 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .ksx{border:0;background:#efe7d6;width:32px;height:32px;border-radius:50%;font-size:15px;cursor:pointer;color:#4a4235}
 .kssec{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:10px 0 6px}
 .ksmore{display:block;text-align:center;margin-top:6px;font-weight:600;color:var(--green);cursor:pointer;padding:8px}
+#storymap{scroll-margin-top:62px}
+.homemap{cursor:pointer;margin-top:14px}.homemap .skick{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay);font-weight:700}.homemap .hmt{font-family:var(--head);font-size:24px;color:var(--green);margin:2px 0 8px}
+.homemap .hmbox{position:relative;border-radius:8px;overflow:hidden}.homemap .hmbox svg{display:block;width:100%;height:auto;pointer-events:none}
 .srow{display:flex;gap:8px;align-items:stretch}.srow .search{flex:1;min-width:0}
 .keybtn{flex:none;width:52px;border:1px solid var(--line);border-radius:10px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 0;cursor:pointer;color:var(--green);font:600 11.5px var(--body)}
 .keybtn i{display:block;height:5px;border-radius:3px}.keybtn .kb1{width:30px;background:linear-gradient(90deg,#5f9a4a66 0 72%,#e6dfd0 72%)}.keybtn .kb2{width:30px;height:3px;background:linear-gradient(90deg,#2f6b35 0 60%,transparent 60%)}
@@ -1278,6 +1281,9 @@ function vHome(){
     ${ME&&ME.you?`<button class="cta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>You’re in the tree</b><span>Relationships are shown relative to you. Tap to change.</span></div></button>`:''}
     <h3 class="sec">Start with</h3>
     <div class="card" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">The Williams, Layton, Newman and Wolcott lines all meet in their children; the Bowne, Grover and Stout families come in through the Laytons.</div></div>
+    <div class="card homemap" onclick="goStoryMap()"><div class="skick">WHERE IT ALL HAPPENED</div><div class="hmt">The families’ road</div>
+      <div class="hmbox">${smapSvg()}<span class="smapen">Follow the road ›</span></div>
+      <div class="small" style="margin-top:8px">Three centuries in one journey: from the Dutch and English villages at the western end of Long Island, across the bay to the new Monmouth settlements, inland through Middletown and Freehold to the Crosswicks country, south into the pine woods along the Metedeconk, and at last east to the shore at Point Pleasant. Side roads bring in the families who married into the line along the way.</div></div>
     <h3 class="sec">From the archives <span class="tiny muted" style="font-family:var(--body);text-transform:none;letter-spacing:0">· swipe ›</span></h3>
     ${archStrip()}
     <h3 class="sec">The family lines</h3>
@@ -1324,6 +1330,7 @@ function keyOpen(){ keyClose(); const k=document.createElement('div'); k.id='key
    <a class="ksmore" onclick="keyClose();goMarks()">Read the full explanation ›</a></div>`;
   document.body.appendChild(k); requestAnimationFrame(()=>k.classList.add('on')); document.addEventListener('keydown',keyEsc);
   k.querySelectorAll('.kspanel .tapk').forEach(el=>el.addEventListener('click',()=>keyClose(),{capture:true})); }
+function goStoryMap(){ go('story'); const f=()=>{ const m=document.getElementById('storymap'); if(m) m.scrollIntoView({block:'start'}); }; setTimeout(f,80); setTimeout(f,400); }
 function goMarks(){ go('home'); const f=()=>{ const h=document.getElementById('marks'); if(h) h.scrollIntoView({block:'start'}); }; setTimeout(f,60); setTimeout(f,320); }
 function vPeople(){
   setTab('people');
@@ -2048,7 +2055,7 @@ function smapSvg(){
     <text x="98" y="21" text-anchor="middle" class="cart">The Families’ Road</text><text x="98" y="36" text-anchor="middle" class="cart2">1645 – 1956</text></g>
    <rect width="${W}" height="${H}" fill="url(#vig)" pointer-events="none"/></svg>`;
 }
-function smapBlock(){ return `<div class="schap smapwrap"><div class="skick">WHERE IT ALL HAPPENED</div><h3>The families’ road</h3>
+function smapBlock(){ return `<div class="schap smapwrap" id="storymap"><div class="skick">WHERE IT ALL HAPPENED</div><h3>The families’ road</h3>
    <div class="smapbox" onclick="smapBig()">${smapSvg()}<span class="smapen">⤢ Tap to enlarge</span></div>
    <div class="tiny muted" style="margin:6px 0 8px">Red dashes follow the main line from Gravesend to Point Pleasant. Dotted paths show the Brewers (Brouwers), Wolcotts and Newmans joining it. Tap a number for details. Background: John Hills, “A Map of Monmouth County” (1781), Library of Congress, with New York harbor, Long Island and the Delaware drawn in to match.</div>
    <div id="smapinfo"></div>

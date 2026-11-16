@@ -748,7 +748,7 @@ button{font:inherit;color:inherit}
 .srec{font-size:12.5px;background:#fff;border:1px solid #d9cdb8;border-radius:999px;padding:3px 10px;cursor:pointer;color:var(--ink)}
 .srec::before{content:"📜 "}
 .smap{border:0;background:none;color:var(--clay);font-weight:700;font-size:13.5px;padding:2px 0;cursor:pointer}
-.helpbtn{background:linear-gradient(135deg,#7a3b22 0%,#9a5a2e 55%,#5a4a2a 100%);box-shadow:0 3px 0 #4e2615,0 6px 14px rgba(40,30,10,.18);margin-top:18px}
+.helpbtn{background:linear-gradient(135deg,#6e1d28 0%,#8c2f38 55%,#5a2626 100%);box-shadow:0 3px 0 #45121a,0 6px 14px rgba(40,30,10,.18);margin-top:18px}
 .hq h3{font-size:21px}.hsec{margin:0 0 8px}.hsec>b,.hfix>b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--clay);margin-bottom:3px}.hsec p{margin:0}.hul{margin:2px 0 0;padding-left:20px}.hul li{margin:0 0 4px;font-size:15px;line-height:1.45;text-align:justify;hyphens:auto}.hfix{background:#f3ead6;border-left:3px solid var(--clay);border-radius:6px;padding:8px 10px;font-size:14.5px;margin:4px 0 2px}
 .smapbox{position:relative;border:3px double #6b4e2a;border-radius:4px;overflow:hidden;box-shadow:0 2px 8px rgba(60,40,15,.25);cursor:zoom-in;background:#e3d6b4}
 .smapsvg{display:block;width:100%;height:auto;font-family:'IM Fell English',Georgia,serif}
@@ -1191,7 +1191,7 @@ function relLine(id){const r=relation(id); if(!r) return ''; const you=refName()
   return `<div class="rel">${t}${you?'':' <span class="muted small">· <a href="#me">show relationships to me instead</a></span>'}</div>`; }
 /* ---------- ui helpers ---------- */
 const app=document.getElementById('app');
-const TABS=[['home','Home','<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],['people','People','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5c2.6.2 4.3 2 5 5"/>'],['tree','Tree','<circle cx="12" cy="5" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M12 7.2v4.3M6 15.8V12h12v3.8"/>'],['story','Story','<path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/>'],['map','Map','<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'],['kids','Kids','']];
+const TABS=[['home','Home','<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],['story','Story','<path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/>'],['people','People','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5c2.6.2 4.3 2 5 5"/>'],['tree','Tree','<circle cx="12" cy="5" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M12 7.2v4.3M6 15.8V12h12v3.8"/>'],['map','Map','<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'],['kids','Kids','']];
 document.getElementById('tabs').innerHTML=TABS.map(([k,l,s])=>k==='kids'?`<button data-t="kids" class="kidtab" aria-label="Kids">${'K,i,d,s'.split(',').map((c,i)=>`<b style="color:${['#e63b2e','#1f6fd1','#f2a400','#2e9e4f'][i]};transform:rotate(${[-10,7,-5,11][i]}deg) translateY(${[1,-2,2,-1][i]}px)">${c}</b>`).join('')}</button>`:`<button data-t="${k}"><svg viewBox="0 0 24 24">${s}</svg>${l}</button>`).join('');
 document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b){const t=b.dataset.t; if(t==='map') mState.ids=null; if(t==='records') rState.pp=''; go(t==='tree'?(store('wfh-tree')==='str'?'str-'+(store('wfh-str')||'Williams'):(store('wfh-tree')==='chart'?'chart-':'anc-')+(ME&&ME.you&&P[ME.you]?ME.you:D.anchor)):t)}};
 function setTab(t){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
@@ -1320,7 +1320,7 @@ function vHome(){
       <button onclick="go('family')"><b>${FAMS.length}</b><span>family lines</span></button>
     </div>
     <h3 class="sec">Start with</h3>
-    <div class="card" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">The Williams, Layton, Newman and Wolcott lines all meet in their children; the Bowne, Grover and Stout families come in through the Laytons.</div></div>
+    <div class="card" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">${meetLine()}</div></div>
     <div class="card homemap" onclick="goStoryMap()"><div class="skick">WHERE IT ALL HAPPENED</div><div class="hmt">The families’ road</div>
       <div class="hmbox">${smapSvg()}<span class="smapen">Follow the road ›</span></div>
       <div class="small" style="margin-top:8px">Three centuries in one journey: from the Dutch and English villages at the western end of Long Island, across the bay to the new Monmouth settlements, inland through Middletown and Freehold to the Crosswicks country, south into the pine woods along the Metedeconk, and at last east to the shore at Point Pleasant. Side roads bring in the families who married into the line along the way.</div></div>
@@ -1332,11 +1332,11 @@ function vHome(){
       ${xrow("go('fan')",'◠','The evidence fan','Every ancestor in one chart, coloured by how well each is proved',NEWB)}
       ${xrow("go('land')",'⌖','Where were the farms?','Old maps and surveys, then and now')}
       ${xrow("go('gather')",'⌂','Where they gathered','Churches, schools, halls & parks')}
-      ${xrow("go('help')",'?','Help wanted','The links still waiting for proof — can you help?')}
       ${xrow("rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:"+(nRecNew?'true':'false')+"};go('records')",'▤','The records',nRec.toLocaleString()+' documents · '+nMapped.toLocaleString()+' on the map',nRecNew?`<i class="statnew">+${nRecNew} new</i>`:'')}
       ${xrow("go('pics')",'▣','Photos',NPHOTO+' pictures of the people and places',nPicNew?`<i class="statnew">+${nPicNew} new</i>`:'')}
       ${xrow("go('marks')",'▬','How to read the marks','The shading, the proof line and the G-tags')}
     </div>
+    <button class="storybtn helpbtn" onclick="go('help')"><span class="sbk">HELP WANTED</span><b>Can you help?</b><span class="sbs">The links still waiting for proof, most important first. A letter, a Bible page or a photo in a drawer could settle one. Share it with family.</span><span class="sbgo">See list ›</span></button>
     <div class="foot">Compiled by Stephen J. Schneider, Point Pleasant Beach<br>Data: ${['Williams','Layton','Newman','Wolcott','Bowne','Safety','Cooper'].filter(f=>D.meta[f]).map(f=>`${fname(f)} v${esc((D.meta[f]||{}).FileVersion||'')}`).join(' · ')} workbooks · Family tree reports of 6 Nov 2026</div>
   </div>`;
   archWire();
@@ -1369,6 +1369,16 @@ function keyOpen(){ keyClose(); const k=document.createElement('div'); k.id='key
    <a class="ksmore" onclick="keyClose();goMarks()">Read the full explanation ›</a></div>`;
   document.body.appendChild(k); requestAnimationFrame(()=>k.classList.add('on')); document.addEventListener('keydown',keyEsc);
   k.querySelectorAll('.kspanel .tapk').forEach(el=>el.addEventListener('click',()=>keyClose(),{capture:true})); }
+/* how every family with an abstract comes together at Thomas & Mary: the four lines that meet in their children,
+   and for each other family, the line it married into (found by walking the direct line down from its nearest ancestor) */
+function meetLine(){ const core=['Williams','Layton','Newman','Wolcott'], grp={Bowne:['Bowne','Grover','Stout']};
+  const plur=s=>s.endsWith('s')?s:s+'s', list=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+  const extra=FAMS.filter(f=>!core.includes(f)).map(f=>{ const names=(grp[f]||[f]).map(x=>x.toLowerCase());
+    const c=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt&&names.includes(surn(p).toLowerCase())).sort((a,b)=>a.G-b.G)[0];
+    let x=c, into=null, guard=0; while(x&&guard++<20){ const s=surn(x); if(core.includes(s)&&!names.includes(s.toLowerCase())){ into=s; break; } x=(x.ch||[]).map(k=>P[k]).find(k=>k&&k.G===x.G-1); }
+    const who=grp[f]?`the ${list(grp[f])} families`:`the ${plur(f)}`; return [who,into?plur(into):null]; });
+  const ex=extra.map(([w,i],k)=>w+(k===0?' come in':'')+(i?' through the '+i:'')), joined=ex.length<2?ex.join(''):ex.slice(0,-1).join(', ')+', and '+ex[ex.length-1];
+  return `The ${list(core)} lines all meet in their children`+(ex.length?'; '+joined:'')+'.'; }
 function xrow(on,ic,t,s,extra){ return `<div class="xrow" onclick="${on}"><span class="xic">${ic}</span><div class="main"><div class="t">${esc(t)} ${extra||''}</div><div class="s">${esc(s)}</div></div><span class="xgo">›</span></div>`; }
 function vFamily(){ setTab('home');
   const te=P[D.anchor], ma=te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n));

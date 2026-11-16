@@ -1195,7 +1195,7 @@ function relLine(id){const r=relation(id); if(!r) return ''; const you=refName()
 const app=document.getElementById('app');
 const TABS=[['home','Home','<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],['story','Story','<path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/>'],['people','People','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5c2.6.2 4.3 2 5 5"/>'],['tree','Tree','<circle cx="12" cy="5" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M12 7.2v4.3M6 15.8V12h12v3.8"/>'],['map','Map','<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'],['kids','Kids','']];
 document.getElementById('tabs').innerHTML=TABS.map(([k,l,s])=>k==='kids'?`<button data-t="kids" class="kidtab" aria-label="Kids">${'K,i,d,s'.split(',').map((c,i)=>`<b style="color:${['#e63b2e','#1f6fd1','#f2a400','#2e9e4f'][i]};transform:rotate(${[-10,7,-5,11][i]}deg) translateY(${[1,-2,2,-1][i]}px)">${c}</b>`).join('')}</button>`:`<button data-t="${k}"><svg viewBox="0 0 24 24">${s}</svg>${l}</button>`).join('');
-document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b){const t=b.dataset.t; if(t==='map') mState.ids=null; if(t==='records') rState.pp=''; go(t==='tree'?(store('wfh-tree')==='fan'?fanGo(treeMe()):{chart:'chart-',list:'anc-'}[store('wfh-tree')]?{chart:'chart-',list:'anc-'}[store('wfh-tree')]+treeMe():(TREEP&&P[TREEP]?strHash(TREEP):'str-'+(store('wfh-str')||'Williams'))):t)}};
+document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b){const t=b.dataset.t; if(t==='map') mState.ids=null; if(t==='records') rState.pp=''; go(t==='tree'?(store('wfh-tree')==='fan'?(TREEP&&P[TREEP]?fanGo(TREEP):'fan'):{chart:'chart-',list:'anc-'}[store('wfh-tree')]?{chart:'chart-',list:'anc-'}[store('wfh-tree')]+treeMe():(TREEP&&P[TREEP]?strHash(TREEP):'str-'+(store('wfh-str')||'Williams'))):t)}};
 function setTab(t){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
 function go(h){ if(location.hash==='#'+h) route(); else location.hash=h; }
 function goBack(){ if(NAVN>0) history.back(); else go('home'); }
@@ -1412,8 +1412,9 @@ function treeMe(){ return (TREEP&&P[TREEP])?TREEP:(ME&&ME.you&&P[ME.you]?ME.you:
 function fanClamp(id){ const h=fanRoot(), hp=P[h], p=P[id]; if(!p||p.living||p.virt) return h;
   if(p.G&&hp.G) return p.G<hp.G?h:id; const by=yr(p.b); return (by&&by>yr(hp.b))?h:id; }
 function fanGo(id){ const c=fanClamp(id); return c===fanRoot()?'fan':'fan-'+c; }
-function treeSeg(on,id){ const me=id||treeMe();
-  const B=[['str','Strength',`go(strHash('${me}'))`],['chart','Chart',`go('chart-${me}')`],['list','List',`store('wfh-tree','list');go('anc-${me}')`],['fan','Fan',`go('${fanGo(me)}')`]];
+/* views stay independent until a person is chosen (from a person page, a line card, the fan, or re-centring a chart); then all four lock on them */
+function treeSeg(on){ const lk=(TREEP&&P[TREEP])?TREEP:null, me=lk||(ME&&ME.you&&P[ME.you]?ME.you:D.anchor);
+  const B=[['str','Strength',lk?`go(strHash('${lk}'))`:`STRHL=null;STRNOTE='';go('str-'+(store('wfh-str')||'Williams'))`],['chart','Chart',`go('chart-${me}')`],['list','List',`store('wfh-tree','list');go('anc-${me}')`],['fan','Fan',`go('${lk?fanGo(lk):'fan'}')`]];
   return `<span class="seg">${B.map(([k,l,a])=>`<button${k===on?' class="on"':` onclick="${a}"`}>${l}</button>`).join('')}</span>`; }
 function xrow(on,ic,t,s,extra){ return `<div class="xrow" onclick="${on}"><span class="xic">${ic}</span><div class="main"><div class="t">${esc(t)} ${extra||''}</div><div class="s">${esc(s)}</div></div><span class="xgo">›</span></div>`; }
 function vFamily(){ setTab('home');
@@ -1425,7 +1426,7 @@ function vFamily(){ setTab('home');
   app.innerHTML=topBar('The Family',true)+`<div class="wrap">
    <div class="card homemap" onclick="go('fan')"><div class="skick">THE EVIDENCE FAN</div><div class="hmt">Every ancestor at a glance</div>${fanSvg(fanRoot(),6,'sup',true)}<div class="small" style="margin-top:6px">Each wedge is one ancestor, coloured by how well the evidence supports them. Tap to explore ›</div></div>
    <h3 class="sec">The family lines</h3>
-   <div class="lines">${FAMS.map(f=>`<div class="linecard" onclick="go('anc-${lineStart[f]}')"><b${f==='Bowne'?' class="lc3"':''}>${f==='Bowne'?'Bowne·Grover·Stout':fname(f)}</b><div class="small muted">${blurbs[f]}</div><div class="tiny muted" style="margin-top:4px">${counts[f]} records · see ancestors ›</div></div>`).join('')}</div><div class="tiny muted" style="margin:6px 2px 0">Family totals ${FAMS.reduce((a,f)=>a+counts[f],0).toLocaleString()} (shared records in each) · ${nRec.toLocaleString()} unique</div>
+   <div class="lines">${FAMS.map(f=>`<div class="linecard" onclick="TREEP='${lineStart[f]}';go('anc-${lineStart[f]}')"><b${f==='Bowne'?' class="lc3"':''}>${f==='Bowne'?'Bowne·Grover·Stout':fname(f)}</b><div class="small muted">${blurbs[f]}</div><div class="tiny muted" style="margin-top:4px">${counts[f]} records · see ancestors ›</div></div>`).join('')}</div><div class="tiny muted" style="margin:6px 2px 0">Family totals ${FAMS.reduce((a,f)=>a+counts[f],0).toLocaleString()} (shared records in each) · ${nRec.toLocaleString()} unique</div>
    <h3 class="sec">Explore</h3><div class="xlist">
     ${xrow("go('people')",'☺','Everyone',nPeople.toLocaleString()+' people · search by name, place or year')}
     ${xrow("document.querySelector('#tabs [data-t=tree]').click()",'⚘','The tree','Ancestors, descendants and charts')}
@@ -1496,11 +1497,11 @@ function fanLegend(mode){
   if(mode==='fam') return FCOLS.map(([k,c])=>`<span><i style="background:${c}"></i>${k==='Other'?'Other surnames':k}</span>`).join('');
   if(mode==='proof') return ['documented','strong','probable','compiled','hypothesis','open','tree'].map(k=>`<span><i style="background:${SC[k]}"></i>${LVL[k]}</span>`).join('');
   return BANDS.map(b=>`<span><i style="background:${b[2]}"></i>${b[1]}</span>`).join(''); }
-function vFan(id){ setTab('tree'); store('wfh-tree','fan'); const root=(id&&P[id])?id:fanRoot(); const rp=P[root]; TREEP=root;
+function vFan(id){ setTab('tree'); store('wfh-tree','fan'); const root=(id&&P[id])?id:fanRoot(); const rp=P[root];
   const S=fanSlots(root,FANS.n); let known=0, poss=0; const bc={}; for(let g=1;g<=FANS.n;g++){ poss+=S[g].length; S[g].forEach(x=>{ if(x){ known++; const b=band(P[x].sc); const k=b?b.label:'—'; bc[k]=(bc[k]||0)+1; } }); }
   const strong=(bc['Very strongly supported']||0)+(bc['Well supported']||0);
   const mtext={sup:'Colour shows how well the evidence supports each ancestor.',proof:'Colour shows how well each link to the child inside it is proved.',fam:'Colour shows the surname, so you can see where each family comes in.'};
-  app.innerHTML=topBar('The evidence fan',true,root!==fanRoot()?`<button class="tbtn" onclick="go('fan')">↺ Reset</button>`:'')+`<div class="wrap"><div class="chartbar">${treeSeg('fan',root)}</div>
+  app.innerHTML=topBar('The evidence fan',true,root!==fanRoot()?`<button class="tbtn" onclick="TREEP=null;go('fan')">↺ Reset</button>`:'')+`<div class="wrap"><div class="chartbar">${treeSeg('fan',root)}</div>
    <div class="chips">${[['sup','Support'],['proof','Proof of link'],['fam','Family']].map(([k,l])=>`<button class="chip ${FANS.mode===k?'on':''}" onclick="FANS.mode='${k}';vFan('${root}')">${l}</button>`).join('')}</div>
    <div class="fanbar"><span class="tiny muted">Generations</span>${[5,6,7,8].map(n=>`<button class="chip sm ${FANS.n===n?'on':''}" onclick="FANS.n=${n};vFan('${root}')">${n}</button>`).join('')}<span style="flex:1"></span><button class="chip sm" onclick="FANS.z=Math.max(1,FANS.z-.5);fanZoom()" aria-label="Zoom out">−</button><button class="chip sm" onclick="FANS.z=Math.min(3,FANS.z+.5);fanZoom()" aria-label="Zoom in">+</button></div>
    <div class="fanbox" id="fanbox"><div id="fanin">${fanSvg(root,FANS.n,FANS.mode,false)}</div></div>
@@ -1508,12 +1509,12 @@ function vFan(id){ setTab('tree'); store('wfh-tree','fan'); const root=(id&&P[id
    <div id="faninfo" class="card small" style="min-height:58px"><span class="muted">${mtext[FANS.mode]} Tap any wedge to see who it is. Dashed spaces are ancestors not yet identified.</span></div>
    <div class="tiny muted" style="margin:4px 2px 10px">Centred on <b>${esc(rp.living?'Living':rp.n)}</b>${gtag(rp)}. ${known} of ${poss} possible ancestors in ${FANS.n} generations are named; ${strong} of them are very strongly or well supported.</div>
    <div class="card small"><b style="display:block">Centre the fan on someone else</b><input class="search" id="fanq" type="search" placeholder="Type a name…" autocomplete="off" style="margin-top:8px"><div id="fanres"></div>
-    ${root!==fanRoot()?`<button class="more" onclick="go('fan')" style="margin-top:8px">↺ Reset to ${esc(P[fanRoot()].n)}</button>`:''}</div>${ME&&ME.you&&root!==ME.you?`<button class="more" onclick="go('fan-${ME.you}')">Centre the fan on you</button>`:''}
+    ${root!==fanRoot()?`<button class="more" onclick="TREEP=null;go('fan')" style="margin-top:8px">↺ Reset to ${esc(P[fanRoot()].n)}</button>`:''}</div>${ME&&ME.you&&root!==ME.you?`<button class="more" onclick="go('fan-${ME.you}')">Centre the fan on you</button>`:''}
   </div>`;
   const fq=document.getElementById('fanq'), fr=document.getElementById('fanres');
   fq.oninput=()=>{ const T=qTerms(fq.value.trim().toLowerCase()); if(!fq.value.trim()){ fr.innerHTML=''; return; }
     const L=Object.values(P).filter(p=>!p.virt&&!p.living&&qMatch(p.n+' '+(p.b||'')+' '+(p.bp||''),T)).sort((a,b)=>((a.G?0:1)-(b.G?0:1))||((yr(a.b)||9999)-(yr(b.b)||9999))).slice(0,8);
-    fr.innerHTML=L.length?L.map(p=>`<div class="row" onclick="go('fan-${p.id}')"><div class="main"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(years(p))}${(p.par||[]).some(x=>P[x])?'':' · no parents recorded yet'}</div></div></div>`).join(''):'<div class="tiny muted" style="margin-top:6px">No one matches.</div>'; };
+    fr.innerHTML=L.length?L.map(p=>`<div class="row" onclick="TREEP='${p.id}';go('fan-${p.id}')"><div class="main"><div class="t">${esc(p.n)}${gtag(p)}</div><div class="s">${esc(years(p))}${(p.par||[]).some(x=>P[x])?'':' · no parents recorded yet'}</div></div></div>`).join(''):'<div class="tiny muted" style="margin-top:6px">No one matches.</div>'; };
   fanZoom(); document.getElementById('fanin').onclick=e=>{ const w=e.target.closest('[data-id]'); if(w) fanPick(w.dataset.id); }; }
 function fanZoom(){ const i=document.getElementById('fanin'); if(!i) return; const box=document.getElementById('fanbox'); const cx=box.scrollLeft+box.clientWidth/2, old=i.offsetWidth||1;
   i.style.width=(FANS.z*100)+'%'; const nw=i.offsetWidth; box.scrollLeft=Math.max(0,cx*nw/old-box.clientWidth/2); box.scrollTop=box.scrollHeight; }
@@ -1522,7 +1523,7 @@ function fanPick(id){ const p=P[id], el=document.getElementById('faninfo'); if(!
   const b=band(p.sc), lv=lvOf(p), hasPar=(p.par||[]).some(x=>P[x]);
   el.innerHTML=`<div style="font-family:var(--head);font-size:19px;color:var(--green)">${esc(p.living?'Living':p.n)}${gtag(p)}</div><div class="muted">${esc(years(p))}</div>
    <div style="margin:6px 0">${p.living?'':`<span class="dot" style="background:${b?b.color:'#cfc6b4'}"></span> ${b?b.label+' ('+p.sc+'/100)':'Not yet scored'}`}${hasPar?` · parents: ${badge(lv)}`:' · no parents recorded yet'}</div>
-   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="chip on" onclick="go('p-${id}')">Open page ›</button>${hasPar?`<button class="chip" onclick="go('fan-${id}')">Centre the fan here ›</button>`:''}</div>`; }
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="chip on" onclick="go('p-${id}')">Open page ›</button>${hasPar?`<button class="chip" onclick="TREEP='${id}';go('fan-${id}')">Centre the fan here ›</button>`:''}</div>`; }
 
 /* ---------- the road in motion ---------- */
 let ROADD=null, ROADY=1640, ROADPLAY=false, ROADT=0;
@@ -1637,7 +1638,7 @@ function vPerson(id){
   const recs=(p.rec||[]).map(x=>R[x]).filter(Boolean).sort((a,b)=>String(a.sd).localeCompare(String(b.sd)));
   app.innerHTML=topBar(p.living?'Living relative':p.n,true)+`<div class="wrap">
    <div class="card">${portrait(p)}<div class="pname">${esc(p.n)}${gtag(p)}</div>${facts}${ps}${flag}${relLine(id)}
-     <div class="btns"><button class="btn fill" onclick="go('chart-${id}')">Chart</button><button class="btn" onclick="go('anc-${id}')">Ancestors list</button><button class="btn" onclick="go('desc-${id}')">Descendants</button>${pmapCount(id)?`<button class="btn" onclick="go('pmap-${id}')">📍 Map</button>`:''}${p.you?'<button class="btn" onclick="go(\'me\')">Edit my line</button>':''}</div></div>
+     <div class="btns"><button class="btn fill" onclick="TREEP='${id}';go('chart-${id}')">Chart</button><button class="btn" onclick="TREEP='${id}';go('anc-${id}')">Ancestors list</button><button class="btn" onclick="go('desc-${id}')">Descendants</button>${pmapCount(id)?`<button class="btn" onclick="go('pmap-${id}')">📍 Map</button>`:''}${p.you?'<button class="btn" onclick="go(\'me\')">Edit my line</button>':''}</div></div>
    ${IMGS[id]?IMGS[id].map(im=>`<div class="card"><img class="photo-hero" src="${im.src}" alt=""><div class="figcap">${esc(im.cap)}</div></div>`).join(''):''}
    ${supportCard(p)}
    ${docsCard(p)}
@@ -1667,7 +1668,7 @@ function vAnc(id){
       if(pars.length&&open){ const lv=lvOf(p);
         h+=`<div class="kids lk-${lv}">${p.ps||lv==='user'?`<div class="linknote">${badge(lv,lv==='user'?LVL.user:p.ps.s)}</div>`:''}${pars.map(y=>rec(y,depth+1,k)).join('')}</div>`;}
       return h+'</div>';};
-    store('wfh-tree','list'); TREEP=id;
+    store('wfh-tree','list');
     app.innerHTML=topBar('Ancestors of '+(P[id].living?'Living':P[id].n),true)+`<div class="wrap"><div class="chartbar">${treeSeg('list',id)}</div><div class="card small">Tap a name to open it, or <b>+</b> to go back another generation. The line’s style shows the proof for each parent link:<div class="legend">${['documented','strong','probable','open','tree','user'].map(k=>badge(k)).join('')}</div></div><div class="tree">${rec(id,0,'a')}</div><div class="btns"><button class="btn" onclick="go('desc-${id}')">Show descendants instead</button></div></div>`;
   };
   draw();
@@ -1692,7 +1693,7 @@ function vDesc(id){
 /* pedigree chart (zoomable) */
 let chartDepth=+(store('wfh-depth')||5);
 function vChart(id){
-  if(!P[id]) return vHome(); setTab('tree'); store('wfh-tree','chart'); TREEP=id;
+  if(!P[id]) return vHome(); setTab('tree'); store('wfh-tree','chart');
   app.innerHTML=topBar('Family chart',true)+`<div class="wrap" style="padding-bottom:4px">
    <div class="chartbar">${treeSeg('chart',id)}
    <button class="zbtn" id="zo" aria-label="Zoom out">−</button><button class="zbtn" id="zi" aria-label="Zoom in">+</button><button class="zbtn" id="zf" aria-label="Fit" style="width:auto;padding:0 10px;font-size:14px">Fit</button>
@@ -1728,7 +1729,7 @@ function vChart(id){
     if(ptrs.size===1){ if(Math.abs(e.clientX-last.x)+Math.abs(e.clientY-last.y)>6) moved=true; tx+=e.clientX-prev.x; ty+=e.clientY-prev.y; apply(); }
     else if(ptrs.size===2){ moved=true; const [a,b]=[...ptrs.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); const r=cw.getBoundingClientRect(); zoomAt((startS*d/startDist)/s,(a.x+b.x)/2-r.left,(a.y+b.y)/2-r.top); } });
   const up=e=>{ ptrs.delete(e.pointerId); if(!ptrs.size) cw.classList.remove('drag');
-    if(!moved&&e.type==='pointerup'){ const el=document.elementFromPoint(e.clientX,e.clientY); const m=el&&el.closest('.pmore'); if(m){go('chart-'+m.dataset.root);return} const pl=el&&el.closest('.plate'); if(pl) go('p-'+pl.dataset.id); } };
+    if(!moved&&e.type==='pointerup'){ const el=document.elementFromPoint(e.clientX,e.clientY); const m=el&&el.closest('.pmore'); if(m){TREEP=m.dataset.root;go('chart-'+m.dataset.root);return} const pl=el&&el.closest('.plate'); if(pl) go('p-'+pl.dataset.id); } };
   cw.addEventListener('pointerup',up); cw.addEventListener('pointercancel',up);
   cw.addEventListener('wheel',e=>{e.preventDefault(); const r=cw.getBoundingClientRect(); zoomAt(e.deltaY<0?1.12:1/1.12,e.clientX-r.left,e.clientY-r.top)},{passive:false});
   const mid=()=>{const r=cw.getBoundingClientRect();return [r.width/2,r.height/2]};

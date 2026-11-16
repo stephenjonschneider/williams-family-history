@@ -879,6 +879,33 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .ksx{border:0;background:#efe7d6;width:32px;height:32px;border-radius:50%;font-size:15px;cursor:pointer;color:#4a4235}
 .kssec{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:10px 0 6px}
 .ksmore{display:block;text-align:center;margin-top:6px;font-weight:600;color:var(--green);cursor:pointer;padding:8px}
+.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 6px}
+.door{border:0;border-radius:14px;padding:13px 8px 12px;text-align:center;cursor:pointer;color:#f6efdc;background:linear-gradient(160deg,#2f4a32,#3e5f3f 60%,#5d4526);box-shadow:0 3px 0 #1f3322,0 6px 12px rgba(40,30,10,.15);font-family:var(--body)}
+.door.d2{background:linear-gradient(160deg,#6b3a26,#8a4e30 60%,#5d4526);box-shadow:0 3px 0 #4a2617,0 6px 12px rgba(40,30,10,.15)}
+.door.d3{background:linear-gradient(160deg,#28495e,#3b6278 60%,#4d4a3a);box-shadow:0 3px 0 #1a3141,0 6px 12px rgba(40,30,10,.15)}
+.door svg{width:30px;height:30px;fill:none;stroke:#e2c27c;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto 5px}
+.door b{display:block;font-family:var(--head);font-weight:400;font-size:18px;line-height:1.1}.door span{display:block;font-size:11.5px;opacity:.85;margin-top:3px;line-height:1.25}
+.xlist{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.xrow{display:flex;align-items:center;gap:11px;padding:11px 12px;border-top:1px solid var(--line);cursor:pointer}.xrow:first-child{border-top:0}
+.xrow .xic{flex:none;width:32px;height:32px;border-radius:9px;background:#efe6d0;color:var(--clay);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700}
+.xrow .main{flex:1;min-width:0}.xrow .t{font-weight:700}.xrow .s{font-size:13px;color:var(--muted)}.xrow .xgo{color:var(--clay);font-size:20px}
+.xrow .statnew{position:static;display:inline-block;margin-left:4px}
+.tour{position:fixed;inset:0;z-index:3000;background:rgba(30,24,14,.55);display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;transition:opacity .25s}.tour.on{opacity:1}
+.tcard{background:var(--paper);border-radius:16px;max-width:420px;width:100%;padding:20px 18px 14px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.tcard .tk{font-size:11.5px;letter-spacing:.16em;font-weight:700;color:var(--clay)}.tcard h2{font-family:var(--head);font-weight:400;color:var(--green);font-size:23px;margin:4px 0 10px;line-height:1.2}
+.tcard .tb{font-size:15px;line-height:1.5}.tsamp{display:grid;gap:6px;margin:2px 0 12px}.tsamp .sup{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-weight:600;position:relative}
+.tfoot{display:flex;align-items:center;justify-content:space-between;margin-top:16px}.tskip{background:none;border:0;color:var(--muted);font-size:15px;min-width:60px;text-align:left;cursor:pointer}
+.tnext{background:var(--green);color:#f6f0e2;border:0;border-radius:999px;padding:9px 16px;font-weight:700;font-size:15px;cursor:pointer}
+.tdots i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#d6ccb6;margin:0 3px}.tdots i.on{background:var(--clay)}
+.fansvg{display:block;width:100%;height:auto}.fansvg [data-id]{cursor:pointer}.fansvg [data-id].sel{stroke:#1d1a14;stroke-width:2.5}
+.fansvg .ftx,.fansvg .ft0{pointer-events:none;fill:#fffdf6;font-family:var(--body);font-weight:600;paint-order:stroke;stroke:rgba(0,0,0,.28);stroke-width:1.6px}.fansvg .ft0{font-size:13px}.fansvg .fgl{font-size:10px;fill:var(--muted);font-family:var(--body)}
+.fanbox{overflow:auto;border-radius:10px;margin:6px 0 4px;-webkit-overflow-scrolling:touch}#fanin{min-width:100%}
+.fanbar{display:flex;align-items:center;gap:6px;margin:4px 0}.chip.sm{padding:3px 11px;font-size:13px}
+.fanleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);margin:6px 2px 10px}.fanleg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.roadtop{display:flex;align-items:center;gap:12px;margin:2px 0 4px}.roadplay{flex:none;width:52px;height:52px;border-radius:50%;border:0;background:var(--green);color:#f6f0e2;font-size:20px;cursor:pointer;box-shadow:0 3px 0 #1f3322}
+.roadyr{font-family:var(--head);font-size:40px;line-height:1;color:var(--green);font-variant-numeric:tabular-nums}
+.roadslide{width:100%;accent-color:var(--clay);margin:6px 0 2px}.roadnow{font-size:13px;min-height:19px;margin:0 2px 6px;color:#5a4a33}
+#map.roadmap{height:calc(100vh - 360px - var(--safe-b) - var(--safe-t));min-height:330px}
 #storymap{scroll-margin-top:62px}
 .homemap{cursor:pointer;margin-top:14px}.homemap .skick{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay);font-weight:700}.homemap .hmt{font-family:var(--head);font-size:24px;color:var(--green);margin:2px 0 8px}
 .homemap .hmbox{position:relative;border-radius:8px;overflow:hidden}.homemap .hmbox svg{display:block;width:100%;height:auto;pointer-events:none}
@@ -1159,7 +1186,7 @@ function relLine(id){const r=relation(id); if(!r) return ''; const you=refName()
   return `<div class="rel">${t}${you?'':' <span class="muted small">· <a href="#me">show relationships to me instead</a></span>'}</div>`; }
 /* ---------- ui helpers ---------- */
 const app=document.getElementById('app');
-const TABS=[['home','Home','<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],['people','People','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5c2.6.2 4.3 2 5 5"/>'],['tree','Tree','<circle cx="12" cy="5" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M12 7.2v4.3M6 15.8V12h12v3.8"/>'],['records','Records','<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>'],['map','Map','<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'],['kids','Kids','']];
+const TABS=[['home','Home','<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],['people','People','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5c2.6.2 4.3 2 5 5"/>'],['tree','Tree','<circle cx="12" cy="5" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M12 7.2v4.3M6 15.8V12h12v3.8"/>'],['story','Story','<path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/>'],['map','Map','<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'],['kids','Kids','']];
 document.getElementById('tabs').innerHTML=TABS.map(([k,l,s])=>k==='kids'?`<button data-t="kids" class="kidtab" aria-label="Kids">${'K,i,d,s'.split(',').map((c,i)=>`<b style="color:${['#e63b2e','#1f6fd1','#f2a400','#2e9e4f'][i]};transform:rotate(${[-10,7,-5,11][i]}deg) translateY(${[1,-2,2,-1][i]}px)">${c}</b>`).join('')}</button>`:`<button data-t="${k}"><svg viewBox="0 0 24 24">${s}</svg>${l}</button>`).join('');
 document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b){const t=b.dataset.t; if(t==='map') mState.ids=null; if(t==='records') rState.pp=''; go(t==='tree'?(store('wfh-tree')==='str'?'str-'+(store('wfh-str')||'Williams'):(store('wfh-tree')==='chart'?'chart-':'anc-')+(ME&&ME.you&&P[ME.you]?ME.you:D.anchor)):t)}};
 function setTab(t){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
@@ -1274,10 +1301,11 @@ function vHome(){
       <div class="photo" onclick="go('p-${fp('Harry Franklin Williams',1900)}')">${photo(2)}</div>
     </div>
     ${ME&&ME.you?'':`<button class="mecall" onclick="go('me')"><span class="mck">START HERE</span><span class="mcrow"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><span><b>Put yourself in the tree</b><span class="mcs">Takes a minute. Then every person in the app shows exactly how they’re related to you, and the generation tags count up from you.</span></span></span><span class="mcgo">Find your place ›</span></button>`}
-    <div class="stats"><div class="stat"><b>${nPeople.toLocaleString()}</b><span>people</span></div><div class="stat tap" onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:${nRecNew?'true':'false'}};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i class="statnew">+${nRecNew} new</i>`:''}</div><div class="stat tap" onclick="go('pics')"><b>${NPHOTO}</b><span>photos</span>${nPicNew?`<i class="statnew">+${nPicNew} new</i>`:''}</div><div class="stat"><b>${nMapped.toLocaleString()}</b><span>on the map</span></div><div class="stat"><b>${FAMS.length}</b><span>family lines</span></div></div>
-    <button class="storybtn" onclick="go('story')"><span class="sbk">THE STORY</span><b>How the families became one</b><span class="sbs">Gravesend · Middletown · Crosswicks · Adelphia · the Metedeconk · Point Pleasant — 1640s to 1956</span><span class="sbgo">Read ›</span></button>
-    <button class="storybtn landbtn" onclick="go('land')"><span class="sbk">LOCATING THE LAND</span><b>Where were the farms?</b><span class="sbs">Old maps and surveys, then and now</span><span class="sbgo">Explore ›</span></button>
-    <button class="storybtn gatherbtn" onclick="go('gather')"><span class="sbk">WHERE THEY GATHERED</span><b>Churches, schools, halls & parks</b><span class="sbs">The places the family built, filled and left behind</span><span class="sbgo">Explore ›</span></button>
+    <div class="doors">
+      <button class="door d1" onclick="go('story')"><svg viewBox="0 0 24 24"><path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/></svg><b>The Story</b><span>How the families became one</span></button>
+      <button class="door d2" onclick="go('family')"><svg viewBox="0 0 24 24"><path d="M3 20a9 9 0 0 1 18 0"/><path d="M7 20a5 5 0 0 1 10 0"/><path d="M12 11V5M6 13.5 3.5 9.5M18 13.5l2.5-4"/></svg><b>The Family</b><span>Lines, people & the fan</span></button>
+      <button class="door d3" onclick="go('map')"><svg viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg><b>The Map</b><span>Homes, churches & records</span></button>
+    </div>
     ${ME&&ME.you?`<button class="cta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>You’re in the tree</b><span>Relationships are shown relative to you. Tap to change.</span></div></button>`:''}
     <h3 class="sec">Start with</h3>
     <div class="card" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">The Williams, Layton, Newman and Wolcott lines all meet in their children; the Bowne, Grover and Stout families come in through the Laytons.</div></div>
@@ -1286,18 +1314,17 @@ function vHome(){
       <div class="small" style="margin-top:8px">Three centuries in one journey: from the Dutch and English villages at the western end of Long Island, across the bay to the new Monmouth settlements, inland through Middletown and Freehold to the Crosswicks country, south into the pine woods along the Metedeconk, and at last east to the shore at Point Pleasant. Side roads bring in the families who married into the line along the way.</div></div>
     <h3 class="sec">From the archives <span class="tiny muted" style="font-family:var(--body);text-transform:none;letter-spacing:0">· swipe ›</span></h3>
     ${archStrip()}
-    <h3 class="sec">The family lines</h3>
-    <div class="lines">${FAMS.map(f=>`<div class="linecard" onclick="go('anc-${lineStart[f]}')"><b${f==='Bowne'?' class="lc3"':''}>${f==='Bowne'?'Bowne·Grover·Stout':fname(f)}</b><div class="small muted">${blurbs[f]}</div><div class="tiny muted" style="margin-top:4px">${counts[f]} records · see ancestors ›</div></div>`).join('')}</div><div class="tiny muted" style="margin:6px 2px 0">Family totals ${FAMS.reduce((a,f)=>a+counts[f],0).toLocaleString()} (shared records in each) · ${nRec.toLocaleString()} unique</div>
-    <h3 class="sec" id="marks">How to read the marks</h3>
-    <div class="card small">${keySample()}<b>Support shading.</b> Every name carries a bar showing how well it is backed by evidence independent of the online family tree: records in the research abstracts, the compiler’s proof assessments, and outside sources checked. Less-proven and theoretical names are included on purpose, so the family can see what still needs work.
-      <div class="bandkey">${keyBands()}</div>
-      <div class="tiny muted">${(()=>{const dl=D.people.filter(p=>p.G&&!p.living&&p.sc!=null);const c=BANDS.map(b=>dl.filter(p=>band(p.sc).min===b[0]).length);return 'Direct line ('+dl.length+' people): '+BANDS.map((b,i)=>c[i]+' '+b[1].toLowerCase()).join(' · ')})()}</div></div>
-    <div class="card small"><b>Proof of each parent link.</b> Shown as the thin line along the bottom of each name: full and green for Documented, shorter and warmer as the grade drops, a short red stub for Open. No line means no parents are recorded yet. Every link is judged on its own evidence, from the workbooks’ parent basis and from records naming parent and child together. An open link lower in the line does not pull down documented links above it.
-      <div class="legend">${keyGrades()}</div><div class="tiny muted" style="margin:-2px 0 6px">Tap a mark to list the direct-line people who carry it.</div>
-      Each parent link in the direct line carries the compiler’s current assessment from the research workbooks. <b>G-tags</b> (G5, G8…) count generations up from ${ME&&ME.you?'you (G1), as set in Find your place':'the compiler (G1) until you set your own place in Find your place; then they count up from you'}. Living relatives appear only as “Living”.
-      <div style="margin-top:10px"><b>What are the documents?</b> Deeds, mortgages, surveys, wills and estate papers, court cases, church and Quaker records, censuses and tax lists, newspapers, certificates, maps and more. <a href="#sources">See all the source categories ›</a></div>
+    <h3 class="sec">More to explore</h3>
+    <div class="xlist">
+      ${xrow("go('road')",'◷','The road in motion','Watch the ancestors move house to house, 1640s to 1956',NEWB)}
+      ${xrow("go('fan')",'◠','The evidence fan','Every ancestor in one chart, coloured by how well each is proved',NEWB)}
+      ${xrow("go('land')",'⌖','Where were the farms?','Old maps and surveys, then and now')}
+      ${xrow("go('gather')",'⌂','Where they gathered','Churches, schools, halls & parks')}
+      ${xrow("go('help')",'?','Help wanted','The links still waiting for proof — can you help?')}
+      ${xrow("rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:"+(nRecNew?'true':'false')+"};go('records')",'▤','The records',nRec.toLocaleString()+' documents · '+nMapped.toLocaleString()+' on the map',nRecNew?`<i class="statnew">+${nRecNew} new</i>`:'')}
+      ${xrow("go('pics')",'▣','Photos',NPHOTO+' pictures of the people and places',nPicNew?`<i class="statnew">+${nPicNew} new</i>`:'')}
+      ${xrow("go('marks')",'▬','How to read the marks','The shading, the proof line and the G-tags')}
     </div>
-    <button class="storybtn helpbtn" onclick="go('help')"><span class="sbk">HELP WANTED</span><b>Open questions — can you help?</b><span class="sbs">The links still waiting for proof, most important first. Share it with family.</span><span class="sbgo">See list ›</span></button>
     <div class="foot">Compiled by Stephen J. Schneider, Point Pleasant Beach<br>Data: ${['Williams','Layton','Newman','Wolcott','Bowne','Safety','Cooper'].filter(f=>D.meta[f]).map(f=>`${fname(f)} v${esc((D.meta[f]||{}).FileVersion||'')}`).join(' · ')} workbooks · Family tree reports of 6 Nov 2026</div>
   </div>`;
   archWire();
@@ -1330,8 +1357,164 @@ function keyOpen(){ keyClose(); const k=document.createElement('div'); k.id='key
    <a class="ksmore" onclick="keyClose();goMarks()">Read the full explanation ›</a></div>`;
   document.body.appendChild(k); requestAnimationFrame(()=>k.classList.add('on')); document.addEventListener('keydown',keyEsc);
   k.querySelectorAll('.kspanel .tapk').forEach(el=>el.addEventListener('click',()=>keyClose(),{capture:true})); }
+function xrow(on,ic,t,s,extra){ return `<div class="xrow" onclick="${on}"><span class="xic">${ic}</span><div class="main"><div class="t">${esc(t)} ${extra||''}</div><div class="s">${esc(s)}</div></div><span class="xgo">›</span></div>`; }
+function vFamily(){ setTab('home');
+  const te=P[D.anchor], ma=te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n));
+  const lineStart={Williams:D.anchor,Layton:findP('Elizabeth Layton',1805),Newman:findP('Catherine Louisa Newman',1840),Wolcott:ma,Bowne:findP('Catherine Bowne',1718),Safety:findP('Safety Layton',1737),Cooper:findP('Mary Elizabeth Cooper',1813)};
+  const blurbs={Williams:'Metedeconk homestead · Southard (Bethel), Howell',Layton:'From founder William Layton (d.1708), Middletown',Newman:'Shark River, Wreck Pond & Harmony',Wolcott:'Shrewsbury, Eatontown & Burnt Tavern',Bowne:'Middletown patentees · through Catherine (Bowne) Layton',Safety:'Every man named Safety · Grover, Bowne & Layton',Cooper:'Howell & Middletown · two Cooper wives, Newman and Brewer sides'};
+  const counts={};FAMS.forEach(f=>counts[f]=D.records.filter(r=>inF(r,f)).length); const nRec=D.records.length;
+  const nPeople=D.people.filter(p=>!p.living).length;
+  app.innerHTML=topBar('The Family',true)+`<div class="wrap">
+   <div class="card homemap" onclick="go('fan')"><div class="skick">THE EVIDENCE FAN</div><div class="hmt">Every ancestor at a glance</div>${fanSvg(fanRoot(),6,'sup',true)}<div class="small" style="margin-top:6px">Each wedge is one ancestor, coloured by how well the evidence supports them. Tap to explore ›</div></div>
+   <h3 class="sec">The family lines</h3>
+   <div class="lines">${FAMS.map(f=>`<div class="linecard" onclick="go('anc-${lineStart[f]}')"><b${f==='Bowne'?' class="lc3"':''}>${f==='Bowne'?'Bowne·Grover·Stout':fname(f)}</b><div class="small muted">${blurbs[f]}</div><div class="tiny muted" style="margin-top:4px">${counts[f]} records · see ancestors ›</div></div>`).join('')}</div><div class="tiny muted" style="margin:6px 2px 0">Family totals ${FAMS.reduce((a,f)=>a+counts[f],0).toLocaleString()} (shared records in each) · ${nRec.toLocaleString()} unique</div>
+   <h3 class="sec">Explore</h3><div class="xlist">
+    ${xrow("go('people')",'☺','Everyone',nPeople.toLocaleString()+' people · search by name, place or year')}
+    ${xrow("document.querySelector('#tabs [data-t=tree]').click()",'⚘','The tree','Ancestors, descendants and charts')}
+    ${xrow("go('me')",'✚',ME&&ME.you?'You’re in the tree':'Put yourself in the tree',ME&&ME.you?'Change where you sit':'Then every page shows how you’re related')}
+    ${xrow("go('marks')",'▬','How to read the marks','The shading, the proof line and the G-tags')}
+   </div></div>`; }
+function vMarks(){ setTab('home');
+  app.innerHTML=topBar('How to read the marks',true)+`<div class="wrap">
+    <div class="card small">${keySample()}<b>Support shading.</b> Every name carries a bar showing how well it is backed by evidence independent of the online family tree: records in the research abstracts, the compiler’s proof assessments, and outside sources checked. Less-proven and theoretical names are included on purpose, so the family can see what still needs work.
+      <div class="bandkey">${keyBands()}</div>
+      <div class="tiny muted">${(()=>{const dl=D.people.filter(p=>p.G&&!p.living&&p.sc!=null);const c=BANDS.map(b=>dl.filter(p=>band(p.sc).min===b[0]).length);return 'Direct line ('+dl.length+' people): '+BANDS.map((b,i)=>c[i]+' '+b[1].toLowerCase()).join(' · ')})()}</div></div>
+    <div class="card small"><b>Proof of each parent link.</b> Shown as the thin line along the bottom of each name: full and green for Documented, shorter and warmer as the grade drops, a short red stub for Open. No line means no parents are recorded yet. Every link is judged on its own evidence, from the workbooks’ parent basis and from records naming parent and child together. An open link lower in the line does not pull down documented links above it.
+      <div class="legend">${keyGrades()}</div><div class="tiny muted" style="margin:-2px 0 6px">Tap a mark to list the direct-line people who carry it.</div>
+      Each parent link in the direct line carries the compiler’s current assessment from the research workbooks. <b>G-tags</b> (G5, G8…) count generations up from ${ME&&ME.you?'you (G1), as set in Find your place':'the compiler (G1) until you set your own place in Find your place; then they count up from you'}. Living relatives appear only as “Living”.
+      <div style="margin-top:10px"><b>What are the documents?</b> Deeds, mortgages, surveys, wills and estate papers, court cases, church and Quaker records, censuses and tax lists, newspapers, certificates, maps and more. <a href="#sources">See all the source categories ›</a></div>
+    </div>
+    <button class="more" onclick="tourOpen(0)">Show the welcome tour again</button></div>`; }
+/* ---------- first-visit tour ---------- */
+const TOUR=[
+ {k:'WELCOME',h:'The Williams family, in its own records',b:`This app gathers the deeds, wills, surveys, church records and photographs behind the Williams family and the families who married in. Use the tabs along the bottom: <b>Story</b> to read how the families came together, <b>People</b> and <b>Tree</b> to explore, and <b>Map</b> to see where they lived.`},
+ {k:'THE WIDE SHADING',h:'How well is this person backed?',b:()=>`<div class="tsamp">${['Very strongly supported','Partly supported','Thin support'].map((l,i)=>`<div class="sup" style="background:linear-gradient(90deg,${BANDS[[0,2,3][i]][2]}33 0 ${[90,50,26][i]}%,transparent ${[90,50,26][i]}%),#fff"><span>${l}</span></div>`).join('')}</div>Every name sits on a shaded bar. The longer and greener it is, the more independent evidence supports that person: records, the compiler’s proof work and outside sources. Weaker names are kept on purpose so the family can see what still needs work.`},
+ {k:'THE THIN LINE',h:'How sure is the link to their parents?',b:()=>`<div class="tsamp">${['documented','probable','open'].map(k=>`<div class="sup" style="background:#fff;--pw:${PW[k]}%;--pc:${SC[k]}"><span>${LVL[k]}</span></div>`).join('')}</div>The thin line along the bottom of a name shows how well the link to that person’s parents is proved: full and green when documented, shorter and warmer as the proof weakens, a red stub when it is still an open question. The small <span class="gtag" style="margin-left:0">G7</span> tags count generations. Tap <b>Key</b> on the People page any time for a reminder.`}];
+let TOURI=0;
+function tourOpen(i){ tourClose(true); TOURI=i||0; const o=document.createElement('div'); o.id='tour'; o.className='tour'; document.body.appendChild(o); tourDraw(); requestAnimationFrame(()=>o.classList.add('on')); }
+function tourDraw(){ const o=document.getElementById('tour'); if(!o) return; const s=TOUR[TOURI], last=TOURI===TOUR.length-1;
+  o.innerHTML=`<div class="tcard" role="dialog" aria-label="Welcome tour"><div class="tk">${s.k}</div><h2>${s.h}</h2><div class="tb">${typeof s.b==='function'?s.b():s.b}</div>
+   <div class="tfoot"><button class="tskip" onclick="tourClose()">${last?'':'Skip'}</button><span class="tdots">${TOUR.map((_,i)=>`<i class="${i===TOURI?'on':''}"></i>`).join('')}</span><button class="tnext" onclick="${last?'tourClose()':'TOURI++;tourDraw()'}">${last?'Start exploring':'Next ›'}</button></div></div>`; }
+function tourClose(quiet){ const o=document.getElementById('tour'); if(o) o.remove(); if(!quiet) store('wfh-tour',1); }
+function tourMaybe(){ if(store('wfh-tour')) return; const h=location.hash.slice(1); if(/^(kid|kids)/.test(h)) return; setTimeout(()=>{ if(!store('wfh-tour')&&!document.getElementById('tour')) tourOpen(0); },700); }
+/* ---------- family colours (fan chart, road in motion) ---------- */
+const FCOLS=[['Williams','#9a3b28'],['Layton','#2f6b8a'],['Newman','#5d8a33'],['Wolcott','#c08a1e'],['Bowne','#6b4e8a'],['Grover','#9a72b8'],['Stout','#44608f'],['Cooper','#2f8a78'],['Brewer','#b5624f'],['Other','#8f8574']];
+function surn(p){ const w=String(p&&p.n||'').replace(/\(.*?\)|".*?"/g,'').split(/\s+/).filter(x=>x&&!/^(jr|sr|ii|iii|esq)\.?$/i.test(x)); return w.length?w[w.length-1].replace(/[^A-Za-z]/g,''):''; }
+function famKey(p){ const s=surn(p).toLowerCase(); const m={williams:'Williams',layton:'Layton',leighton:'Layton',newman:'Newman',wolcott:'Wolcott',woolcott:'Wolcott',bowne:'Bowne',grover:'Grover',stout:'Stout',cooper:'Cooper',brewer:'Brewer',brouwer:'Brewer'}; return m[s]||'Other'; }
+function famCol(p){ const k=famKey(p); return (FCOLS.find(x=>x[0]===k)||FCOLS[FCOLS.length-1])[1]; }
+
+/* ---------- the evidence fan ---------- */
+let FANS={mode:'sup',n:7,z:1};
+function fanRoot(){ return fp('Harry Franklin Williams',1900)||D.anchor; }
+function fanPar(id){ const p=P[id]; if(!p) return [null,null]; const ps=(p.par||[]).filter(x=>P[x]);
+  let f=ps.find(x=>sex(x)===1)||null, m=ps.find(x=>x!==f&&sex(x)!==1)||null;
+  if(!f&&!m&&ps.length) f=ps[0]; if(f&&!m&&ps.length>1) m=ps.find(x=>x!==f)||null; return [f,m]; }
+function fanSlots(root,n){ const S=[[root]]; for(let g=1;g<=n;g++){ const row=[]; S[g-1].forEach(id=>{ const [f,m]=id?fanPar(id):[null,null]; row.push(f,m); }); S.push(row); } return S; }
+function fanFill(id,child,mode){ const p=P[id]; if(!p) return null;
+  if(mode==='fam') return famCol(p);
+  if(mode==='proof'){ if(!child) return '#cfc6b4'; return SC[lvOf(P[child])]||'#cfc6b4'; }
+  if(p.living) return '#e3dccb'; const b=band(p.sc); return b?b.color:'#cfc6b4'; }
+function fanShort(s,n){ s=String(s||''); return s.length>n?s.slice(0,n-1)+'…':s; }
+function fanSvg(root,n,mode,mini){
+  const S=fanSlots(root,n), W0=[60,56,50,44,38,32,27,23], r0=50; let R=r0; const rr=[0,r0]; for(let g=1;g<=n;g++){ R+=W0[g-1]; rr.push(R); }
+  const pt=(r,a)=>(r*Math.cos(a)).toFixed(1)+','+(r*Math.sin(a)).toFixed(1);
+  let s=`<svg class="fansvg" viewBox="${-R-3} ${-R-3} ${2*R+6} ${R+6}" xmlns="http://www.w3.org/2000/svg">`;
+  const rp=P[root]; s+=`<path d="M${-r0},0A${r0} ${r0} 0 0 1 ${r0},0Z" fill="${(mini?fanFill(root,null,mode):fanFill(root,null,mode))||'#cfc6b4'}" stroke="#fff" stroke-width="1.5" ${mini?'':`data-id="${root}"`}/>`;
+  if(!mini&&rp) s+=`<text x="0" y="-26" class="ft0" text-anchor="middle">${esc(fanShort(rp.living?'Living':rp.n.split(' ')[0],12))}</text><text x="0" y="-10" class="ft0" text-anchor="middle">${esc(fanShort(rp.living?'':surn(rp),12))}</text>`;
+  for(let g=1;g<=n;g++){ const k=S[g].length, da=Math.PI/k, r1=rr[g], r2=rr[g+1];
+    S[g].forEach((id,i)=>{ const a1=Math.PI+i*da, a2=a1+da, child=S[g-1][i>>1];
+      const d=`M${pt(r1,a1)}L${pt(r2,a1)}A${r2} ${r2} 0 0 1 ${pt(r2,a2)}L${pt(r1,a2)}A${r1} ${r1} 0 0 0 ${pt(r1,a1)}Z`;
+      if(!id){ if(child) s+=`<path d="${d}" fill="#faf6ec" stroke="#c9bda3" stroke-width=".8" stroke-dasharray="3 2"/>`; return; }
+      s+=`<path d="${d}" fill="${fanFill(id,child,mode)}" stroke="#fffaf0" stroke-width="${g>5?.6:1.2}" ${mini?'':`data-id="${id}"`}/>`;
+      if(mini||g>5) return; const p=P[id], am=(a1+a2)/2, rm=(r1+r2)/2, deg=am*180/Math.PI;
+      const fn=p.living?'Living':(p.n.replace(/\(.*?\)|".*?"/g,'').trim().split(/\s+/)[0]), sn=p.living?'':surn(p);
+      if(g<=3){ const fs=[0,15,12.5,10.5][g], mx=[0,16,13,11][g]; const rot=deg+90;
+        s+=`<g transform="translate(${pt(rm,am)}) rotate(${rot.toFixed(1)})" class="ftx"><text y="${-fs*.25}" text-anchor="middle" font-size="${fs}">${esc(fanShort(fn,mx))}</text><text y="${fs*.95}" text-anchor="middle" font-size="${fs*.9}">${esc(fanShort(sn,mx))}</text></g>`; }
+      else { const fs=g===4?9.5:8, mx=g===4?9:8; const rot=deg>270?deg:deg+180;
+        s+=`<g transform="translate(${pt(rm,am)}) rotate(${rot.toFixed(1)})" class="ftx"><text y="${fs*.35}" text-anchor="middle" font-size="${fs}">${esc(fanShort(fn,mx))}</text></g>`; }
+    }); }
+  return s+'</svg>'; }
+function fanLegend(mode){
+  if(mode==='fam') return FCOLS.map(([k,c])=>`<span><i style="background:${c}"></i>${k==='Other'?'Other surnames':k}</span>`).join('');
+  if(mode==='proof') return ['documented','strong','probable','compiled','hypothesis','open','tree'].map(k=>`<span><i style="background:${SC[k]}"></i>${LVL[k]}</span>`).join('');
+  return BANDS.map(b=>`<span><i style="background:${b[2]}"></i>${b[1]}</span>`).join(''); }
+function vFan(id){ setTab('tree'); const root=(id&&P[id])?id:fanRoot(); const rp=P[root];
+  const S=fanSlots(root,FANS.n); let known=0, poss=0; const bc={}; for(let g=1;g<=FANS.n;g++){ poss+=S[g].length; S[g].forEach(x=>{ if(x){ known++; const b=band(P[x].sc); const k=b?b.label:'—'; bc[k]=(bc[k]||0)+1; } }); }
+  const strong=(bc['Very strongly supported']||0)+(bc['Well supported']||0);
+  const mtext={sup:'Colour shows how well the evidence supports each ancestor.',proof:'Colour shows how well each link to the child inside it is proved.',fam:'Colour shows the surname, so you can see where each family comes in.'};
+  app.innerHTML=topBar('The evidence fan',true)+`<div class="wrap">
+   <div class="chips">${[['sup','Support'],['proof','Proof of link'],['fam','Family']].map(([k,l])=>`<button class="chip ${FANS.mode===k?'on':''}" onclick="FANS.mode='${k}';vFan('${root}')">${l}</button>`).join('')}</div>
+   <div class="fanbar"><span class="tiny muted">Generations</span>${[5,6,7,8].map(n=>`<button class="chip sm ${FANS.n===n?'on':''}" onclick="FANS.n=${n};vFan('${root}')">${n}</button>`).join('')}<span style="flex:1"></span><button class="chip sm" onclick="FANS.z=Math.max(1,FANS.z-.5);fanZoom()" aria-label="Zoom out">−</button><button class="chip sm" onclick="FANS.z=Math.min(3,FANS.z+.5);fanZoom()" aria-label="Zoom in">+</button></div>
+   <div class="fanbox" id="fanbox"><div id="fanin">${fanSvg(root,FANS.n,FANS.mode,false)}</div></div>
+   <div class="fanleg">${fanLegend(FANS.mode)}</div>
+   <div id="faninfo" class="card small" style="min-height:58px"><span class="muted">${mtext[FANS.mode]} Tap any wedge to see who it is. Dashed spaces are ancestors not yet identified.</span></div>
+   <div class="tiny muted" style="margin:4px 2px 10px">Centred on <b>${esc(rp.living?'Living':rp.n)}</b>${gtag(rp)}. ${known} of ${poss} possible ancestors in ${FANS.n} generations are named; ${strong} of them are very strongly or well supported.</div>
+   ${root!==fanRoot()?`<button class="more" onclick="go('fan')">Back to the full family fan</button>`:''}${ME&&ME.you&&root!==ME.you?`<button class="more" onclick="go('fan-${ME.you}')">Centre the fan on you</button>`:''}
+  </div>`;
+  fanZoom(); document.getElementById('fanin').onclick=e=>{ const w=e.target.closest('[data-id]'); if(w) fanPick(w.dataset.id); }; }
+function fanZoom(){ const i=document.getElementById('fanin'); if(!i) return; const box=document.getElementById('fanbox'); const cx=box.scrollLeft+box.clientWidth/2, old=i.offsetWidth||1;
+  i.style.width=(FANS.z*100)+'%'; const nw=i.offsetWidth; box.scrollLeft=Math.max(0,cx*nw/old-box.clientWidth/2); box.scrollTop=box.scrollHeight; }
+function fanPick(id){ const p=P[id], el=document.getElementById('faninfo'); if(!p||!el) return;
+  document.querySelectorAll('#fanin [data-id]').forEach(w=>w.classList.toggle('sel',w.dataset.id===id));
+  const b=band(p.sc), lv=lvOf(p), hasPar=(p.par||[]).some(x=>P[x]);
+  el.innerHTML=`<div style="font-family:var(--head);font-size:19px;color:var(--green)">${esc(p.living?'Living':p.n)}${gtag(p)}</div><div class="muted">${esc(years(p))}</div>
+   <div style="margin:6px 0">${p.living?'':`<span class="dot" style="background:${b?b.color:'#cfc6b4'}"></span> ${b?b.label+' ('+p.sc+'/100)':'Not yet scored'}`}${hasPar?` · parents: ${badge(lv)}`:' · no parents recorded yet'}</div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="chip on" onclick="go('p-${id}')">Open page ›</button>${hasPar?`<button class="chip" onclick="go('fan-${id}')">Centre the fan here ›</button>`:''}</div>`; }
+
+/* ---------- the road in motion ---------- */
+let ROADD=null, ROADY=1640, ROADPLAY=false, ROADT=0;
+function roadData(){ if(ROADD) return ROADD;
+  const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={};
+  const add=(id,q)=>{ (byP[id]=byP[id]||[]).push(q); };
+  D.records.forEach(r=>{ const pl=PL[r.pl], y=parseInt(String(r.sd||'').slice(0,4)); if(!pl||!(y>1500)) return; (r.home||[]).forEach(id=>{ if(ids.has(id)) add(id,{y,lat:pl.lat,lon:pl.lon,lab:pl.label,r:r.id}); }); });
+  (D.homes||[]).forEach(h=>{ const y=yr(h.y); if(!h.ll||!y) return; (h.ppl||[]).forEach(id=>{ if(ids.has(id)) add(id,{y,lat:h.ll[0],lon:h.ll[1],lab:h.a}); }); });
+  const out=[]; let lo=2000, hi=1500;
+  dl.forEach(p=>{ const b=yr(p.b), d=yr(p.d); let pts=(byP[p.id]||[]).slice();
+    if(p.bpl&&PL[p.bpl]&&b) pts.push({y:b,lat:PL[p.bpl].lat,lon:PL[p.bpl].lon,lab:PL[p.bpl].label,born:1});
+    if(p.dpl&&PL[p.dpl]&&d) pts.push({y:d,lat:PL[p.dpl].lat,lon:PL[p.dpl].lon,lab:PL[p.dpl].label,died:1});
+    pts=pts.filter(q=>(!b||q.y>=b)&&(!d||q.y<=d)); if(!pts.length) return;
+    pts.sort((a,c)=>(a.y-c.y)||((c.born||0)-(a.born||0))||((a.died||0)-(c.died||0)));
+    const Q=[]; pts.forEach(q=>{ const l=Q[Q.length-1]; if(l&&Math.abs(l.lat-q.lat)<2e-4&&Math.abs(l.lon-q.lon)<2e-4) return; Q.push(q); });
+    const last=Q[Q.length-1].y, s=b||Q[0].y, e=d||Math.max(last,b?Math.min(b+65,last+25):last+10);
+    let h=0; for(const c of p.id) h=(h*31+c.charCodeAt(0))%997; const an=h/997*2*Math.PI;
+    out.push({id:p.id,p,pts:Q,s,e,col:famCol(p),dx:Math.cos(an)*.004,dy:Math.sin(an)*.003});
+    lo=Math.min(lo,s); hi=Math.max(hi,e); });
+  ROADD={L:out,lo:Math.floor(Math.min(lo,1640)/10)*10,hi:Math.min(1960,Math.max(hi,1956))}; return ROADD; }
+function roadPos(o,Y){ if(Y<o.s||Y>=o.e+1) return null; const Q=o.pts; let k=-1; for(let i=0;i<Q.length;i++){ if(Q[i].y<=Y) k=i; else break; }
+  if(k<0) return [Q[0].lat,Q[0].lon,0]; const a=Q[k], n=Q[k+1]; if(n){ const f=Math.max(0,Math.min(1,Y-(n.y-1))); if(f>0) return [a.lat+(n.lat-a.lat)*f,a.lon+(n.lon-a.lon)*f,k]; } return [a.lat,a.lon,k]; }
+function vRoad(){ setTab('story'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
+  app.innerHTML=topBar('The road in motion',true)+`<div class="wrap">
+   <div class="roadtop"><button class="roadplay" id="roadplay" onclick="roadToggle()" aria-label="Play">▶</button><div style="flex:1;min-width:0"><div class="roadyr" id="roadyr">${Math.floor(ROADY)}</div><div class="tiny muted" id="roadct"></div></div></div>
+   <input type="range" class="roadslide" id="roadsl" min="${RD.lo}" max="${RD.hi}" step="1" value="${Math.floor(ROADY)}" aria-label="Year">
+   <div class="roadnow" id="roadnow"></div>
+   <div id="map" class="roadmap"></div>
+   <div class="fanleg">${FCOLS.filter(([k])=>RD.L.some(o=>famKey(o.p)===k)).map(([k,c])=>`<span><i style="background:${c};border-radius:50%"></i>${k==='Other'?'Other surnames':k}</span>`).join('')}</div>
+   <div class="card small">Each dot is one direct-line ancestor (${RD.L.length} of them), shown from birth to death at the places the records put them: where they were born, the land they held, the houses they lived in and where they died. A dot slides to a new place when a record finds them there; the faint trail shows where they had been. Tap a dot to see who it is. Couples share a place, so their dots sit side by side.</div></div>`;
+  const ren=mkMap(); const lay=L.layerGroup().addTo(MAP); const M={}, T={};
+  let b=null; RD.L.forEach(o=>o.pts.forEach(q=>{ b=b?b.extend([q.lat,q.lon]):L.latLngBounds([q.lat,q.lon],[q.lat,q.lon]); })); if(b) MAP.fitBounds(b.pad(.05));
+  RD.L.forEach(o=>{ T[o.id]=L.polyline([],{color:o.col,weight:2,opacity:.35,interactive:false,renderer:ren,pane:'pins'});
+    M[o.id]=L.circleMarker([0,0],{radius:6.5,color:'#fffaf0',weight:1.6,fillColor:o.col,fillOpacity:.95,renderer:ren,pane:'pins'})
+      .bindPopup(()=>{ const ps=roadPos(o,ROADY), q=ps?o.pts[ps[2]]:null; return `<b>${esc(o.p.n)}</b>${gtag(o.p)}<div class="muted small">${esc(years(o.p))}</div>${q?`<div class="small" style="margin:4px 0">${q.born?'Born at':q.died?'Died at':'At'} ${esc(q.lab)}${q.born||q.died?'':' from '+q.y}${q.r?` · <a href="#r-${q.r}" style="display:inline">record</a>`:''}</div>`:''}<a href="#p-${o.id}">Open page ›</a>`; }); });
+  const yrEl=document.getElementById('roadyr'), ct=document.getElementById('roadct'), now=document.getElementById('roadnow'), sl=document.getElementById('roadsl');
+  let lastNow='';
+  window.roadDraw=()=>{ const Y=ROADY; let n=0; const fams=new Set();
+    RD.L.forEach(o=>{ const ps=roadPos(o,Y), m=M[o.id], t=T[o.id];
+      if(!ps){ if(lay.hasLayer(m)){ lay.removeLayer(m); lay.removeLayer(t); } return; }
+      n++; fams.add(famKey(o.p)); const ll=[ps[0]+o.dy,ps[1]+o.dx]; m.setLatLng(ll); if(!lay.hasLayer(m)){ lay.addLayer(t); lay.addLayer(m); }
+      t.setLatLngs(o.pts.slice(0,ps[2]+1).map(q=>[q.lat+o.dy,q.lon+o.dx]).concat([ll])); });
+    yrEl.textContent=Math.floor(Y); ct.textContent=n?`${n} ancestor${n>1?'s':''} living`:'No direct-line ancestor on record this year'; if(!ROADPLAY) sl.value=Math.floor(Y);
+    const yi=Math.floor(Y), ch=SMAP.filter(s=>{ const m=String(s[4]).match(/(\d{4})s?\D*(\d{4})?/); if(!m) return false; const a=+m[1], z=/→/.test(s[4])?2100:(m[2]?+m[2]+(/s$/.test(s[4])?9:0):a); return yi>=a&&yi<=z; }).map(s=>s[1]).join(' · ');
+    if(ch!==lastNow){ lastNow=ch; now.innerHTML=ch?`<b>On the road:</b> ${esc(ch)}`:'&nbsp;'; } };
+  sl.oninput=e=>{ ROADY=+e.target.value; if(ROADPLAY) roadToggle(); roadDraw(); };
+  roadDraw(); }
+function roadToggle(){ const btn=document.getElementById('roadplay'); if(!btn) return; ROADPLAY=!ROADPLAY; btn.textContent=ROADPLAY?'❚❚':'▶'; btn.setAttribute('aria-label',ROADPLAY?'Pause':'Play');
+  const RD=roadData(); if(ROADPLAY&&ROADY>=RD.hi) ROADY=RD.lo; ROADT=0;
+  const step=ts=>{ if(!ROADPLAY||!document.getElementById('roadyr')){ ROADPLAY=false; return; } if(ROADT){ ROADY=Math.min(RD.hi,ROADY+(ts-ROADT)/1000*7); } ROADT=ts;
+    roadDraw(); const sl=document.getElementById('roadsl'); if(sl) sl.value=Math.floor(ROADY);
+    if(ROADY>=RD.hi){ ROADPLAY=false; btn.textContent='▶'; return; } requestAnimationFrame(step); };
+  if(ROADPLAY) requestAnimationFrame(step); }
 function goStoryMap(){ go('story'); const f=()=>{ const m=document.getElementById('storymap'); if(m) m.scrollIntoView({block:'start'}); }; setTimeout(f,80); setTimeout(f,400); }
-function goMarks(){ go('home'); const f=()=>{ const h=document.getElementById('marks'); if(h) h.scrollIntoView({block:'start'}); }; setTimeout(f,60); setTimeout(f,320); }
+function goMarks(){ go('marks'); }
 function vPeople(){
   setTab('people');
   app.innerHTML=topBar('People',false,`<button class="tbtn" onclick="picState='people';picQ='';go('pics')">Photos ›</button>`)+`<div class="wrap"><div class="srow"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><button class="keybtn" onclick="keyOpen()" aria-label="How to read the marks" title="How to read the marks"><i class="kb1"></i><i class="kb2"></i><span>Key</span></button></div><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof to child']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
@@ -2069,7 +2252,7 @@ function smapBig(){ const o=document.createElement('div'); o.className='smapov';
   const sc=o.querySelector('.smapscroll'), sv=sc.querySelector('svg'), vb=sv.viewBox.baseVal; sv.style.width=Math.max(innerWidth,(innerHeight-64)*vb.width/vb.height)+'px'; requestAnimationFrame(()=>{ sc.scrollLeft=(sc.scrollWidth-sc.clientWidth)*.55; sc.scrollTop=(sc.scrollHeight-sc.clientHeight)*.45; }); }
 
 function vStory(){
-  setTab('home');
+  setTab('story');
   const CH=[
    ['Long Island · 1640s–1660s','A Dutch bride and an English town',
     `The oldest thread in this history is ${sp('p1060','Penelope')}, the wife of ${sp('p1135','Richard Stout')}. New Jersey tradition says she was a young Dutch woman, born Van Princis, who survived a shipwreck and an attack near Sandy Hook, was cared for by the Lenape, and reached New Amsterdam, where she married Richard. The records cannot test that story, and her birthplace and her famous age of 110 remain tradition. What they do show is solid: she sold land beside Richard in 1679/80 and acknowledged the deed in person, and his will of 1703 calls her “my loving wife.” Together with Richard, she is remembered as the “Mother of Middletown.”`,
@@ -2550,7 +2733,7 @@ function route(){
   const back=RETURNING; RETURNING=false; CURKEY='';
   if((h==='map'||h.startsWith('map-'))&&!back) MHIDE.clear();
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
-  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
+  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));
   else if(h.startsWith('r-')) vRecord(h.slice(2)); else if(h.startsWith('map-')) vMap(h.slice(4)); else if(h.startsWith('pmap-')) vPMap(h.slice(5)); else if(h.startsWith('pic-')) vPic(h.slice(4)); else if(h==='pics') vPics(); else if(h==='sources') vSources(); else vHome();
   const key=NAVN+'|'+h, y=back?(SCROLLMEM[key]||0):0;
@@ -2595,7 +2778,7 @@ function askLeave(){
   d.querySelector('#lvStay').onclick=stay; d.onclick=e=>{if(e.target===d) stay()};
   d.querySelector('#lvGo').onclick=()=>{LEAVING=true; d.remove(); history.back();};
 }
-route();
+route(); tourMaybe();
 </script>
 <script>if("serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("sw.js").catch(()=>{})}</script>
 </body>

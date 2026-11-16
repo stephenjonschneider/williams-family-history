@@ -1387,10 +1387,10 @@ function vHome(){
     </div>
     ${ME&&ME.you?`<button class="cta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>You’re in the tree</b><span>Relationships are shown relative to you. Tap to change.</span></div></button>`:''}
     <div class="mstats">
+      ${(()=>{ const g1=Object.values(P).find(p=>p.G===1&&!p.virt); const nA=Object.values(P).filter(p=>p.G>1&&!p.virt).length; return `<button onclick="${g1?`TREEP='${g1.id}';go('anc-${g1.id}')`:"go('fan')"}"><b>${nA.toLocaleString()}</b><span>ancestors</span></button>`; })()}
       <button onclick="pState={q:'',f:'all',lim:80};go('people')"><b>${nPeople.toLocaleString()}</b><span>people</span></button>
-      <button onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:${nRecNew?'true':'false'}};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i>+${nRecNew}</i>`:''}</button>
       <button onclick="go('pics')"><b>${NPHOTO}</b><span>photos</span>${nPicNew?`<i>+${nPicNew}</i>`:''}</button>
-      <button onclick="go('map')"><b>${nMapped.toLocaleString()}</b><span>on the map</span></button>
+      <button onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:${nRecNew?'true':'false'}};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i>+${nRecNew}</i>`:''}</button>
       <button onclick="go('family')"><b>${FAMS.length}</b><span>family lines</span></button>
     </div>
     <h3 class="sec">Start with</h3>
@@ -1782,7 +1782,7 @@ function vAnc(id){
         h+=`<div class="kids lk-${lv}">${p.ps||lv==='user'?`<div class="linknote">${badge(lv,lv==='user'?LVL.user:p.ps.s)}</div>`:''}${pars.map(y=>rec(y,depth+1,k)).join('')}</div>`;}
       return h+'</div>';};
     store('wfh-tree','list');
-    app.innerHTML=topBar('Ancestors of '+(P[id].living?'Living':P[id].n),true)+`<div class="wrap"><div class="chartbar">${treeSeg('list',id)}</div><div class="card small">Tap a name to open it, or <b>+</b> to go back another generation. The line’s style shows the proof for each parent link:<div class="legend">${['documented','strong','probable','open','tree','user'].map(k=>badge(k)).join('')}</div></div><div class="tree">${rec(id,0,'a')}</div><div class="btns"><button class="btn" onclick="go('desc-${id}')">Show descendants instead</button></div></div>`;
+    app.innerHTML=topBar(P[id].G===1?(ME&&ME.you===id?'Your ancestors':'The compiler’s ancestors'):'Ancestors of '+(P[id].living?'Living':P[id].n),true)+`<div class="wrap"><div class="chartbar">${treeSeg('list',id)}</div><div class="card small">Tap a name to open it, or <b>+</b> to go back another generation. The line’s style shows the proof for each parent link:<div class="legend">${['documented','strong','probable','open','tree','user'].map(k=>badge(k)).join('')}</div></div><div class="tree">${rec(id,0,'a')}</div><div class="btns"><button class="btn" onclick="go('desc-${id}')">Show descendants instead</button></div></div>`;
   };
   draw();
   app.onclick=e=>{const t=e.target.closest('.tog'); if(!t) return; const k=t.dataset.k; if(t.textContent==='−'){openSet.delete(k);openSet.add('!'+k)}else{openSet.add(k);openSet.delete('!'+k)} const y=window.scrollY; draw(); window.scrollTo(0,y);};

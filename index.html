@@ -923,6 +923,14 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .mstats button:active{background:#efe6d0}.mstats b{display:block;font-family:var(--head);font-weight:400;font-size:18px;color:var(--green);line-height:1.1}
 .mstats span{display:block;font-size:10.5px;color:var(--muted);line-height:1.15;margin-top:1px}
 .mstats i{position:absolute;top:-7px;right:-3px;background:var(--clay);color:#fff;font-style:normal;font-size:9.5px;font-weight:700;border-radius:999px;padding:1px 5px}
+.wbtn{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 9px;border:0;border-radius:14px;padding:13px 16px;text-align:left;cursor:pointer;color:#f6efdc;font-family:var(--body);
+ background:linear-gradient(160deg,#2f4a32,#3e5f3f 60%,#5d4526);box-shadow:0 3px 0 #1f3322,0 6px 12px rgba(40,30,10,.15);outline:2px solid #c9a25a;outline-offset:-6px}
+.wbtn.d2{background:linear-gradient(160deg,#6b3a26,#8a4e30 60%,#5d4526);box-shadow:0 3px 0 #4a2617,0 6px 12px rgba(40,30,10,.15)}
+.wbtn.d3{background:linear-gradient(160deg,#28495e,#3b6278 60%,#4d4a3a);box-shadow:0 3px 0 #1a3141,0 6px 12px rgba(40,30,10,.15)}
+.wbtn svg{flex:none;width:30px;height:30px;fill:none;stroke:#e2c27c;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.wbtn .wt{flex:1;min-width:0}.wbtn b{display:block;font-family:var(--head);font-weight:400;font-size:19px;line-height:1.15}.wbtn .wt>span{display:block;font-size:12.5px;opacity:.85;margin-top:2px;line-height:1.3}
+.wbtn .wgo{font-size:22px;color:#e2c27c}.wbtn .statnew{position:static;display:inline-block;vertical-align:3px;margin-left:4px;font-family:var(--body);font-style:normal;font-size:11px;font-weight:700;background:#e2c27c;color:#3a2a10;border-radius:999px;padding:1px 7px}
+.hbtns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:4px}.wbtn.half{margin:0 0 9px;padding:12px 12px;gap:9px}.wbtn.half svg{width:26px;height:26px}.wbtn.half b{font-size:17px}.wbtn.half .wgo{display:none}
 .doors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 6px}
 .door{border:0;border-radius:14px;padding:13px 8px 12px;text-align:center;cursor:pointer;color:#f6efdc;background:linear-gradient(160deg,#2f4a32,#3e5f3f 60%,#5d4526);box-shadow:0 3px 0 #1f3322,0 6px 12px rgba(40,30,10,.15);font-family:var(--body);outline:2px solid #c9a25a;outline-offset:-6px}
 .door.d2{background:linear-gradient(160deg,#6b3a26,#8a4e30 60%,#5d4526);box-shadow:0 3px 0 #4a2617,0 6px 12px rgba(40,30,10,.15)}
@@ -1393,14 +1401,12 @@ function vHome(){
     <h3 class="sec">From the archives <span class="tiny muted" style="font-family:var(--body);text-transform:none;letter-spacing:0">· swipe ›</span></h3>
     ${archStrip()}
     <h3 class="sec">More to explore</h3>
-    <div class="xlist">
-      ${xrow("go('road')",'◷','The road in motion','Watch the families settle Monmouth, 1660s to 1956',NEWB)}
-      ${xrow("go('fan')",'◠','The evidence fan','Every ancestor in one chart, coloured by how well each is proved',NEWB)}
-      ${xrow("go('land')",'⌖','Where were the farms?','Old maps and surveys, then and now')}
-      ${xrow("go('gather')",'⌂','Where they gathered','Churches, schools, halls & parks')}
-      ${xrow("rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:"+(nRecNew?'true':'false')+"};go('records')",'▤','The records',nRec.toLocaleString()+' documents · '+nMapped.toLocaleString()+' on the map',nRecNew?`<i class="statnew">+${nRecNew} new</i>`:'')}
-      ${xrow("go('pics')",'▣','Photos',NPHOTO+' pictures of the people and places',nPicNew?`<i class="statnew">+${nPicNew} new</i>`:'')}
-      ${xrow("go('marks')",'▬','How to read the marks','The shading, the proof line and the G-tags')}
+    ${wbtn("go('land')",'d1','<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/>','Where were the farms?','Old maps and surveys, then and now')}
+    ${wbtn("go('gather')",'d2','<path d="M4 20V10l8-6 8 6v10"/><path d="M10 20v-5h4v5M12 4V1.5M10.8 2.6h2.4"/>','Where they gathered','Churches, schools, halls & parks')}
+    ${wbtn("go('marks')",'d3','<rect x="3" y="9" width="18" height="6" rx="1.5"/><path d="M3 19h11"/>','How to read the marks','The shading, the proof line and the G-tags')}
+    <div class="hbtns">
+      ${wbtn("rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:"+(nRecNew?'true':'false')+"};go('records')",'d1 half','<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>','The records',nRec.toLocaleString()+' documents',nRecNew?`<i class="statnew">+${nRecNew}</i>`:'')}
+      ${wbtn("go('pics')",'d2 half','<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/>','Photos',NPHOTO+' pictures',nPicNew?`<i class="statnew">+${nPicNew}</i>`:'')}
     </div>
     <button class="storybtn helpbtn" onclick="go('help')"><span class="sbk">HELP WANTED</span><b>Can you help?</b><span class="sbs">The links still waiting for proof, most important first. A letter, a Bible page or a photo in a drawer could settle one. Share it with family.</span><span class="sbgo">See list ›</span></button>
     <div class="foot">Compiled by Stephen J. Schneider, Point Pleasant Beach<br>Data: ${['Williams','Layton','Newman','Wolcott','Bowne','Safety','Cooper'].filter(f=>D.meta[f]).map(f=>`${fname(f)} v${esc((D.meta[f]||{}).FileVersion||'')}`).join(' · ')} workbooks · Family tree reports of 6 Nov 2026</div>
@@ -1457,6 +1463,7 @@ function fanGo(id){ const c=fanClamp(id); return c===fanRoot()?'fan':'fan-'+c; }
 function treeSeg(on){ const lk=(TREEP&&P[TREEP])?TREEP:null, me=lk||(ME&&ME.you&&P[ME.you]?ME.you:D.anchor);
   const B=[['str','Strength',lk?`go(strHash('${lk}'))`:`STRHL=null;STRNOTE='';go('str-'+(store('wfh-str')||'Williams'))`],['chart','Chart',`go('chart-${me}')`],['list','List',`store('wfh-tree','list');go('anc-${me}')`],['fan','Fan',`go('${lk?fanGo(lk):'fan'}')`]];
   return `<span class="seg">${B.map(([k,l,a])=>`<button${k===on?' class="on"':` onclick="${a}"`}>${l}</button>`).join('')}</span>`; }
+function wbtn(on,cls,svg,t,s,extra){ return `<button class="wbtn ${cls}" onclick="${on}"><svg viewBox="0 0 24 24">${svg}</svg><span class="wt"><b>${esc(t)}${extra?' '+extra:''}</b><span>${esc(s)}</span></span><span class="wgo">›</span></button>`; }
 function xrow(on,ic,t,s,extra){ return `<div class="xrow" onclick="${on}"><span class="xic">${ic}</span><div class="main"><div class="t">${esc(t)} ${extra||''}</div><div class="s">${esc(s)}</div></div><span class="xgo">›</span></div>`; }
 function vFamily(){ setTab('home');
   const te=P[D.anchor], ma=te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n));

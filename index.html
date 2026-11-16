@@ -1499,7 +1499,9 @@ function tourClose(quiet){ const o=document.getElementById('tour'); if(o) o.remo
 function tourMaybe(){ if(store('wfh-tour')) return; const h=location.hash.slice(1); if(/^(kid|kids)/.test(h)) return; setTimeout(()=>{ if(!store('wfh-tour')&&!document.getElementById('tour')) tourOpen(0); },700); }
 /* ---------- family colours (fan chart, road in motion) ---------- */
 const FCOLS=[['Williams','#9a3b28'],['Layton','#2f6b8a'],['Newman','#5d8a33'],['Wolcott','#c08a1e'],['Bowne','#6b4e8a'],['Grover','#9a72b8'],['Stout','#44608f'],['Cooper','#2f8a78'],['Brewer','#b5624f'],['Other','#8f8574']];
-function surn(p){ const w=String(p&&p.n||'').replace(/\(.*?\)|".*?"/g,'').split(/\s+/).filter(x=>x&&!/^(jr|sr|ii|iii|esq)\.?$/i.test(x)); return w.length?w[w.length-1].replace(/[^A-Za-z]/g,''):''; }
+function surn(p){ const w=String(p&&p.n||'').replace(/\(.*?\)|".*?"/g,' ').replace(/\b(van|von|de|der|ten)\s+(?=[A-Z])/gi,m=>m.trim()).split(/\s+/).filter(x=>x&&!/^(jr|sr|i|ii|iii|iv|esq|widow|-)\.?$/i.test(x));
+  if(w.length<2) return '';   // a lone first name ("Mary", "Joan") has no surname to colour by
+  return w[w.length-1].split('-')[0].replace(/[^\p{L}]/gu,''); }
 function famKey(p){ const s=surn(p).toLowerCase(); const m={williams:'Williams',layton:'Layton',leighton:'Layton',newman:'Newman',wolcott:'Wolcott',woolcott:'Wolcott',bowne:'Bowne',grover:'Grover',stout:'Stout',cooper:'Cooper',brewer:'Brewer',brouwer:'Brewer'}; return m[s]||'Other'; }
 function famCol(p){ const k=famKey(p); return (FCOLS.find(x=>x[0]===k)||FCOLS[FCOLS.length-1])[1]; }
 
@@ -1571,10 +1573,23 @@ let ROADD=null, ROADY=1660, ROADPLAY=false, ROADT=0, ROADSP=2.5;
 /* dots: direct-line ancestors, birth to death, at the places the records put them.
    zones: every record that places a family member (direct line or not) at a place lights a soft patch in the family colour,
    fading in a few years before the record and out over the following decades, so a family's country builds up and fades */
+/* the map in motion colours more surnames than the rest of the app: the core families keep their colours, and every other
+   surname that a direct-line ancestor carries (and that turns up at least twice), or that fills a good run of records, gets its own */
+const RXPAL=['#d1495b','#00798c','#e0a526','#5b8e7d','#8d6a9f','#e07a5f','#3d5a80','#a3b18a','#b56576','#2a9d8f','#bc6c25','#6d597a','#e76f51','#457b9d','#7f8c2b','#c06c84','#355070','#9c6644','#4d908e','#d4a373','#5e548e','#f28482','#06a77d','#b07d62','#7b2cbf','#d62828','#1d3557','#90be6d'];
+let RX=null;
+function roadKeys(){ if(RX) return RX; const dot={}, rec={};
+  Object.values(P).forEach(p=>{ if(p.G&&!p.living&&!p.virt&&famKey(p)==='Other'){ const s=surn(p); if(s) dot[s]=(dot[s]||0)+1; } });
+  D.records.forEach(r=>(r.home||[]).forEach(id=>{ const p=P[id]; if(!p||p.living||famKey(p)!=='Other') return; const s=surn(p); if(s) rec[s]=(rec[s]||0)+1; }));
+  const names=new Set([...Object.keys(dot),...Object.keys(rec)]); const score=s=>(dot[s]||0)*6+(rec[s]||0);
+  const keep=[...names].filter(s=>(dot[s]&&(dot[s]+(rec[s]||0))>=2)||(rec[s]||0)>=6).sort((a,b)=>score(b)-score(a)).slice(0,RXPAL.length);
+  const col={}; FCOLS.forEach(([k,c])=>col[k]=c); keep.forEach((s,i)=>col[s]=RXPAL[i]);
+  RX={keep:new Set(keep),col}; return RX; }
+function roadKey(p){ const k=famKey(p); if(k!=='Other') return k; const s=surn(p); return roadKeys().keep.has(s)?s:'Other'; }
+function roadCol(k){ return roadKeys().col[k]||FCOLS[FCOLS.length-1][1]; }
 function roadData(){ if(ROADD) return ROADD;
   const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={}, Z=[];
   const add=(id,q)=>{ (byP[id]=byP[id]||[]).push(q); };
-  const zone=(id,y,lat,lon)=>{ const p=P[id]; if(!p||p.living) return; const f=famKey(p); if(f==='Other') return; Z.push({f,y,lat,lon}); };
+  const zone=(id,y,lat,lon)=>{ const p=P[id]; if(!p||p.living) return; const f=roadKey(p); if(f==='Other') return; Z.push({f,y,lat,lon}); };
   D.records.forEach(r=>{ const pl=PL[r.pl], y=parseInt(String(r.sd||'').slice(0,4)); if(!pl||!(y>1500)) return;
     (r.home||[]).forEach(id=>{ zone(id,y,pl.lat,pl.lon); if(ids.has(id)) add(id,{y,lat:pl.lat,lon:pl.lon,lab:pl.label,r:r.id}); }); });
   (D.homes||[]).forEach(h=>{ const y=yr(h.y); if(!h.ll||!y) return; (h.ppl||[]).forEach(id=>{ zone(id,y,h.ll[0],h.ll[1]); if(ids.has(id)) add(id,{y,lat:h.ll[0],lon:h.ll[1],lab:h.a}); }); });
@@ -1587,7 +1602,7 @@ function roadData(){ if(ROADD) return ROADD;
     const Q=[]; pts.forEach(q=>{ const l=Q[Q.length-1]; if(l&&Math.abs(l.lat-q.lat)<2e-3&&Math.abs(l.lon-q.lon)<2e-3) return; Q.push(q); });
     const last=Q[Q.length-1].y, s=b||Q[0].y, e=d||Math.max(last,b?Math.min(b+65,last+25):last+10);
     let h=0; for(const c of p.id) h=(h*31+c.charCodeAt(0))%997; const an=h/997*2*Math.PI;
-    out.push({id:p.id,p,pts:Q,s,e,col:famCol(p),dx:Math.cos(an)*.006,dy:Math.sin(an)*.0045});
+    out.push({id:p.id,p,pts:Q,s,e,fk:roadKey(p),col:roadCol(roadKey(p)),dx:Math.cos(an)*.006,dy:Math.sin(an)*.0045});
     lo=Math.min(lo,s); hi=Math.max(hi,e); });
   ROADD={L:out,Z,lo:1660,   // Monmouth's English settlement begins in the 1660s; the clock starts there
     hi:Math.min(1960,Math.max(hi,1956))}; return ROADD; }
@@ -1598,14 +1613,14 @@ function roadPos(o,Y){ if(Y<o.s||Y>=o.e+1) return null; const Q=o.pts; let k=-1;
   return [a.lat,a.lon,k]; }
 function mapTog(on){ return `<button class="tbtn mtog${on?' on':''}" onclick="${on?"store('wfh-mapmode','std');go('map')":"store('wfh-mapmode','move');go('mapmove')"}" aria-pressed="${on}" aria-label="Show ancestors in motion"><span class="sw"><i></i></span>In motion</button>`; }
 function roadW(y,Y){ if(Y<y-4) return 0; if(Y<y) return (Y-(y-4))/4; if(Y<=y+15) return 1; if(Y<=y+40) return 1-(Y-y-15)/25; return 0; }
-function vRoad(asMap){ setTab(asMap?'map':'story'); if(asMap) store('wfh-mapmode','move'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
+function vRoad(asMap){ RLEG=''; setTab(asMap?'map':'story'); if(asMap) store('wfh-mapmode','move'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
   app.innerHTML=(asMap?topBar('Map',false,mapTog(true)):topBar('The road in motion',true))+`<div class="wrap">
    <div class="roadtop"><button class="roadplay" id="roadplay" onclick="roadToggle()" aria-label="Play">▶</button><div style="flex:1;min-width:0"><div class="roadyr" id="roadyr">${Math.floor(ROADY)}</div><div class="tiny muted" id="roadct"></div></div>
      <div class="roadsp">${[[1.2,'Slow'],[2.5,'Steady'],[5,'Fast']].map(([v,l])=>`<button class="chip sm ${ROADSP===v?'on':''}" onclick="ROADSP=${v};this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===this))">${l}</button>`).join('')}</div></div>
    <input type="range" class="roadslide" id="roadsl" min="${RD.lo}" max="${RD.hi}" step="1" value="${Math.floor(ROADY)}" aria-label="Year">
    <div class="roadnow" id="roadnow"></div>
    <div id="map" class="roadmap"></div><div class="roadoff tiny muted" id="roadoff"></div>
-   <div class="fanleg">${FCOLS.filter(([k])=>k!=='Other'&&(RD.Z.some(z=>z.f===k)||RD.L.some(o=>famKey(o.p)===k))).map(([k,c])=>`<span><i style="background:${c};border-radius:50%"></i>${k}</span>`).join('')}<span><i style="background:${FCOLS[FCOLS.length-1][1]};border-radius:50%"></i>Other surnames</span></div>
+   <div class="fanleg roadleg" id="roadleg"></div>
    <div class="card small">The soft coloured country is each family’s presence: every deed, survey, tax list, census or home that places a family member somewhere lights that spot, fading in a few years before the record and out over the following decades. Where families overlap, the colours blend, which is where marriages tend to happen. Each dot is one direct-line ancestor (${RD.L.length} of them), shown from birth to death; it drifts to a new place over the few years before a record finds them there. Tap a dot to see who it is.</div></div>`;
   const ren=mkMap(); const lay=L.layerGroup().addTo(MAP); const M={};
   MAP.fitBounds([[40.075,-74.43],[40.49,-73.98]],{padding:[4,4]});
@@ -1614,7 +1629,7 @@ function vRoad(asMap){ setTab(asMap?'map':'story'); if(asMap) store('wfh-mapmode
   const off=document.createElement('canvas'), ox=off.getContext('2d'), cx=cv.getContext('2d');
   const size=()=>{ const r=devicePixelRatio||1, w=box.clientWidth, h=box.clientHeight; [cv,off].forEach(c=>{ c.width=w*r; c.height=h*r; }); cv.style.width=w+'px'; cv.style.height=h+'px'; cx.setTransform(r,0,0,r,0,0); ox.setTransform(r,0,0,r,0,0); };
   size();
-  const colOf=f=>(FCOLS.find(x=>x[0]===f)||FCOLS[FCOLS.length-1])[1]; let spr=null, sprR=0;
+  const colOf=f=>roadCol(f); let spr=null, sprR=0;
   const drawZones=()=>{ const Y=ROADY, w=box.clientWidth, h=box.clientHeight; cx.clearRect(0,0,w,h);
     const c0=MAP.getCenter(), pa=MAP.latLngToContainerPoint(c0), pb=MAP.latLngToContainerPoint([c0.lat+.045,c0.lng]), R=Math.max(14,Math.abs(pa.y-pb.y));   // ~5 km
     if(!spr||sprR!==Math.round(R)){ sprR=Math.round(R); spr=document.createElement('canvas'); const s=sprR*2, r0=devicePixelRatio||1; spr.width=s*r0; spr.height=s*r0; const sx=spr.getContext('2d'); sx.scale(r0,r0);
@@ -1622,13 +1637,17 @@ function vRoad(asMap){ setTab(asMap?'map':'story'); if(asMap) store('wfh-mapmode
     /* one patch per family per place: weights at the same spot add up (capped), so heavy record years glow stronger */
     const by={}; RD.Z.forEach(z=>{ const wt=roadW(z.y,Y); if(wt<=.02) return; const F=by[z.f]=by[z.f]||{}; const k=z.lat.toFixed(3)+','+z.lon.toFixed(3); const c=F[k]=F[k]||{lat:z.lat,lon:z.lon,w:0}; c.w+=wt; });
     const labels=[];
-    Object.entries(by).forEach(([f,F])=>{ ox.globalCompositeOperation='source-over'; ox.clearRect(0,0,w,h);
-      let best=null, bw=0; const seen={};
-      Object.values(F).forEach(c=>{ const wt=Math.min(1.6,c.w); const p=MAP.latLngToContainerPoint([c.lat,c.lon]); if(p.x<-R||p.y<-R||p.x>w+R||p.y>h+R) return;
+    const dpr=devicePixelRatio||1;
+    Object.entries(by).forEach(([f,F])=>{ ox.globalCompositeOperation='source-over';
+      let best=null, bw=0; const seen={}; let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; const PTS=[];
+      Object.values(F).forEach(c=>{ const p=MAP.latLngToContainerPoint([c.lat,c.lon]); if(p.x<-R||p.y<-R||p.x>w+R||p.y>h+R) return; PTS.push([c,p]); x0=Math.min(x0,p.x-R); y0=Math.min(y0,p.y-R); x1=Math.max(x1,p.x+R); y1=Math.max(y1,p.y+R); });
+      if(!PTS.length) return; x0=Math.max(0,Math.floor(x0)); y0=Math.max(0,Math.floor(y0)); x1=Math.min(w,Math.ceil(x1)); y1=Math.min(h,Math.ceil(y1)); const bw0=x1-x0, bh0=y1-y0; if(bw0<=0||bh0<=0) return;
+      ox.clearRect(x0,y0,bw0,bh0);
+      PTS.forEach(([c,p])=>{ const wt=Math.min(1.6,c.w);
         ox.globalAlpha=Math.min(1,wt); ox.drawImage(spr,p.x-sprR,p.y-sprR,sprR*2,sprR*2); if(wt>1){ ox.globalAlpha=wt-1; ox.drawImage(spr,p.x-sprR,p.y-sprR,sprR*2,sprR*2); } ox.globalAlpha=1;
         const k=Math.round(p.x/(R*1.5))+','+Math.round(p.y/(R*1.5)); const s=seen[k]=seen[k]||{x:0,y:0,w:0}; s.x+=p.x*wt; s.y+=p.y*wt; s.w+=wt; if(s.w>bw){ bw=s.w; best=s; } });
-      ox.globalCompositeOperation='source-in'; ox.fillStyle=colOf(f); ox.fillRect(0,0,w,h);
-      cx.globalAlpha=.62; cx.drawImage(off,0,0,w,h); cx.globalAlpha=1;
+      ox.globalCompositeOperation='source-in'; ox.fillStyle=colOf(f); ox.fillRect(x0,y0,bw0,bh0);
+      cx.globalAlpha=.62; cx.drawImage(off,x0*dpr,y0*dpr,bw0*dpr,bh0*dpr,x0,y0,bw0,bh0); cx.globalAlpha=1;
       if(best&&bw>=1.2) labels.push([f,best.x/best.w,best.y/best.w,bw]); });
     cx.font="600 13px 'Fredoka','Trebuchet MS',sans-serif"; cx.textAlign='center'; cx.lineJoin='round';
     const placed=[]; labels.sort((a,b)=>b[3]-a[3]).forEach(([f,x,y])=>{ const t=f==='Other'?'':f; y-=R*.25; const tw=cx.measureText(t).width; let tries=0; while(tries++<8&&placed.some(q=>Math.abs(q[0]-x)<(q[2]+tw)/2+4&&Math.abs(q[1]-y)<16)) y+=16; placed.push([x,y,tw]); y+=R*.25; cx.lineWidth=4; cx.strokeStyle='rgba(255,252,242,.9)'; cx.strokeText(t,x,y-R*.25); cx.fillStyle=colOf(f); cx.fillText(t,x,y-R*.25); }); };
@@ -1643,13 +1662,21 @@ function vRoad(asMap){ setTab(asMap?'map':'story'); if(asMap) store('wfh-mapmode
       if(!ps){ if(lay.hasLayer(m)) lay.removeLayer(m); return; }
       n++; const ll=[ps[0]+o.dy,ps[1]+o.dx]; m.setLatLng(ll); if(!lay.hasLayer(m)) lay.addLayer(m);
       if(!bnd.contains(ll)){ const q=o.pts[ps[2]]; const k=String(q.lab||'').split(/[,(—]/)[0].trim().replace(/^(near|at)\s+/i,''); away[k]=(away[k]||0)+1; } });
-    drawZones();
+    drawZones(); roadLegend(Y);
     yrEl.textContent=Math.floor(Y); ct.textContent=n?`${n} ancestor${n>1?'s':''} living`:'No direct-line ancestor on record this year'; if(!ROADPLAY) sl.value=Math.floor(Y);
     const ot=Object.entries(away).map(([k,c])=>`${k}${c>1?' ('+c+')':''}`).join(' · '); if(ot!==lastOff){ lastOff=ot; offEl.textContent=ot?'Also living, off this map: '+ot:''; }
     const yi=Math.floor(Y), ch=SMAP.filter(s=>{ const m=String(s[4]).match(/(\d{4})s?\D*(\d{4})?/); if(!m) return false; const a=+m[1], z=/→/.test(s[4])?2100:(m[2]?+m[2]+(/s$/.test(s[4])?9:0):a); return yi>=a&&yi<=z; }).map(s=>s[1]).join(' · ');
     if(ch!==lastNow){ lastNow=ch; now.innerHTML=ch?`<b>On the road:</b> ${esc(ch)}`:'&nbsp;'; } };
   sl.oninput=e=>{ ROADY=+e.target.value; if(ROADPLAY) roadToggle(); roadDraw(); };
   roadDraw(); }
+/* the key lists every family on the map this year (zone or dot), the busiest first */
+let RLEG='';
+function roadLegend(Y){ const el=document.getElementById('roadleg'); if(!el) return; const RD=roadData(), w={};
+  RD.Z.forEach(z=>{ const v=roadW(z.y,Y); if(v>.05) w[z.f]=(w[z.f]||0)+v; });
+  RD.L.forEach(o=>{ if(roadPos(o,Y)) w[o.fk]=(w[o.fk]||0)+2; });
+  const ks=Object.keys(w).filter(k=>k!=='Other').sort((a,b)=>w[b]-w[a]); const other=!!w.Other;
+  const h=ks.map(k=>`<span><i style="background:${roadCol(k)};border-radius:50%"></i>${k}</span>`).join('')+(other?`<span><i style="background:${roadCol('Other')};border-radius:50%"></i>Other surnames</span>`:'');
+  if(h!==RLEG){ RLEG=h; el.innerHTML=`<b style="color:var(--ink,#333);margin-right:2px">On the map now:</b>`+h; } }
 function roadToggle(){ const btn=document.getElementById('roadplay'); if(!btn) return; ROADPLAY=!ROADPLAY; btn.textContent=ROADPLAY?'❚❚':'▶'; btn.setAttribute('aria-label',ROADPLAY?'Pause':'Play');
   const RD=roadData(); if(ROADPLAY&&ROADY>=RD.hi) ROADY=RD.lo; ROADT=0;
   const step=ts=>{ if(!ROADPLAY||!document.getElementById('roadyr')){ ROADPLAY=false; return; } if(ROADT){ ROADY=Math.min(RD.hi,ROADY+Math.min(.1,(ts-ROADT)/1000)*ROADSP); } ROADT=ts;

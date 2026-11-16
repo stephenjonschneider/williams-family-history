@@ -967,6 +967,7 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .sstrip{display:flex;gap:2px;height:16px;border-radius:5px;overflow:hidden;margin:2px 0 4px}.sstrip i{flex:1}
 .sstripg{position:relative;height:14px;font-size:11px;color:var(--muted);margin:0 1px}.sstripg span{position:absolute;top:0}
 .sladder{padding:10px 12px}
+.srow.shl{background:#fff3cf;box-shadow:inset 0 0 0 2px #d9a441}
 .srow{display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:8px;cursor:pointer}.srow:active{background:#f1ede2}
 .srow .sg{flex:0 0 auto;min-width:40px;text-align:center;color:#fff;font-weight:600;font-size:13px;border-radius:7px;padding:5px 4px}
 .srow .sn{flex:1;min-width:0}.srow .t{font-family:var(--head);font-size:17px;color:var(--green);line-height:1.2}.srow .s{font-size:12.5px;color:var(--muted)}
@@ -1194,7 +1195,7 @@ function relLine(id){const r=relation(id); if(!r) return ''; const you=refName()
 const app=document.getElementById('app');
 const TABS=[['home','Home','<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],['story','Story','<path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/>'],['people','People','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5c2.6.2 4.3 2 5 5"/>'],['tree','Tree','<circle cx="12" cy="5" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M12 7.2v4.3M6 15.8V12h12v3.8"/>'],['map','Map','<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'],['kids','Kids','']];
 document.getElementById('tabs').innerHTML=TABS.map(([k,l,s])=>k==='kids'?`<button data-t="kids" class="kidtab" aria-label="Kids">${'K,i,d,s'.split(',').map((c,i)=>`<b style="color:${['#e63b2e','#1f6fd1','#f2a400','#2e9e4f'][i]};transform:rotate(${[-10,7,-5,11][i]}deg) translateY(${[1,-2,2,-1][i]}px)">${c}</b>`).join('')}</button>`:`<button data-t="${k}"><svg viewBox="0 0 24 24">${s}</svg>${l}</button>`).join('');
-document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b){const t=b.dataset.t; if(t==='map') mState.ids=null; if(t==='records') rState.pp=''; go(t==='tree'?(store('wfh-tree')==='fan'?fanGo(treeMe()):{chart:'chart-',list:'anc-'}[store('wfh-tree')]?{chart:'chart-',list:'anc-'}[store('wfh-tree')]+treeMe():'str-'+(store('wfh-str')||'Williams')):t)}};
+document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b){const t=b.dataset.t; if(t==='map') mState.ids=null; if(t==='records') rState.pp=''; go(t==='tree'?(store('wfh-tree')==='fan'?fanGo(treeMe()):{chart:'chart-',list:'anc-'}[store('wfh-tree')]?{chart:'chart-',list:'anc-'}[store('wfh-tree')]+treeMe():(TREEP&&P[TREEP]?strHash(TREEP):'str-'+(store('wfh-str')||'Williams'))):t)}};
 function setTab(t){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
 function go(h){ if(location.hash==='#'+h) route(); else location.hash=h; }
 function goBack(){ if(NAVN>0) history.back(); else go('home'); }
@@ -1256,7 +1257,7 @@ function vStr(f){
     <div class="sstripg"><span style="left:0">G${sgv(P[all[0]])}</span><span style="left:${(nUp-1)/Math.max(1,segs.length)*100}%;transform:translateX(-50%)">G${sgv(P[all[nUp-1]])}</span><span style="right:0">G${sgv(P[all[all.length-1]])}</span></div>
     <div class="tiny muted" style="margin:2px 2px 0">${f} line, G${sgv(P[all[0]])}–G${sgv(P[up[nUp-1]])}: ${cnt(['proved','documented'])} documented · ${cnt(['strong'])} strong · ${cnt(['probable','compiled'])} probable or compiled · ${cnt(['hypothesis','open','tree'])} hypothesis, open or unproven${cnt(['user'])?` · ${cnt(['user'])} user`:''}</div>`;
   const row=(id,muted)=>{const p=P[id]; const b=band(p.sc);
-    return `<div class="srow${muted?' mute':''}" onclick="go('p-${id}')"><span class="sg" style="background:${b?b.color:'#bbb'}">G${sgv(p)}</span>
+    return `<div class="srow${muted?' mute':''}${id===STRHL?' shl':''}" onclick="go('p-${id}')"><span class="sg" style="background:${b?b.color:'#bbb'}">G${sgv(p)}</span>
       <div class="sn"><div class="t">${esc(ME&&ME.you&&id===ME.you?'You':(!(ME&&ME.you&&P[ME.you])&&id===D.root?'The compiler':(p.living?'Living':p.n)))}${p.flag?' <span class="badge flag" style="font-size:10.5px">needs proof to child</span>':''}</div><div class="s">${esc(years(p))}${p.sc!=null&&!p.living?` · support ${p.sc}/100`:''}</div></div><span class="chev">›</span></div>`;};
   const con=(child,muted)=>{const L=lnk(child); return `<div class="scon${muted?' mute':''}"><svg width="34" height="34"><line x1="17" y1="0" x2="17" y2="34" stroke="${SC[L.lv]}" stroke-width="4" ${SD[L.lv]?`stroke-dasharray="${SD[L.lv]}"`:''} stroke-linecap="round"/></svg>${badge(L.lv,L.s)}</div>`;};
   let h=''; all.forEach((id,i)=>{ const muted=i>=nUp; if(i>0) h+=con(id,i>nUp-1&&i>=nUp); if(i===nUp) h=h; h+=(i===nUp?`<div class="sjoin">Below: the line continues down to ${ME&&ME.you&&P[ME.you]?'you':'the compiler'}</div>`:'')+row(id,muted); });
@@ -1264,12 +1265,35 @@ function vStr(f){
     <div class="chartbar">${treeSeg('str')}</div>
     <div class="chips" id="sf">${SLINES.map(([k,l])=>{const n=strEntries(k).length; return `<button class="chip ${k===f?'on':''}${n>1?' multi':''}" onclick="strPick('${k}')">${l}${n>1?`<sup class="rtn">${n}</sup>`:''}</button>`}).join('')}</div>
     ${ENT.length>1?`<div class="rtbar"><span>Route ${vi+1} of ${ENT.length}: through <b>${esc(P[ENT[vi]].n)}</b>${gtag(P[ENT[vi]])}</span><button class="btn" onclick="strPick('${f}')">Next route ›</button></div>`:''}
-    <div class="card">${strip}</div>
+    ${STRNOTE&&(!STRHL||all.includes(STRHL))?`<div class="tiny muted" style="margin:0 2px 6px">${esc(STRNOTE)}</div>`:''}<div class="card">${strip}</div>
     <div class="card sladder">${h}</div>
     <div class="tiny muted" style="margin:6px 2px 14px">Each line between two names is one parent link, coloured by its proof: green documented or strong, orange probable or compiled, purple a working hypothesis, red open or unproven (dashed when not documented), the palest green “User” for a link a family member entered themselves — trusted, but with no record or tree behind it yet. The G-tag is shaded by how well that person is supported. Tap a name to open the person.</div></div>`;
+  if(STRHL){ const el=document.querySelector('.srow.shl'); if(el) setTimeout(()=>el.scrollIntoView({block:'center'}),60); }
 }
 
-function strPick(k){ const cur=(location.hash||'').slice(1); if(cur==='str-'+k){ STRV[k]=((STRV[k]||0)+1)%Math.max(1,strEntries(k).length); vStr(k); window.scrollTo(0,0);} else go('str-'+k); }
+/* open Strength on the line that carries a given person: their own surname's line first, then any line where they sit
+   above the join, then any line at all; someone off the direct line is shown through their nearest direct-line descendant */
+let STRHL=null, STRNOTE='';
+let STRIX=null;   // person -> the lines and routes they appear on, built once
+function strIndex(){ if(STRIX) return STRIX; STRIX={};
+  for(const [f] of SLINES){ const E=strEntries(f); for(let v=0;v<E.length;v++){ const {up,down}=strLine(f,E[v]);
+    up.forEach(x=>(STRIX[x]=STRIX[x]||[]).push({f,v,iu:1})); down.forEach(x=>(STRIX[x]=STRIX[x]||[]).push({f,v,iu:0})); } }
+  return STRIX; }
+function strFind(id){ const IX=strIndex();
+  const look=x=>{ const L=IX[x]; if(!L) return null; const fk=famKey(P[x]); return L.map(h=>({f:h.f,v:h.v,hit:x,s:h.iu*2+(h.iu&&h.f===fk?2:0)})).sort((a,b)=>b.s-a.s)[0]; };
+  const own=look(id); if(own) return own;
+  /* off the direct line: nearest relative on a line, through parents and children; at equal distance prefer one sharing the surname */
+  const fk=famKey(P[id]); let ring=[id]; const seen=new Set([id]);
+  for(let d=0; d<4 && ring.length; d++){ const next=[];
+    for(const x of ring) for(const y of (P[x].par||[]).concat(P[x].ch||[])) if(P[y]&&!seen.has(y)){ seen.add(y); next.push(y); }
+    const hits=next.map(look).filter(Boolean); if(hits.length){ hits.sort((a,b)=>((famKey(P[b.hit])===fk)-(famKey(P[a.hit])===fk))||(b.s-a.s)); return hits[0]; }
+    ring=next; }
+  return null; }
+function strHash(id){ const r=id&&P[id]?strFind(id):null; STRHL=null; STRNOTE='';
+  if(!r){ if(id&&P[id]){ const fk=famKey(P[id]); STRNOTE=`${P[id].n} is not closely connected to a direct line, so no one is highlighted here.`; if(SLINES.some(l=>l[0]===fk)) return 'str-'+fk; } return 'str-'+(store('wfh-str')||'Williams'); }
+  STRV[r.f]=r.v; STRHL=r.hit; if(r.hit!==id) STRNOTE=`${P[id].n} is not on a direct line, so this shows the nearest direct-line relative, ${P[r.hit].n}.`;
+  return 'str-'+r.f; }
+function strPick(k){ STRHL=null; STRNOTE=''; const cur=(location.hash||'').slice(1); if(cur==='str-'+k){ STRV[k]=((STRV[k]||0)+1)%Math.max(1,strEntries(k).length); vStr(k); window.scrollTo(0,0);} else go('str-'+k); }
 /* ---------- archives carousel ---------- */
 function archSlides(){
   const A=[{src:IMG.survey,cap:'The 1788 Miery Branch survey — where the Williams homestead at Southard began.',go:'r-W-0021'},
@@ -1389,7 +1413,7 @@ function fanClamp(id){ const h=fanRoot(), hp=P[h], p=P[id]; if(!p||p.living||p.v
   if(p.G&&hp.G) return p.G<hp.G?h:id; const by=yr(p.b); return (by&&by>yr(hp.b))?h:id; }
 function fanGo(id){ const c=fanClamp(id); return c===fanRoot()?'fan':'fan-'+c; }
 function treeSeg(on,id){ const me=id||treeMe();
-  const B=[['str','Strength',`go('str-'+(store('wfh-str')||'Williams'))`],['chart','Chart',`go('chart-${me}')`],['list','List',`store('wfh-tree','list');go('anc-${me}')`],['fan','Fan',`go('${fanGo(me)}')`]];
+  const B=[['str','Strength',`go(strHash('${me}'))`],['chart','Chart',`go('chart-${me}')`],['list','List',`store('wfh-tree','list');go('anc-${me}')`],['fan','Fan',`go('${fanGo(me)}')`]];
   return `<span class="seg">${B.map(([k,l,a])=>`<button${k===on?' class="on"':` onclick="${a}"`}>${l}</button>`).join('')}</span>`; }
 function xrow(on,ic,t,s,extra){ return `<div class="xrow" onclick="${on}"><span class="xic">${ic}</span><div class="main"><div class="t">${esc(t)} ${extra||''}</div><div class="s">${esc(s)}</div></div><span class="xgo">›</span></div>`; }
 function vFamily(){ setTab('home');

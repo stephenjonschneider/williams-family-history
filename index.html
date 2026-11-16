@@ -871,6 +871,9 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .cta b{font-family:var(--head);font-weight:400;font-size:16px;display:block}
 .cta span{font-size:12.5px;opacity:.9}
 /* list rows */
+.srow{display:flex;gap:8px;align-items:stretch}.srow .search{flex:1;min-width:0}
+.keybtn{flex:none;width:52px;border:1px solid var(--line);border-radius:10px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 0;cursor:pointer;color:var(--green);font:600 11.5px var(--body)}
+.keybtn i{display:block;height:5px;border-radius:3px}.keybtn .kb1{width:30px;background:linear-gradient(90deg,#5f9a4a66 0 72%,#e6dfd0 72%)}.keybtn .kb2{width:30px;height:3px;background:linear-gradient(90deg,#2f6b35 0 60%,transparent 60%)}
 .search{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;font-family:var(--body);font-size:16px;line-height:1.3;color:#2e2a24;-webkit-text-fill-color:#2e2a24;caret-color:#2f4a32;opacity:1;-webkit-appearance:none;appearance:none}
 .search::placeholder{color:#9a907f;-webkit-text-fill-color:#9a907f}
 input,select,textarea{color:#2e2a24;-webkit-text-fill-color:#2e2a24}
@@ -1271,7 +1274,7 @@ function vHome(){
     ${archStrip()}
     <h3 class="sec">The family lines</h3>
     <div class="lines">${FAMS.map(f=>`<div class="linecard" onclick="go('anc-${lineStart[f]}')"><b${f==='Bowne'?' class="lc3"':''}>${f==='Bowne'?'Bowne·Grover·Stout':fname(f)}</b><div class="small muted">${blurbs[f]}</div><div class="tiny muted" style="margin-top:4px">${counts[f]} records · see ancestors ›</div></div>`).join('')}</div><div class="tiny muted" style="margin:6px 2px 0">Family totals ${FAMS.reduce((a,f)=>a+counts[f],0).toLocaleString()} (shared records in each) · ${nRec.toLocaleString()} unique</div>
-    <h3 class="sec">How to read the marks</h3>
+    <h3 class="sec" id="marks">How to read the marks</h3>
     <div class="card small"><div class="barkey"><div class="sup" style="background:linear-gradient(90deg,#5f9a4a33 0 70%,transparent 70%),#fff;--pw:82%;--pc:#5f9a4a"><span>Name</span></div><div class="tiny"><b>Wide shading</b> = support for the person · <b>thin line along the bottom</b> = proof of the link to their parents</div></div><b>Support shading.</b> Every name carries a bar showing how well it is backed by evidence independent of the online family tree: records in the research abstracts, the compiler’s proof assessments, and outside sources checked. Less-proven and theoretical names are included on purpose, so the family can see what still needs work.
       <div class="bandkey">${BANDS.map((b,i)=>{const w=[92,72,52,34,14,3][i]; return `<div class="tapk" style="background:linear-gradient(90deg,${b[2]}${i===5?'66':'33'} 0 ${w}%,transparent ${w}%),#fff" onclick="peopleBy('band:${b[0]}')"><span class="dot" style="background:${b[2]}"></span>${b[1]} ›</div>`;}).join('')}</div>
       <div class="tiny muted">${(()=>{const dl=D.people.filter(p=>p.G&&!p.living&&p.sc!=null);const c=BANDS.map(b=>dl.filter(p=>band(p.sc).min===b[0]).length);return 'Direct line ('+dl.length+' people): '+BANDS.map((b,i)=>c[i]+' '+b[1].toLowerCase()).join(' · ')})()}</div></div>
@@ -1297,9 +1300,10 @@ function lvOf(p){ return userOnly(p)?'user':((p.ps&&p.ps.lv)||'tree'); }
 function pFilterLabel(f){ if(f.startsWith('band:')){const b=BANDS.find(x=>x[0]===+f.slice(5)); return b?'Support: '+b[1]:''}
   if(f==='flagdl') return 'Needs proof to child (compiler’s flag) — direct line';
   if(f.startsWith('lv:')){const v=f.slice(3); return 'Parent link: '+LVL[v]+' — each person listed is the child of that link'} return ''; }
+function goMarks(){ go('home'); const f=()=>{ const h=document.getElementById('marks'); if(h) h.scrollIntoView({block:'start'}); }; setTimeout(f,60); setTimeout(f,320); }
 function vPeople(){
   setTab('people');
-  app.innerHTML=topBar('People',false,`<button class="tbtn" onclick="picState='people';picQ='';go('pics')">Photos ›</button>`)+`<div class="wrap"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof to child']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
+  app.innerHTML=topBar('People',false,`<button class="tbtn" onclick="picState='people';picQ='';go('pics')">Photos ›</button>`)+`<div class="wrap"><div class="srow"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><button class="keybtn" onclick="goMarks()" aria-label="How to read the marks" title="How to read the marks"><i class="kb1"></i><i class="kb2"></i><span>Key</span></button></div><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof to child']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
   const draw=()=>{
     const q=pState.q.trim().toLowerCase(); let L=Object.values(P).filter(p=>!p.virt);
     if(pState.f==='dl'||pState.f==='weak'||pState.f==='strong') L=L.filter(p=>p.G&&!p.living); if(pState.f==='flag') L=L.filter(p=>p.flag);

@@ -879,6 +879,11 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .ksx{border:0;background:#efe7d6;width:32px;height:32px;border-radius:50%;font-size:15px;cursor:pointer;color:#4a4235}
 .kssec{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:10px 0 6px}
 .ksmore{display:block;text-align:center;margin-top:6px;font-weight:600;color:var(--green);cursor:pointer;padding:8px}
+.mstats{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:10px 0 2px}
+.mstats button{position:relative;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:7px 2px 6px;cursor:pointer;text-align:center;font-family:var(--body);color:inherit;box-shadow:0 1px 0 rgba(60,45,20,.08)}
+.mstats button:active{background:#efe6d0}.mstats b{display:block;font-family:var(--head);font-weight:400;font-size:18px;color:var(--green);line-height:1.1}
+.mstats span{display:block;font-size:10.5px;color:var(--muted);line-height:1.15;margin-top:1px}
+.mstats i{position:absolute;top:-7px;right:-3px;background:var(--clay);color:#fff;font-style:normal;font-size:9.5px;font-weight:700;border-radius:999px;padding:1px 5px}
 .doors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 6px}
 .door{border:0;border-radius:14px;padding:13px 8px 12px;text-align:center;cursor:pointer;color:#f6efdc;background:linear-gradient(160deg,#2f4a32,#3e5f3f 60%,#5d4526);box-shadow:0 3px 0 #1f3322,0 6px 12px rgba(40,30,10,.15);font-family:var(--body)}
 .door.d2{background:linear-gradient(160deg,#6b3a26,#8a4e30 60%,#5d4526);box-shadow:0 3px 0 #4a2617,0 6px 12px rgba(40,30,10,.15)}
@@ -1307,6 +1312,13 @@ function vHome(){
       <button class="door d3" onclick="go('map')"><svg viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg><b>The Map</b><span>Homes, churches & records</span></button>
     </div>
     ${ME&&ME.you?`<button class="cta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>You’re in the tree</b><span>Relationships are shown relative to you. Tap to change.</span></div></button>`:''}
+    <div class="mstats">
+      <button onclick="pState={q:'',f:'all',lim:80};go('people')"><b>${nPeople.toLocaleString()}</b><span>people</span></button>
+      <button onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:${nRecNew?'true':'false'}};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i>+${nRecNew}</i>`:''}</button>
+      <button onclick="go('pics')"><b>${NPHOTO}</b><span>photos</span>${nPicNew?`<i>+${nPicNew}</i>`:''}</button>
+      <button onclick="go('map')"><b>${nMapped.toLocaleString()}</b><span>on the map</span></button>
+      <button onclick="go('family')"><b>${FAMS.length}</b><span>family lines</span></button>
+    </div>
     <h3 class="sec">Start with</h3>
     <div class="card" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">The Williams, Layton, Newman and Wolcott lines all meet in their children; the Bowne, Grover and Stout families come in through the Laytons.</div></div>
     <div class="card homemap" onclick="goStoryMap()"><div class="skick">WHERE IT ALL HAPPENED</div><div class="hmt">The families’ road</div>

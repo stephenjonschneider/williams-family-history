@@ -1975,10 +1975,11 @@ const SMAP=[ // [n, label, lon, lat, years, families, chapter, app place id, lab
  [9,'Adelphia · Long Brook',-74.246,40.217,'1724–1801','Brewer · Cooper · Layton',7,'adelphia','r'],
  [10,'Shark River',-74.059,40.192,'1742–1850','Newman',9,'sharkriver','r'],
  [11,'Wreck Pond',-74.039,40.141,'1801–1848','Newman',9,'wreckpond','r'],
- [12,'Miery Branch · Southard (Bethel)',-74.224,40.134,'1788–1900','Williams · Layton · Newman',8,'miery','b','Southard (Bethel)'],
+ [12,'Miery Branch · Southard (Bethel)',-74.224,40.134,'1788–1930','Williams · Layton · Newman',8,'miery','b','Southard (Bethel)'],
  [13,'Harmony',-74.30,40.135,'1844–1859','Newman',9,'harmony','t'],
  [14,'Burnt Tavern',-74.42,40.162,'1840s–1870s','Wolcott',9,'burnt','t'],
- [15,'Point Pleasant',-74.068,40.083,'1900 →','Williams',10,'ptpleasant','r']];
+ [15,'Point Pleasant',-74.068,40.083,'1930 →','Williams',10,'ptpleasant','r']];
+SMAP.forEach(s=>{ s[5]=s[5].split(' · ').sort((a,b)=>a.localeCompare(b)).join(' · '); });   // families listed alphabetically
 const SMAP_ROAD=[1,3,4,5,6,7,9,12,15], SMAP_SIDE=[[2,4],[8,14,12],[10,11,12],[13,12]];
 function smapSvg(){
   const lon0=-74.98,lon1=-73.72,lat0=39.98,lat1=40.80,k=560/((lon1-lon0)*Math.cos(40.35*Math.PI/180)), W=560, H=Math.round((lat1-lat0)*k);
@@ -2074,7 +2075,7 @@ function vStory(){
   app.innerHTML=topBar('The Story',true)+`<div class="wrap story">
     <div class="shead"><div class="kicker">MONMOUTH COUNTY · 1640s – 1956</div><h2>How the families became one</h2>
       <p>This history follows several families that started apart and came together. Every name below opens that person's page, and every chip opens the record behind the sentence. Where the story rests on tradition or a working hypothesis, it says so.</p></div>
-    ${CH.map((c,i)=>`<div class="schap"><div class="snum">${i+1}</div><div class="skick">${esc(c[0])}</div><h3>${esc(c[1])}</h3><p>${c[2]}</p>${c[3]?`<p>${c[3]}</p>`:''}
+    ${CH.map((c,i)=>`<div class="schap"><div class="snum">${i+1}</div><div class="skick">${esc(c[0]).replace(/(\d)s\b/g,'$1<span style="text-transform:none">s</span>')}</div><h3>${esc(c[1])}</h3><p>${c[2]}</p>${c[3]?`<p>${c[3]}</p>`:''}
       <div class="schips">${c[4].map(r=>sr(r[0],r[1])).join('')}</div>${c[5]?smap(c[5]):''}</div>`).join('<div class="sjoint">✦</div>')}
     <div class="sjoint">✦</div>${smapBlock()}
     <div class="tiny muted" style="margin:10px 4px 18px;text-align:center">Written from the six research workbooks and the compiler's documents. Proof grades are on each person's page.</div></div>`;

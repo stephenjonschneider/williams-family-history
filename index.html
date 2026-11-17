@@ -959,8 +959,8 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .fanbox{overflow:auto;border-radius:10px;margin:6px 0 4px;-webkit-overflow-scrolling:touch}#fanin{min-width:100%}
 .fanbar{display:flex;align-items:center;gap:6px;margin:4px 0}.chip.sm{padding:3px 11px;font-size:13px}
 .fanleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);margin:6px 2px 10px}.fanleg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}
-.roadzone{position:absolute;inset:0;z-index:450;pointer-events:none}.roadsp{display:flex;gap:4px}.roadoff{min-height:16px;margin:4px 2px 0}
-.rfam .chip i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:0}.rfam{margin-bottom:8px}
+.roadzone{position:absolute;left:0;top:0;pointer-events:none}.roadsp{display:flex;gap:4px}.roadoff{min-height:16px;margin:4px 2px 0}
+.rfam .chip i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:0}.roadwrap{padding-top:8px!important}.chips.rfam{margin:0 0 6px;gap:5px}.chips.rfam .chip{padding:4px 10px;font-size:13.5px;min-height:0}
 .roadplayer{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px 12px 4px;margin:8px 0 2px}
 .roadtop{display:flex;align-items:center;gap:12px;margin:2px 0 4px}.roadplay{flex:none;width:52px;height:52px;border-radius:50%;border:0;background:var(--green);color:#f6f0e2;font-size:20px;cursor:pointer;box-shadow:0 3px 0 #1f3322}
 .roadyr{font-family:var(--head);font-size:40px;line-height:1;color:var(--green);font-variant-numeric:tabular-nums}
@@ -1657,7 +1657,7 @@ function roadPos(o,Y){ if(Y<o.s||Y>=o.e+1) return null; const Q=o.pts; let k=-1;
 function mapTog(on){ return `<button class="tbtn mtog${on?' on':''}" onclick="${on?"store('wfh-mapmode','std');go('map')":"store('wfh-mapmode','move');go('mapmove')"}" aria-pressed="${on}" aria-label="Show ancestors in motion"><span class="sw"><i></i></span>In motion</button>`; }
 function roadW(y,Y){ if(Y<y-4) return 0; if(Y<y) return (Y-(y-4))/4; if(Y<=y+15) return 1; if(Y<=y+40) return 1-(Y-y-15)/25; return 0; }
 function vRoad(asMap){ RLEG=''; setTab(asMap?'map':'story'); if(asMap) store('wfh-mapmode','move'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
-  app.innerHTML=(asMap?topBar('Map',false,mapTog(true)):topBar('The road in motion',true))+`<div class="wrap">
+  app.innerHTML=(asMap?topBar('Map',false,mapTog(true)):topBar('The road in motion',true))+`<div class="wrap roadwrap">
    <div class="chips rfam" id="rfam"><button class="chip ${RFAM.size===RCORE.length?'on':''}" data-k="*">All</button>${RCORE.map(k=>`<button class="chip ${RFAM.size<RCORE.length&&RFAM.has(k)?'on':''}" data-k="${k}"><i style="background:${roadCol(k)}"></i>${k==='Bowne'?'Bowne·Grover·Stout':k}</button>`).join('')}</div>
    <div id="map" class="roadmap"></div><div class="roadoff tiny muted" id="roadoff"></div>
    <div class="roadplayer">
@@ -1674,12 +1674,14 @@ function vRoad(asMap){ RLEG=''; setTab(asMap?'map':'story'); if(asMap) store('wf
   const ren=mkMap(); const lay=L.layerGroup().addTo(MAP); const M={};
   MAP.fitBounds([[40.075,-74.43],[40.49,-73.98]],{padding:[4,4]});
   /* the presence layer: one canvas over the base map, under the dots */
-  const box=document.getElementById('map'), cv=document.createElement('canvas'); cv.className='roadzone'; box.appendChild(cv);
+  const box=document.getElementById('map'), cv=document.createElement('canvas'); cv.className='roadzone';
+  /* the zones live in their own map pane, above the base map and below the dots and pop-ups */
+  if(!MAP.getPane('zones')){ MAP.createPane('zones').style.zIndex=450; MAP.getPane('zones').style.pointerEvents='none'; } MAP.getPane('zones').appendChild(cv);
   const off=document.createElement('canvas'), ox=off.getContext('2d'), cx=cv.getContext('2d');
   const size=()=>{ const r=devicePixelRatio||1, w=box.clientWidth, h=box.clientHeight; [cv,off].forEach(c=>{ c.width=w*r; c.height=h*r; }); cv.style.width=w+'px'; cv.style.height=h+'px'; cx.setTransform(r,0,0,r,0,0); ox.setTransform(r,0,0,r,0,0); };
   size();
   const colOf=f=>roadCol(f); let spr=null, sprR=0;
-  const drawZones=()=>{ const Y=ROADY, w=box.clientWidth, h=box.clientHeight; cx.clearRect(0,0,w,h);
+  const drawZones=()=>{ const Y=ROADY, w=box.clientWidth, h=box.clientHeight; L.DomUtil.setPosition(cv,MAP.containerPointToLayerPoint([0,0])); cx.clearRect(0,0,w,h);
     const c0=MAP.getCenter(), pa=MAP.latLngToContainerPoint(c0), pb=MAP.latLngToContainerPoint([c0.lat+.045,c0.lng]), R=Math.max(14,Math.abs(pa.y-pb.y));   // ~5 km
     if(!spr||sprR!==Math.round(R)){ sprR=Math.round(R); spr=document.createElement('canvas'); const s=sprR*2, r0=devicePixelRatio||1; spr.width=s*r0; spr.height=s*r0; const sx=spr.getContext('2d'); sx.scale(r0,r0);
       const g=sx.createRadialGradient(sprR,sprR,0,sprR,sprR,sprR); g.addColorStop(0,'rgba(0,0,0,.6)'); g.addColorStop(.55,'rgba(0,0,0,.32)'); g.addColorStop(1,'rgba(0,0,0,0)'); sx.fillStyle=g; sx.fillRect(0,0,s,s); }
@@ -1717,7 +1719,7 @@ function vRoad(asMap){ RLEG=''; setTab(asMap?'map':'story'); if(asMap) store('wf
     const yi=Math.floor(Y), ch=SMAP.filter(s=>{ const m=String(s[4]).match(/(\d{4})s?\D*(\d{4})?/); if(!m) return false; const a=+m[1], z=/→/.test(s[4])?2100:(m[2]?+m[2]+(/s$/.test(s[4])?9:0):a); return yi>=a&&yi<=z; }).map(s=>s[1]).join(' · ');
     if(ch!==lastNow){ lastNow=ch; now.innerHTML=ch?`<b>On the road:</b> ${esc(ch)}`:'&nbsp;'; } };
   sl.oninput=e=>{ ROADY=+e.target.value; if(ROADPLAY) roadToggle(); roadDraw(); };
-  roadDraw(); }
+  roadDraw(); setTimeout(()=>{ if(MAP&&document.getElementById('roadyr')){ MAP.invalidateSize(); roadDraw(); } },200); MAP.on('moveend',()=>{ if(!ROADPLAY&&document.getElementById('roadyr')) roadDraw(); }); }
 /* the key lists every family on the map this year (zone or dot), the busiest first */
 let RLEG='';
 function roadLegend(Y){ const el=document.getElementById('roadleg'); if(!el) return; const RD=roadData(), w={};
@@ -1728,6 +1730,7 @@ function roadLegend(Y){ const el=document.getElementById('roadleg'); if(!el) ret
   if(h!==RLEG){ RLEG=h; el.innerHTML=`<b style="color:var(--ink,#333);margin-right:2px">On the map now:</b>`+h; } }
 function roadToggle(){ const btn=document.getElementById('roadplay'); if(!btn) return; ROADPLAY=!ROADPLAY; btn.textContent=ROADPLAY?'❚❚':'▶'; btn.setAttribute('aria-label',ROADPLAY?'Pause':'Play');
   const RD=roadData(); if(ROADPLAY&&ROADY>=RD.hi) ROADY=RD.lo; ROADT=0;
+  if(ROADPLAY){ const m=document.getElementById('map'), tb=document.querySelector('.topbar'); if(m){ const y=m.getBoundingClientRect().top+window.scrollY-((tb&&tb.offsetHeight)||50)-6; window.scrollTo({top:Math.max(0,y),behavior:'smooth'}); } }
   const step=ts=>{ if(!ROADPLAY||!document.getElementById('roadyr')){ ROADPLAY=false; return; } if(ROADT){ ROADY=Math.min(RD.hi,ROADY+Math.min(.1,(ts-ROADT)/1000)*ROADSP); } ROADT=ts;
     roadDraw(); const sl=document.getElementById('roadsl'); if(sl) sl.value=Math.floor(ROADY);
     if(ROADY>=RD.hi){ ROADPLAY=false; btn.textContent='▶'; return; } requestAnimationFrame(step); };

@@ -1465,11 +1465,11 @@ function treeSeg(on){ const lk=(TREEP&&P[TREEP])?TREEP:null, me=lk||(ME&&ME.you&
   return `<span class="seg">${B.map(([k,l,a])=>`<button${k===on?' class="on"':` onclick="${a}"`}>${l}</button>`).join('')}</span>`; }
 function wbtn(on,cls,svg,t,s,extra){ return `<button class="wbtn ${cls}" onclick="${on}"><svg viewBox="0 0 24 24">${svg}</svg><span class="wt"><b>${esc(t)}${extra?' '+extra:''}</b><span>${esc(s)}</span></span><span class="wgo">›</span></button>`; }
 /* the surnames carried by the ancestors (G2 and up, living kept out), most ancestors first */
-function ancNames(){ const m={}; Object.values(P).forEach(p=>{ if(!(p.G>1)||p.virt||p.living) return; const s=surn(p); if(!s) return; const o=m[s]=m[s]||{s,n:0,y:9999,G:99}; o.n++; const b=yr(p.b)||yr(p.d); if(b&&b<o.y) o.y=b; if(p.G<o.G) o.G=p.G; });
+function ancNames(){ const m={}; Object.values(P).forEach(p=>{ if(!(p.G>1)||p.virt||p.living) return; const raw=surn(p); if(!raw) return; const s=surnC(raw); const o=m[s]=m[s]||{s,n:0,y:9999,G:99,v:new Set()}; o.n++; if(raw!==s&&raw.toLowerCase()!==s.toLowerCase()) o.v.add(raw); const b=yr(p.b)||yr(p.d); if(b&&b<o.y) o.y=b; if(p.G<o.G) o.G=p.G; });
   return Object.values(m).sort((a,b)=>b.n-a.n||a.s.localeCompare(b.s)); }
 function vNames(){ setTab('people'); const L=ancNames(); const nA=L.reduce((a,o)=>a+o.n,0);
   app.innerHTML=topBar('Family names',true)+`<div class="wrap"><div class="card small">The ${L.length} surnames carried by ${ME&&ME.you?'your':'the compiler’s'} ${nA} named ancestors, most ancestors first. Tap a name to find everyone in the app who carries it.</div>
-   <div class="list">${L.map(o=>`<div class="row" onclick="pState={q:'${o.s.replace(/'/g,'')}',f:'all',lim:80};go('people')"><div class="main"><div class="t">${esc(o.s)}</div><div class="s">${o.n} ancestor${o.n>1?'s':''}${o.y<9999?' · from c.'+o.y:''} · nearest <span class="gtag" style="margin-left:2px">G${o.G}</span></div></div><span class="xgo" style="color:var(--clay);font-size:20px">›</span></div>`).join('')}</div></div>`; }
+   <div class="list">${L.map(o=>`<div class="row" onclick="pState={q:'${o.s.replace(/'/g,'')}',f:'all',lim:80};go('people')"><div class="main"><div class="t">${esc(o.s)}</div>${o.v.size?`<div class="s">also spelled ${[...o.v].map(v=>`<a href="#" onclick="event.stopPropagation();pState={q:'${v.replace(/'/g,'')}',f:'all',lim:80};go('people');return false" style="display:inline">${esc(v)}</a>`).join(', ')}</div>`:''}<div class="s">${o.n} ancestor${o.n>1?'s':''}${o.y<9999?' · from c.'+o.y:''} · nearest <span class="gtag" style="margin-left:2px">G${o.G}</span></div></div><span class="xgo" style="color:var(--clay);font-size:20px">›</span></div>`).join('')}</div></div>`; }
 function xrow(on,ic,t,s,extra){ return `<div class="xrow" onclick="${on}"><span class="xic">${ic}</span><div class="main"><div class="t">${esc(t)} ${extra||''}</div><div class="s">${esc(s)}</div></div><span class="xgo">›</span></div>`; }
 function vFamily(){ setTab('home');
   const te=P[D.anchor], ma=te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n));
@@ -1512,10 +1512,13 @@ function tourClose(quiet){ const o=document.getElementById('tour'); if(o) o.remo
 function tourMaybe(){ if(store('wfh-tour')) return; const h=location.hash.slice(1); if(/^(kid|kids)/.test(h)) return; setTimeout(()=>{ if(!store('wfh-tour')&&!document.getElementById('tour')) tourOpen(0); },700); }
 /* ---------- family colours (fan chart, road in motion) ---------- */
 const FCOLS=[['Williams','#9a3b28'],['Layton','#2f6b8a'],['Newman','#5d8a33'],['Wolcott','#c08a1e'],['Bowne','#6b4e8a'],['Grover','#9a72b8'],['Stout','#44608f'],['Cooper','#2f8a78'],['Brewer','#b5624f'],['Other','#8f8574']];
-function surn(p){ const w=String(p&&p.n||'').replace(/\(.*?\)|".*?"/g,' ').replace(/\b(van|von|de|der|ten)\s+(?=[A-Z])/gi,m=>m.trim()).split(/\s+/).filter(x=>x&&!/^(jr|sr|i|ii|iii|iv|esq|widow|-)\.?$/i.test(x));
+function surn(p){ const w=String(p&&p.n||'').replace(/\(.*?\)|".*?"/g,' ').replace(/\b(van|von|de|der|ten)\s+(?=[A-Z])/gi,m=>m.trim()).split(/\s+/).filter(x=>x&&!/^(jr|sr|i|ii|iii|iv|esq|widow|captain|capt|lieutenant|lt|rev|dr|col|major|ensign|deacon|-)\.?$/i.test(x));
   if(w.length<2) return '';   // a lone first name ("Mary", "Joan") has no surname to colour by
   return w[w.length-1].split('-')[0].replace(/[^\p{L}]/gu,''); }
-function famKey(p){ const s=surn(p).toLowerCase(); const m={williams:'Williams',layton:'Layton',leighton:'Layton',newman:'Newman',wolcott:'Wolcott',woolcott:'Wolcott',bowne:'Bowne',grover:'Grover',stout:'Stout',cooper:'Cooper',brewer:'Brewer',brouwer:'Brewer'}; return m[s]||'Other'; }
+/* known spellings of the same family name, folded to one */
+const SURV={Brouwer:'Brewer',Bruer:'Brewer',Dantzebaechers:'Danzenbaker',Danzenpecker:'Danzenbaker',Joeckel:'Jöckel',Jockel:'Jöckel',Mathewes:'Matthews',Mathews:'Matthews',vanPelt:'VanPelt',Sigars:'Sygars',Seger:'Sygars',Seeger:'Sygars',Sager:'Sygars',Bennet:'Bennett',Leighton:'Layton',Laydon:'Layton',Newmon:'Newman',Woolley:'Wooley',Woolcott:'Wolcott',Wollcott:'Wolcott',Bowen:'Bowne',Clavenger:'Clevenger',Clevinger:'Clevenger',Worthly:'Worthley',Lippencott:'Lippincott'};
+function surnC(s){ return SURV[s]||s; }
+function famKey(p){ const s=surnC(surn(p)).toLowerCase(); const m={williams:'Williams',layton:'Layton',leighton:'Layton',newman:'Newman',wolcott:'Wolcott',woolcott:'Wolcott',bowne:'Bowne',grover:'Grover',stout:'Stout',cooper:'Cooper',brewer:'Brewer',brouwer:'Brewer'}; return m[s]||'Other'; }
 function famCol(p){ const k=famKey(p); return (FCOLS.find(x=>x[0]===k)||FCOLS[FCOLS.length-1])[1]; }
 
 /* ---------- the evidence fan ---------- */
@@ -1591,13 +1594,13 @@ let ROADD=null, ROADY=1660, ROADPLAY=false, ROADT=0, ROADSP=2.5;
 const RXPAL=['#d1495b','#00798c','#e0a526','#5b8e7d','#8d6a9f','#e07a5f','#3d5a80','#a3b18a','#b56576','#2a9d8f','#bc6c25','#6d597a','#e76f51','#457b9d','#7f8c2b','#c06c84','#355070','#9c6644','#4d908e','#d4a373','#5e548e','#f28482','#06a77d','#b07d62','#7b2cbf','#d62828','#1d3557','#90be6d'];
 let RX=null;
 function roadKeys(){ if(RX) return RX; const dot={}, rec={};
-  Object.values(P).forEach(p=>{ if(p.G&&!p.living&&!p.virt&&famKey(p)==='Other'){ const s=surn(p); if(s) dot[s]=(dot[s]||0)+1; } });
-  D.records.forEach(r=>(r.home||[]).forEach(id=>{ const p=P[id]; if(!p||p.living||famKey(p)!=='Other') return; const s=surn(p); if(s) rec[s]=(rec[s]||0)+1; }));
+  Object.values(P).forEach(p=>{ if(p.G&&!p.living&&!p.virt&&famKey(p)==='Other'){ const s=surnC(surn(p)); if(s) dot[s]=(dot[s]||0)+1; } });
+  D.records.forEach(r=>(r.home||[]).forEach(id=>{ const p=P[id]; if(!p||p.living||famKey(p)!=='Other') return; const s=surnC(surn(p)); if(s) rec[s]=(rec[s]||0)+1; }));
   const names=new Set([...Object.keys(dot),...Object.keys(rec)]); const score=s=>(dot[s]||0)*6+(rec[s]||0);
   const keep=[...names].filter(s=>(dot[s]&&(dot[s]+(rec[s]||0))>=2)||(rec[s]||0)>=6).sort((a,b)=>score(b)-score(a)).slice(0,RXPAL.length);
   const col={}; FCOLS.forEach(([k,c])=>col[k]=c); keep.forEach((s,i)=>col[s]=RXPAL[i]);
   RX={keep:new Set(keep),col}; return RX; }
-function roadKey(p){ const k=famKey(p); if(k!=='Other') return k; const s=surn(p); return roadKeys().keep.has(s)?s:'Other'; }
+function roadKey(p){ const k=famKey(p); if(k!=='Other') return k; const s=surnC(surn(p)); return roadKeys().keep.has(s)?s:'Other'; }
 function roadCol(k){ return roadKeys().col[k]||FCOLS[FCOLS.length-1][1]; }
 function roadData(){ if(ROADD) return ROADD;
   const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={}, Z=[];

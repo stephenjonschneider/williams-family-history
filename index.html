@@ -1388,10 +1388,10 @@ function vHome(){
     ${ME&&ME.you?`<button class="cta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>You’re in the tree</b><span>Relationships are shown relative to you. Tap to change.</span></div></button>`:''}
     <div class="mstats">
       ${(()=>{ const g1=Object.values(P).find(p=>p.G===1&&!p.virt); const nA=Object.values(P).filter(p=>p.G>1&&!p.virt).length; return `<button onclick="${g1?`TREEP='${g1.id}';go('anc-${g1.id}')`:"go('fan')"}"><b>${nA.toLocaleString()}</b><span>ancestors</span></button>`; })()}
-      <button onclick="pState={q:'',f:'all',lim:80};go('people')"><b>${nPeople.toLocaleString()}</b><span>people</span></button>
+      <button onclick="go('names')"><b>${ancNames().length}</b><span>family names</span></button>
       <button onclick="go('pics')"><b>${NPHOTO}</b><span>photos</span>${nPicNew?`<i>+${nPicNew}</i>`:''}</button>
       <button onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:${nRecNew?'true':'false'}};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i>+${nRecNew}</i>`:''}</button>
-      <button onclick="go('family')"><b>${FAMS.length}</b><span>family lines</span></button>
+      <button onclick="pState={q:'',f:'all',lim:80};go('people')"><b>${nPeople.toLocaleString()}</b><span>people</span></button>
     </div>
     <h3 class="sec">Start with</h3>
     <div class="card" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">${meetLine()}</div></div>
@@ -1464,6 +1464,12 @@ function treeSeg(on){ const lk=(TREEP&&P[TREEP])?TREEP:null, me=lk||(ME&&ME.you&
   const B=[['str','Strength',lk?`go(strHash('${lk}'))`:`STRHL=null;STRNOTE='';go('str-'+(store('wfh-str')||'Williams'))`],['chart','Chart',`go('chart-${me}')`],['list','List',`store('wfh-tree','list');go('anc-${me}')`],['fan','Fan',`go('${lk?fanGo(lk):'fan'}')`]];
   return `<span class="seg">${B.map(([k,l,a])=>`<button${k===on?' class="on"':` onclick="${a}"`}>${l}</button>`).join('')}</span>`; }
 function wbtn(on,cls,svg,t,s,extra){ return `<button class="wbtn ${cls}" onclick="${on}"><svg viewBox="0 0 24 24">${svg}</svg><span class="wt"><b>${esc(t)}${extra?' '+extra:''}</b><span>${esc(s)}</span></span><span class="wgo">›</span></button>`; }
+/* the surnames carried by the ancestors (G2 and up, living kept out), most ancestors first */
+function ancNames(){ const m={}; Object.values(P).forEach(p=>{ if(!(p.G>1)||p.virt||p.living) return; const s=surn(p); if(!s) return; const o=m[s]=m[s]||{s,n:0,y:9999,G:99}; o.n++; const b=yr(p.b)||yr(p.d); if(b&&b<o.y) o.y=b; if(p.G<o.G) o.G=p.G; });
+  return Object.values(m).sort((a,b)=>b.n-a.n||a.s.localeCompare(b.s)); }
+function vNames(){ setTab('people'); const L=ancNames(); const nA=L.reduce((a,o)=>a+o.n,0);
+  app.innerHTML=topBar('Family names',true)+`<div class="wrap"><div class="card small">The ${L.length} surnames carried by ${ME&&ME.you?'your':'the compiler’s'} ${nA} named ancestors, most ancestors first. Tap a name to find everyone in the app who carries it.</div>
+   <div class="list">${L.map(o=>`<div class="row" onclick="pState={q:'${o.s.replace(/'/g,'')}',f:'all',lim:80};go('people')"><div class="main"><div class="t">${esc(o.s)}</div><div class="s">${o.n} ancestor${o.n>1?'s':''}${o.y<9999?' · from c.'+o.y:''} · nearest <span class="gtag" style="margin-left:2px">G${o.G}</span></div></div><span class="xgo" style="color:var(--clay);font-size:20px">›</span></div>`).join('')}</div></div>`; }
 function xrow(on,ic,t,s,extra){ return `<div class="xrow" onclick="${on}"><span class="xic">${ic}</span><div class="main"><div class="t">${esc(t)} ${extra||''}</div><div class="s">${esc(s)}</div></div><span class="xgo">›</span></div>`; }
 function vFamily(){ setTab('home');
   const te=P[D.anchor], ma=te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n));
@@ -2939,7 +2945,7 @@ function route(){
   const back=RETURNING; RETURNING=false; CURKEY='';
   if((h==='map'||h.startsWith('map-'))&&!back) MHIDE.clear();
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
-  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='mapmove') vRoad(true); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
+  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='names') vNames(); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='mapmove') vRoad(true); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));
   else if(h.startsWith('r-')) vRecord(h.slice(2)); else if(h.startsWith('map-')) vMap(h.slice(4)); else if(h.startsWith('pmap-')) vPMap(h.slice(5)); else if(h.startsWith('pic-')) vPic(h.slice(4)); else if(h==='pics') vPics(); else if(h==='sources') vSources(); else vHome();
   const key=NAVN+'|'+h, y=back?(SCROLLMEM[key]||0):0;

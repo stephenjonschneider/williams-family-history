@@ -919,10 +919,13 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .kssec{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:10px 0 6px}
 .ksmore{display:block;text-align:center;margin-top:6px;font-weight:600;color:var(--green);cursor:pointer;padding:8px}
 .mstats{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:10px 0 2px}
-.mstats button{position:relative;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:7px 2px 6px;cursor:pointer;text-align:center;font-family:var(--body);color:inherit;box-shadow:0 1px 0 rgba(60,45,20,.08)}
-.mstats button:active{background:#efe6d0}.mstats b{display:block;font-family:var(--head);font-weight:400;font-size:18px;color:var(--green);line-height:1.1}
-.mstats span{display:block;font-size:10.5px;color:var(--muted);line-height:1.15;margin-top:1px}
-.mstats i{position:absolute;top:-7px;right:-3px;background:var(--clay);color:#fff;font-style:normal;font-size:9.5px;font-weight:700;border-radius:999px;padding:1px 5px}
+.mstats button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;border:0;border-radius:11px;padding:9px 2px 8px;cursor:pointer;text-align:center;font-family:var(--body);color:#f6efdc;
+ background:linear-gradient(160deg,#2f4a32,#3e5f3f 60%,#5d4526);box-shadow:0 2px 0 #1f3322,0 4px 8px rgba(40,30,10,.15);outline:1.5px solid #c9a25a;outline-offset:-4px}
+.mstats button:nth-child(5n+2),.mstats button:nth-child(5n+5){background:linear-gradient(160deg,#6b3a26,#8a4e30 60%,#5d4526);box-shadow:0 2px 0 #4a2617,0 4px 8px rgba(40,30,10,.15)}
+.mstats button:nth-child(5n+3){background:linear-gradient(160deg,#28495e,#3b6278 60%,#4d4a3a);box-shadow:0 2px 0 #1a3141,0 4px 8px rgba(40,30,10,.15)}
+.mstats button:active{transform:translateY(2px);box-shadow:0 0 0 rgba(0,0,0,0)}.mstats b{display:block;font-family:var(--head);font-weight:400;font-size:19px;color:#f6efdc;line-height:1.1}
+.mstats span{display:block;font-size:10.5px;color:#e2c27c;line-height:1.15;margin-top:1px}
+.mstats i{position:absolute;top:-7px;right:-3px;background:#e2c27c;color:#3a2a10;font-style:normal;font-size:9.5px;font-weight:700;border-radius:999px;padding:1px 5px;box-shadow:0 1px 2px rgba(0,0,0,.25)}
 .wbtn{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 9px;border:0;border-radius:14px;padding:13px 16px;text-align:left;cursor:pointer;color:#f6efdc;font-family:var(--body);
  background:linear-gradient(160deg,#2f4a32,#3e5f3f 60%,#5d4526);box-shadow:0 3px 0 #1f3322,0 6px 12px rgba(40,30,10,.15);outline:2px solid #c9a25a;outline-offset:-6px}
 .wbtn.d2{background:linear-gradient(160deg,#6b3a26,#8a4e30 60%,#5d4526);box-shadow:0 3px 0 #4a2617,0 6px 12px rgba(40,30,10,.15)}

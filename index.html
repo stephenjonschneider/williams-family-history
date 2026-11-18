@@ -1024,6 +1024,7 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .mtog{display:inline-flex;align-items:center;gap:7px;padding:4px 11px 4px 5px}.mtog .sw{position:relative;width:32px;height:18px;border-radius:999px;background:rgba(246,240,226,.3);transition:background .2s}
 .mtog .sw i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#f6f0e2;transition:left .2s}.mtog.on .sw{background:#d9a441}.mtog.on .sw i{left:16px}
 .scon .snote{font-size:12px;color:var(--muted);font-style:italic;margin-left:8px;line-height:1.3}
+.svar{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:0 0 8px}.svar .tiny{margin-right:2px}
 .srow.shl{background:#fff3cf;box-shadow:inset 0 0 0 2px #d9a441}
 .srow{display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:8px;cursor:pointer}.srow:active{background:#f1ede2}
 .srow .sg{flex:0 0 auto;min-width:40px;text-align:center;color:#fff;font-weight:600;font-size:13px;border-radius:7px;padding:5px 4px}
@@ -1440,7 +1441,8 @@ function peopleBy(f){ pState={q:'',f,lim:200}; go('people'); }
 function userOnly(p){ if(!p) return false; if(p.virt) return true; const hasRec=(p.rs&&p.rs.length)>0;
   if(p.living) return !hasRec; return !hasRec && !(p.src||[]).some(x=>!/^(compiler|entered on this device)$/i.test(x)); }
 function lvOf(p){ return userOnly(p)?'user':((p.ps&&p.ps.lv)||'tree'); }
-function pFilterLabel(f){ if(f.startsWith('band:')){const b=BANDS.find(x=>x[0]===+f.slice(5)); return b?'Support: '+b[1]:''}
+function pFilterLabel(f){ if(f.startsWith('sn:')){ const S=f.slice(3), v=Object.entries(SURV).filter(([a,b])=>b===S).length; return 'Surname: '+S+(v?' (all spellings)':''); }
+ if(f.startsWith('band:')){const b=BANDS.find(x=>x[0]===+f.slice(5)); return b?'Support: '+b[1]:''}
   if(f==='flagdl') return 'Needs proof to child (compiler’s flag) — direct line';
   if(f.startsWith('lv:')){const v=f.slice(3); return 'Parent link: '+LVL[v]+' — each person listed is the child of that link'} return ''; }
 /* the marks key: one source for the home page section and the People-page pop-up */
@@ -1486,8 +1488,8 @@ function wbtn(on,cls,svg,t,s,extra){ return `<button class="wbtn ${cls}" onclick
 function ancNames(){ const m={}; Object.values(P).forEach(p=>{ if(!(p.G>1)||p.virt||p.living) return; const raw=surn(p); if(!raw) return; const s=surnC(raw); const o=m[s]=m[s]||{s,n:0,y:9999,G:99,v:new Set()}; o.n++; if(raw!==s&&raw.toLowerCase()!==s.toLowerCase()) o.v.add(raw); const b=yr(p.b)||yr(p.d); if(b&&b<o.y) o.y=b; if(p.G<o.G) o.G=p.G; });
   return Object.values(m).sort((a,b)=>b.n-a.n||a.s.localeCompare(b.s)); }
 function vNames(){ setTab('people'); const L=ancNames(); const nA=L.reduce((a,o)=>a+o.n,0);
-  app.innerHTML=topBar('Family names',true)+`<div class="wrap"><div class="card small">The ${L.length} surnames carried by ${ME&&ME.you?'your':'the compiler’s'} ${nA} named ancestors, most ancestors first. Tap a name to find everyone in the app who carries it.</div>
-   <div class="list">${L.map(o=>`<div class="row" onclick="pState={q:'${o.s.replace(/'/g,'')}',f:'all',lim:80};go('people')"><div class="main"><div class="t">${esc(o.s)}</div>${o.v.size?`<div class="s">also spelled ${[...o.v].map(v=>`<a href="#" onclick="event.stopPropagation();pState={q:'${v.replace(/'/g,'')}',f:'all',lim:80};go('people');return false" style="display:inline">${esc(v)}</a>`).join(', ')}</div>`:''}<div class="s">${o.n} ancestor${o.n>1?'s':''}${o.y<9999?' · from c.'+o.y:''} · nearest <span class="gtag" style="margin-left:2px">G${o.G}</span></div></div><span class="xgo" style="color:var(--clay);font-size:20px">›</span></div>`).join('')}</div></div>`; }
+  app.innerHTML=topBar('Family names',true)+`<div class="wrap"><div class="card small">The ${L.length} surnames carried by ${ME&&ME.you?'your':'the compiler’s'} ${nA} named ancestors, most ancestors first. Tap a name to see everyone in the app who carries it, in all its spellings.</div>
+   <div class="list">${L.map(o=>`<div class="row" onclick="pState={q:'',f:'sn:${o.s.replace(/'/g,'')}',sv:'',lim:80};go('people')"><div class="main"><div class="t">${esc(o.s)}</div>${o.v.size?`<div class="s">also spelled ${esc([...o.v].join(', '))}</div>`:''}<div class="s">${o.n} ancestor${o.n>1?'s':''}${o.y<9999?' · from c.'+o.y:''} · nearest <span class="gtag" style="margin-left:2px">G${o.G}</span></div></div><span class="xgo" style="color:var(--clay);font-size:20px">›</span></div>`).join('')}</div></div>`; }
 function xrow(on,ic,t,s,extra){ return `<div class="xrow" onclick="${on}"><span class="xic">${ic}</span><div class="main"><div class="t">${esc(t)} ${extra||''}</div><div class="s">${esc(s)}</div></div><span class="xgo">›</span></div>`; }
 function vFamily(){ setTab('home');
   const te=P[D.anchor], ma=te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n));
@@ -1758,6 +1760,8 @@ function vPeople(){
     const q=pState.q.trim().toLowerCase(); let L=Object.values(P).filter(p=>!p.virt);
     if(pState.f==='dl'||pState.f==='weak'||pState.f==='strong') L=L.filter(p=>p.G&&!p.living); if(pState.f==='flag') L=L.filter(p=>p.flag);
     if(pState.f==='flagdl') L=L.filter(p=>p.flag&&p.G&&!p.living);
+    /* a surname with all its spellings, optionally narrowed to one spelling */
+    let SV=null; if(pState.f.startsWith('sn:')){ const S=pState.f.slice(3); L=L.filter(p=>surnC(surn(p))===S); SV={}; L.forEach(p=>{ const r=surn(p); SV[r]=(SV[r]||0)+1; }); if(pState.sv&&SV[pState.sv]) L=L.filter(p=>surn(p)===pState.sv); }
     if(pState.f.startsWith('band:')){const m=+pState.f.slice(5); L=L.filter(p=>p.G&&!p.living&&p.sc!=null&&band(p.sc).min===m);}
     if(pState.f.startsWith('lv:')){const v=pState.f.slice(3); L=L.filter(p=>p.G&&!p.living&&(p.par||[]).some(y=>P[y])&&lvOf(p)===v);}
     if(q){const T=qTerms(q); L=L.filter(p=>qMatch(p.n+' '+(p.b||'')+' '+(p.bp||'')+' '+(p.d||'')+' '+(p.dp||''),T));}
@@ -1766,7 +1770,7 @@ function vPeople(){
     if(pState.f==='weak') L.sort((a,b)=>(a.sc-b.sc)||(a.G-b.G));
     if(pState.f==='strong') L.sort((a,b)=>(b.sc-a.sc)||(a.G-b.G));
     if(pState.f.startsWith('band:')||pState.f.startsWith('lv:')||pState.f==='flagdl') L.sort((a,b)=>(a.G-b.G)||((yr(a.b)||0)-(yr(b.b)||0)));
-    const fl=pFilterLabel(pState.f); document.getElementById('pl').innerHTML=(fl?`<div class="fbar"><span>${esc(fl)}</span><button onclick="pState.f='dl';vPeople()" aria-label="Clear">×</button></div>`:'')+`<div class="tiny muted" style="margin:0 2px 6px">${L.length} people</div>`+(L.length?L.slice(0,pState.lim).map(p=>prow(p.id,((pState.f==='weak'||pState.f==='strong')&&p.sc!=null?p.sc+'/100':'')+(p.bp?((pState.f==='weak'||pState.f==='strong')?' · ':'')+esc(p.bp.split(',')[0]):''))).join(''):'<div class="empty">No one matches.</div>')+(L.length>pState.lim?`<button class="more" id="pm">Show more (${L.length-pState.lim})</button>`:'');
+    const fl=pFilterLabel(pState.f); document.getElementById('pl').innerHTML=(fl?`<div class="fbar"><span>${esc(fl)}</span><button onclick="pState.f='dl';pState.sv='';vPeople()" aria-label="Clear">×</button></div>`:'')+(SV&&Object.keys(SV).length>1?`<div class="chips svar"><span class="tiny muted">Spellings</span><button class="chip sm ${!pState.sv?'on':''}" onclick="pState.sv='';vPeople()">All</button>${Object.entries(SV).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`<button class="chip sm ${pState.sv===k?'on':''}" onclick="pState.sv='${k.replace(/'/g,'')}';vPeople()">${esc(k)} <span class="muted">${n}</span></button>`).join('')}</div>`:'')+`<div class="tiny muted" style="margin:0 2px 6px">${L.length} people</div>`+(L.length?L.slice(0,pState.lim).map(p=>prow(p.id,((pState.f==='weak'||pState.f==='strong')&&p.sc!=null?p.sc+'/100':'')+(p.bp?((pState.f==='weak'||pState.f==='strong')?' · ':'')+esc(p.bp.split(',')[0]):''))).join(''):'<div class="empty">No one matches.</div>')+(L.length>pState.lim?`<button class="more" id="pm">Show more (${L.length-pState.lim})</button>`:'');
     const m=document.getElementById('pm'); if(m) m.onclick=()=>{pState.lim+=150;draw()};
   };
   document.getElementById('pq').oninput=e=>{pState.q=e.target.value;pState.lim=80;draw()};

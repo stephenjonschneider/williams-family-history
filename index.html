@@ -1023,12 +1023,13 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .sladder{padding:10px 12px}
 .mtog{display:inline-flex;align-items:center;gap:7px;padding:4px 11px 4px 5px}.mtog .sw{position:relative;width:32px;height:18px;border-radius:999px;background:rgba(246,240,226,.3);transition:background .2s}
 .mtog .sw i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#f6f0e2;transition:left .2s}.mtog.on .sw{background:#d9a441}.mtog.on .sw i{left:16px}
+.scon .snote{font-size:12px;color:var(--muted);font-style:italic;margin-left:8px;line-height:1.3}
 .srow.shl{background:#fff3cf;box-shadow:inset 0 0 0 2px #d9a441}
 .srow{display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:8px;cursor:pointer}.srow:active{background:#f1ede2}
 .srow .sg{flex:0 0 auto;min-width:40px;text-align:center;color:#fff;font-weight:600;font-size:13px;border-radius:7px;padding:5px 4px}
 .srow .sn{flex:1;min-width:0}.srow .t{font-family:var(--head);font-size:17px;color:var(--green);line-height:1.2}.srow .s{font-size:12.5px;color:var(--muted)}
 .srow .chev{color:var(--muted);font-size:20px}
-.scon{display:flex;align-items:center;gap:6px;margin:-2px 0 -2px 7px;height:34px}.scon .badge{font-size:11px}
+.scon{display:flex;align-items:center;gap:6px;margin:-2px 0 -2px 7px;min-height:34px}.scon .badge{font-size:11px}
 .srow.mute .t{font-size:15px;color:#5d6a57}.srow.mute .sg{opacity:.75}.scon.mute{opacity:.75}
 .sjoin{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:6px 4px 2px;border-top:1px dashed var(--line);padding-top:8px}
 .pphead{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin:8px 0 2px;font-weight:600}
@@ -1167,7 +1168,7 @@ function fp(n,y){const p=D.people.find(q=>q.n===n&&yr(q.b)===y);return p?p.id:nu
 const IMGS={};
 const SURVEY_CAP='Survey of 22 May 1788 by Anthony Dennis for Kenneth Hankinson at the request of Daniel Williams: 30 acres of pine land on the Miery Branch, Shrewsbury (later Howell). Record W-0021.';
 window.PHOTOS={1:IMG.cath,2:IMG.goldie}; window.PHOTO_CAPS={1:'Catherine Louisa Newman Williams',2:'Harry F. Williams with Goldie'};
-const LVL={proved:'Proved',documented:'Documented',strong:'Strong',probable:'Probable',compiled:'Compiled',hypothesis:'Hypothesis',open:'Open question',tree:'Tree only',user:'User'};
+const LVL={proved:'Proved',documented:'Documented',strong:'Strong',probable:'Probable',compiled:'Compiled',hypothesis:'Hypothesis',open:'Open',tree:'Tree only',user:'User'};
 const esc=s=>gShift(String(s==null?'':s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const yr=s=>{const m=String(s||'').match(/(1[5-9]\d\d|20\d\d)/);return m?+m[1]:null};
 function years(p){ if(p.living) return 'Living'+(p.ly?' · b. '+p.ly:'');
@@ -1305,7 +1306,12 @@ function vStr(f){
   if(!SLINES.some(l=>l[0]===f)) f='Williams'; setTab('tree'); store('wfh-tree','str'); store('wfh-str',f);
   const ENT=strEntries(f); const vi=(STRV[f]||0)%Math.max(1,ENT.length);
   const {up,down}=strLine(f,ENT[vi]); const all=up.concat(down); const nUp=up.length;
-  const lnk=c=>{const p=P[c]; const lv=lvOf(p); return {lv, s:lv==='user'?LVL.user:((p.ps&&p.ps.s)||LVL.tree)}};
+  /* the tag names the grade only. Where the workbook grades the two parents apart ("Documented (father) · Strong (mother)"),
+     the tag shows the grade of the parent this line runs through */
+  const lnk=(c,par)=>{ const p=P[c]; let lv=lvOf(p); const s=String(p.ps&&p.ps.s||'');
+    const side=par&&P[par]?(sex(par)===1?'father':'mother'):null, m=side&&s.match(new RegExp('(Documented|Strong|Probable|Compiled|Hypothesis|Open|Tree only)[^·]*\\('+side+'\\)','i'));
+    if(m){ const k={documented:'documented',strong:'strong',probable:'probable',compiled:'compiled',hypothesis:'hypothesis',open:'open','tree only':'tree'}[m[1].toLowerCase()]; if(k) lv=k; }
+    return {lv, s:LVL[lv], note:STRNOTEP[c]||''}; };
   // strip across the top: one segment per parent link, oldest on the left
   const segs=[]; for(let i=1;i<all.length;i++){ const L=lnk(all[i]); segs.push({lv:L.lv,g:sgv(P[all[i-1]]),own:i<nUp}); }
   const cnt=k=>segs.filter(x=>x.own&&(k.includes(x.lv))).length;
@@ -1315,8 +1321,8 @@ function vStr(f){
   const row=(id,muted)=>{const p=P[id]; const b=band(p.sc);
     return `<div class="srow${muted?' mute':''}${id===STRHL?' shl':''}" onclick="go('p-${id}')"><span class="sg" style="background:${b?b.color:'#bbb'}">G${sgv(p)}</span>
       <div class="sn"><div class="t">${esc(ME&&ME.you&&id===ME.you?'You':(!(ME&&ME.you&&P[ME.you])&&id===D.root?'The compiler':(p.living?'Living':p.n)))}${p.flag?' <span class="badge flag" style="font-size:10.5px">needs proof to child</span>':''}</div><div class="s">${esc(years(p))}${p.sc!=null&&!p.living?` · support ${p.sc}/100`:''}</div></div><span class="chev">›</span></div>`;};
-  const con=(child,muted)=>{const L=lnk(child); return `<div class="scon${muted?' mute':''}"><svg width="34" height="34"><line x1="17" y1="0" x2="17" y2="34" stroke="${SC[L.lv]}" stroke-width="4" ${SD[L.lv]?`stroke-dasharray="${SD[L.lv]}"`:''} stroke-linecap="round"/></svg>${badge(L.lv,L.s)}</div>`;};
-  let h=''; all.forEach((id,i)=>{ const muted=i>=nUp; if(i>0) h+=con(id,i>nUp-1&&i>=nUp); if(i===nUp) h=h; h+=(i===nUp?`<div class="sjoin">Below: the line continues down to ${ME&&ME.you&&P[ME.you]?'you':'the compiler'}</div>`:'')+row(id,muted); });
+  const con=(child,muted,par)=>{const L=lnk(child,par); return `<div class="scon${muted?' mute':''}"><svg width="34" height="34"><line x1="17" y1="0" x2="17" y2="34" stroke="${SC[L.lv]}" stroke-width="4" ${SD[L.lv]?`stroke-dasharray="${SD[L.lv]}"`:''} stroke-linecap="round"/></svg>${badge(L.lv,L.s)}${L.note?`<span class="snote">${esc(L.note)}</span>`:''}</div>`;};
+  let h=''; all.forEach((id,i)=>{ const muted=i>=nUp; if(i>0) h+=con(id,i>nUp-1&&i>=nUp,all[i-1]); if(i===nUp) h=h; h+=(i===nUp?`<div class="sjoin">Below: the line continues down to ${ME&&ME.you&&P[ME.you]?'you':'the compiler'}</div>`:'')+row(id,muted); });
   app.innerHTML=topBar('Strength of each line',true)+`<div class="wrap">
     <div class="chartbar">${treeSeg('str')}</div>
     <div class="chips" id="sf">${SLINES.map(([k,l])=>{const n=strEntries(k).length; return `<button class="chip ${k===f?'on':''}${n>1?' multi':''}" onclick="strPick('${k}')">${l}${n>1?`<sup class="rtn">${n}</sup>`:''}</button>`}).join('')}</div>
@@ -1330,6 +1336,8 @@ function vStr(f){
 /* open Strength on the line that carries a given person: their own surname's line first, then any line where they sit
    above the join, then any line at all; someone off the direct line is shown through their nearest direct-line descendant */
 let STRHL=null, STRNOTE='';
+/* the one link on the Strength pages that carries a note beside its grade */
+const STRNOTEP={p79:'John’s father: Andrew, or a son of Andrew’s brother Samuel.'};
 let STRIX=null;   // person -> the lines and routes they appear on, built once
 function strIndex(){ if(STRIX) return STRIX; STRIX={};
   for(const [f] of SLINES){ const E=strEntries(f); for(let v=0;v<E.length;v++){ const {up,down}=strLine(f,E[v]);

@@ -1911,8 +1911,9 @@ function vChart(id){
 
 const TYPES=[['deed',/deed|quitclaim|release|conveyance|indenture|partition|sheriff/i,'Deeds'],['mort',/mortgage|bond/i,'Mortgages & bonds'],['survey',/survey|warrant|patent|return|plat|tract/i,'Surveys & warrants'],['will',/will|probate|inventory|administration|estate|orphans|surrogate|guardian/i,'Wills & estates'],['court',/court|suit|plaintiff|defendant|judgment|common pleas/i,'Court'],['church',/marriage|quaker|friends|church|baptism|bible|burial|cemetery|grave/i,'Family & church'],['census',/census|ratable|tax|militia|enlist|pension|army|register/i,'Census, tax & military'],['news',/newspaper|obituary|death certificate|birth|map/i,'Papers & certificates'],['comp',/compiled|index|tree|finding aid/i,'Compiled & indexes']];
 /* search: words match anywhere; "quoted words" must appear together, as written */
-function qTerms(q){const T=[]; (q||'').replace(/[“”„‟]/g,'"').replace(/"([^"]*)"|(\S+)/g,(m,ph,w)=>{ if(ph!==undefined){ph=ph.trim(); if(ph) T.push({ph:new RegExp('(^|[^a-z0-9])'+ph.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s+')+'($|[^a-z0-9])')})} else if(w){T.push({w:w.toLowerCase()})} return ''}); return T}
-function qMatch(text,T){const s=(text||'').toLowerCase(); return T.every(t=>t.ph?t.ph.test(s):s.includes(t.w))}
+function qTerms(q){const T=[]; (q||'').replace(/[“”„‟]/g,'"').replace(/"([^"]*)"|(\S+)/g,(m,ph,w)=>{ if(ph!==undefined){ph=ph.trim(); if(ph) T.push({ph:new RegExp('(^|[^a-z0-9])'+ph.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/\s+/g,'\\s+')+'($|[^a-z0-9])')})} else if(w){ w=w.toLowerCase(); T.push({w, re:new RegExp('(^|[^a-z0-9])'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'))})} return ''}); return T}
+/* a typed word matches from the start of a word, so “Layton” finds Laytons but not Claytons */
+function qMatch(text,T){const s=(text||'').toLowerCase(); return T.every(t=>t.ph?t.ph.test(s):(t.re?t.re.test(s):s.includes(t.w)))}
 const TDESC={deed:'Land sales, releases, quitclaims, partitions and sheriff\'s deeds — who owned what, bought from whom, and who lived next door.',
  mort:'Mortgages and bonds — money borrowed against land, often naming wives, heirs and neighbours.',
  survey:'Proprietors\' warrants, surveys, patents and returns of land, with their maps and courses — East Jersey Early Land Records.',

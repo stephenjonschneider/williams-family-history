@@ -1025,6 +1025,13 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .mtog .sw i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#f6f0e2;transition:left .2s}.mtog.on .sw{background:#d9a441}.mtog.on .sw i{left:16px}
 .scon .snote{font-size:12px;color:var(--muted);font-style:italic;margin-left:8px;line-height:1.3}
 .svar{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:0 0 8px}.svar .tiny{margin-right:2px}
+.lifecard{cursor:pointer;position:relative;padding-right:46px}.lifecard .skick{font-size:11px;letter-spacing:.1em;text-transform:none;color:var(--clay);font-weight:700}
+.lifecard .lt{font-family:var(--head);font-size:22px;color:var(--green);margin:2px 0 4px}.lifecard .lgo{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--clay);font-size:14px;font-weight:700}
+.lifepage .skick{font-size:11.5px;letter-spacing:.1em;text-transform:none;color:var(--clay);font-weight:700}.lifepage h2{font-family:var(--head);font-weight:400;color:var(--green);font-size:28px;margin:4px 0 2px}
+.lifepage .lsub{font-style:italic;color:var(--muted);margin-bottom:10px}.lifepage p{line-height:1.6;text-align:justify;text-align-last:left;hyphens:auto;-webkit-hyphens:auto}
+.fnr{color:var(--clay);font-weight:700;cursor:pointer;font-size:.7em;margin-left:1px;padding:0 1px}.lbtns{margin:12px 0 4px}
+.lsrc{font-family:var(--head);font-weight:400;color:var(--green);font-size:19px;margin:16px 0 6px}.lsrcs{padding-left:22px;margin:0;font-size:13.5px;line-height:1.45}.lsrcs li{margin:0 0 6px;border-radius:6px;transition:background .4s}.lsrcs li.hit{background:#fff3cf}
+.lsrcs a{cursor:pointer;color:var(--green);text-decoration:underline;text-decoration-color:#c9bda3}
 .srow.shl{background:#fff3cf;box-shadow:inset 0 0 0 2px #d9a441}
 .srow{display:flex;align-items:center;gap:10px;padding:6px 4px;border-radius:8px;cursor:pointer}.srow:active{background:#f1ede2}
 .srow .sg{flex:0 0 auto;min-width:40px;text-align:center;color:#fff;font-weight:600;font-size:13px;border-radius:7px;padding:5px 4px}
@@ -1423,6 +1430,8 @@ function vHome(){
     <h3 class="sec">More to explore</h3>
     ${wbtn("go('land')",'d1','<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/>','Where were the farms?','Old maps and surveys, then and now')}
     ${wbtn("go('gather')",'d2','<path d="M4 20V10l8-6 8 6v10"/><path d="M10 20v-5h4v5M12 4V1.5M10.8 2.6h2.4"/>','Where they gathered','Churches, schools, halls & parks')}
+    <h3 class="sec">Lives behind the records</h3>
+    ${LIVES.map(lifeCard).join('')}
     ${wbtn("go('marks')",'d3','<rect x="3" y="9" width="18" height="6" rx="1.5"/><path d="M3 19h11"/>','How to read the marks','The shading, the proof line and the G-tags')}
     <div class="hbtns">
       ${wbtn("rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:"+(nRecNew?'true':'false')+"};go('records')",'d1 half','<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>','The records',nRec.toLocaleString()+' documents',nRecNew?`<i class="statnew">+${nRecNew}</i>`:'')}
@@ -1490,6 +1499,90 @@ function ancNames(){ const m={}; Object.values(P).forEach(p=>{ if(!(p.G>1)||p.vi
 function vNames(){ setTab('people'); const L=ancNames(); const nA=L.reduce((a,o)=>a+o.n,0);
   app.innerHTML=topBar('Family names',true)+`<div class="wrap"><div class="card small">The ${L.length} surnames carried by ${ME&&ME.you?'your':'the compiler’s'} ${nA} named ancestors, most ancestors first. Tap a name to see everyone in the app who carries it, in all its spellings.</div>
    <div class="list">${L.map(o=>`<div class="row" onclick="pState={q:'',f:'all',sn:'${o.s.replace(/'/g,'')}',sv:'',lim:80};go('people')"><div class="main"><div class="t">${esc(o.s)}</div>${o.v.size?`<div class="s">also spelled ${esc([...o.v].join(', '))}</div>`:''}<div class="s">${o.n} ancestor${o.n>1?'s':''}${o.y<9999?' · from c.'+o.y:''} · nearest <span class="gtag" style="margin-left:2px">G${o.G}</span></div></div><span class="xgo" style="color:var(--clay);font-size:20px">›</span></div>`).join('')}</div></div>`; }
+/* ---------- Lives behind the records: personal stories, each with numbered sources ---------- */
+const LIVES=[
+ {k:'penelope', pid:'p1060', kick:'GRAVESEND & MIDDLETOWN · c.1620s – AFTER 1705', t:'Penelope Stout', sub:'The “Mother of Middletown,” and the legend that grew around her',
+  body:()=>[
+  `Every Stout descendant knows the story. A ship bound for New Amsterdam runs aground near Sandy Hook. The passengers walk on toward the Dutch town, but a young woman stays behind with her sick husband. Lenape men find them, kill him and leave her for dead. She hides for days in a hollow tree until an old Indian carries her to his village, heals her wounds and later brings her to New Amsterdam. There she meets and marries an Englishman, ${sp('p1135','Richard Stout')}. Years afterward, when the family has settled across the bay, the same old man slips into her house to warn her of an attack, and the settlers are saved.[[1]]`,
+  `It is a gripping tale, but it was first printed in 1765 by the historian Samuel Smith, more than a century after the events it describes. In 1792 Morgan Edwards published a second version from Oliver Hart, the Hopewell minister, which gave her the surname “Van Princis” and the famous claim that she lived to 110. Later writers added a name for the first husband, a scalping and noble Dutch parents. The versions disagree on where the ship came ashore, how long she hid and who rescued her, and no record has been found of the wreck.[[1]]`,
+  `The records tell a quieter story. On 12 September 1648 the town court at Gravesend, on Dutch Long Island, questioned “Pennellope Prince” for saying that a neighbour's wife had milked Thomas Applegate's cow. She “acknowledged her fault” and made amends, and both sides were satisfied.[[2]] Her name was Prince, an English name, which casts doubt on the Dutch heritage of the legend. She married Richard Stout, a Nottinghamshire man who had served seven years at sea and held a Gravesend plantation by 1643. Their children were born from about 1645 to 1669.[[1]][[3]]`,
+  `In 1665 Richard was one of the twelve patentees of the Monmouth purchase, and the Stouts were remembered as one of the first five families to settle on it.[[4]] That December their daughter ${sp('p981','Mary')} married ${sp('p649','James Bowne')} at Gravesend, the first marriage joining two of this history's founding families.`,
+  `At Middletown, Penelope appears in the records beside her husband. In 1679/80 she and Richard sold their house, barn and orchard. On 23 September 1684 she came before the justices herself to acknowledge the sale and the £66 5s paid.[[5]] In 1690 Richard set aside a lot and meadow for her “joynture,” her support as a widow.[[1]]`,
+  `Richard's will of 9 June 1703, signed with his mark, left “my loving wife” the orchard, her rooms in the house, the cellar and the use of all his land for life.[[6]] The will was proved in October 1705. Penelope was alive when he wrote it, and after that the records fall silent. Tradition places her grave at Middletown.`,
+  `Whatever happened on the beach, the woman in the records is remarkable enough. She stood up in a Dutch town court, crossed the bay with the first settlers, raised a large family and outlived her husband. Her children's families spread through Monmouth and far beyond, and she is still remembered as the Mother of Middletown.`],
+  src:[
+   {t:'“Penelope Stout,” Wikipedia (the 1648 Gravesend record, the Middletown deeds, and the published versions from Smith 1765 and Edwards 1792 onward)',u:'https://en.wikipedia.org/wiki/Penelope_Stout'},
+   {t:'“The 1648 slander trial,” Searching for Penelope Stout (Gravesend Town Records, 12 Sept 1648)',u:'https://searchingforpenelopestout.blogspot.com/2013/06/the-1648-slander-trial.html'},
+   {r:'BG-0306',t:'Herald F. Stout, Stout and Allied Families (1951): Richard Stout'},
+   {r:'BG-0270',t:'Lee, Genealogical and Memorial History of N.J. (1910): the first five families'},
+   {r:'BG-0122',t:'Richard and Penelope Stout acknowledge their sale, 23 Sept 1684'},
+   {r:'BG-0310',t:'Will of Richard Stout Senior, 9 June 1703'}]},
+
+ {k:'jamesgrover', pid:'p657', kick:'LYNN, GRAVESEND & MIDDLETOWN · c.1620s – 1685/6', t:'James Grover', sub:'Rebel at Gravesend, founder of Middletown, tavern keeper, ironmaster and justice',
+  body:()=>[
+  `Nobody knows where in England ${sp('p657','James Grover')} was born. He may be the James Grover, servant of James Hubbard, who in December 1642 bound himself to a carpenter at Lynn, Massachusetts, to learn the trade. Hubbard was at his side for the next twenty years.[[1]]`,
+  `By February 1646 he had a house lot and a twenty-acre farm in the first division of Gravesend, the English town Lady Deborah Moody had planted on Dutch Long Island.[[2]] He was not a quiet neighbour. On 9 March 1655 he, Hubbard and George Baxter raised the English flag at Gravesend and proclaimed the English Republic. The others were arrested for treason; Grover escaped to Boston and on to England. In 1657 he came back with a letter from Oliver Cromwell to the English of Long Island. Governor Stuyvesant ordered him brought to New Amsterdam, but Grover slipped away and left the letter behind, and Stuyvesant sent it to Holland unopened.[[2]][[3]]`,
+  `When the English took New Netherland in 1664, Grover was among the men licensed to bargain with the Navesink sachems, and on 8 April 1665 he was one of the twelve patentees of the Monmouth purchase. When the accounts were settled in 1670, every purchaser's payment went to “James Grover &amp; Company”: he, John Tilton and William Goulding had laid out the wampum, coats, kettles, guns and powder that paid the sachems.[[2]][[4]]`,
+  `He sold his Gravesend farm in 1667 and became one of the first settlers of Middletown. He helped survey the town lots, drew lot No. 16 and served as the first town clerk.[[3]] On 10 July 1667 Governor Philip Carteret licensed “James Grouer of Nauesinc to keep an ordinary, or victualing house,” one of the earliest tavern licences on record in New Jersey.[[5]][[6]] In 1669 he took on the town mill, promising to grind the townspeople's corn first and to make meal as good as any in New York. He was also one of the founders of the Baptist church at Middletown.[[5]]`,
+  `He could be on both sides of a quarrel. In 1668 he and John Bowne went to the first Assembly as Middletown's deputies and took the oath to the Proprietors. The town meeting disowned them, and the repudiation in the town book is signed “Testis James Grover, Towne Clarke.”[[7]] That August he carried the settlers' letter about their land titles to Governor Nicolls.[[8]]`,
+  `On 24 August 1674 the sachems of the Toponemese sold Grover, John Bowne and Richard Hartshorne the land at “the Falls.”[[9]][[10]] There, by tradition, Grover started the first ironworks in New Jersey, bringing the Leonard brothers from Massachusetts to work the bog iron. The venture needed more money than he had, and by 1675 the works had passed to Lewis Morris, whose Tinton Manor was built on them with the labour of enslaved Africans.[[11]][[12]] The records held here do not yet show the transfer itself.`,
+  `He rose with the colony. He was lieutenant of the Middletown foot company from 1672, built a mill on Staten Island for New York's governor in 1673, and that summer was chosen with John Bowne to treat with the Dutch when they briefly retook New York.[[5]] From 1675 he sat as a justice of the county court, “Mr James Grover” beside Capt. John Bowne,[[13]] and he patented more than a thousand acres, including his mill seat on the Navesink. In 1683 he was again lieutenant, with his son ${sp('p282','Safety')} as ensign.[[14]]`,
+  `On 18 November 1685 he gave land to “my son Safety Grover,” and on 1 December he made his will. He was buried before 28 December, when his executors paid for the funeral and for fencing the grave. His widow Rebecca was maintained from the estate, his sons rebuilt the house and the mill, and Lewis Morris sued the executors.[[15]][[16]] He left five children: James, Joseph, Abigail (Mrs Benjamin Borden), Safety and Hannah.`],
+  src:[
+   {r:'BG-0267',t:'Essex Co. court record, 27 Dec 1642 (via The Great Migration Begins)'},
+   {r:'BG-0268',t:'Stillwell, Historical and Genealogical Miscellany vol. 3: Grover at Gravesend'},
+   {t:'James Grover memorial biography, Find a Grave',u:'https://findagrave.com/memorial/123076932/james-grover'},
+   {r:'BG-0137',t:'Monmouth purchase accounts, 5 July 1670'},
+   {r:'BG-0269',t:'Stillwell vol. 3: Grover at Middletown (the ordinary licence, the mill, the church)'},
+   {t:'Flagon and Trencher, list of New Jersey taverner ancestors (James Grover, Navesink, 1667)',u:'https://flagonandtrencher.org/wp-content/uploads/2025/08/taverners-nj.pdf'},
+   {r:'BG-0485',t:'Middletown Town Book, Oct 1668: the deputies repudiated'},
+   {r:'BG-0135',t:'Governor Nicolls to the inhabitants, 10 Aug 1668'},
+   {r:'BG-0404',t:'Indian deed for “the Falls,” 24 Aug 1674'},
+   {t:'“New Jersey land deed, 1674,” Princeton University Library',u:'https://static-prod.lib.princeton.edu/republic/new-jersey-land-deed-1674'},
+   {t:'History of Tinton Falls, Borough of Tinton Falls',u:'https://tintonfalls.com/visitor/history'},
+   {t:'“How enslavement came to Monmouth County,” Monmouth Timeline',u:'https://monmouthtimeline.org/timeline/how-enslavement-came-to-monmouth-county/'},
+   {r:'BG-0181',t:'Court orders, 4 Sept 1677: Capt. John Bowne and Mr James Grover, justices'},
+   {r:'BG-0493',t:'Militia commissions, 3 Dec 1683'},
+   {r:'S-0076',t:'Deed of gift to “my son Safety Grover,” 18 Nov 1685'},
+   {r:'BG-0287',t:'Executors’ account of James Grover’s estate, 1685–87'}]},
+
+ {k:'safetygrover', pid:'p282', kick:'GRAVESEND & MIDDLETOWN · c.1658 – AFTER 1726', t:'Captain Safety Grover', sub:'Militia officer and magistrate, and one of the men who took the Governor prisoner',
+  body:()=>[
+  `${sp('p282','Safety Grover')} was born at Gravesend about 1658; in April 1707 he swore in court that he was 49. He was the youngest son of ${sp('p657','James Grover')}, and his unusual first name would be carried down for generations by the Bownes, Bordens, Stouts and Laytons.[[1]]`,
+  `He came to Middletown as a boy. In 1680 the governor ordered land laid out for “Safety Grover the sonn of James,” a grant that counted a wife, so he was married by then.[[2]] By 1683 he was sitting on county juries, and on 3 December 1683, under New Jersey's first militia act, he was commissioned ensign of the Middletown company, with his father as lieutenant and Captain John Bowne as major.[[3]]`,
+  `His first appearance in court as a defendant is a good story. In 1685 Samuel Leonard accused him of “ranging the woods”: catching and branding a wild horse. His father, sitting as a justice, certified that Safety had brought the horse before him and been allowed to brand it. The jury twice returned the same verdict of guilty, and in June 1685 he was fined five pounds.[[4]]`,
+  `That November his father gave him land by a deed to “my son Safety Grover,” and in 1686 the Proprietors patented him tracts along the Mill Brook, on the Navesink and at Shoal Harbour.[[5]][[6]] He was called Captain by 1688, was commissioned lieutenant of Capt. Samuel Leonard's company in 1692, and by 1695 “Capt. Safety Grover” was guardian of an orphan boy and one of the nearest relations of his late brother Joseph's children.[[1]][[7]]`,
+  `The defining moment of his life came in 1701. Middletown's settlers held their land under the old Nicolls patent and refused the Proprietors' quitrents and courts. In 1700, when Governor Andrew Hamilton marched on Middletown with thirty or forty armed men, he found nearly two hundred townsmen waiting with clubs and withdrew.[[8]] On 25 March 1701 Hamilton returned to sit in the Middletown court with Lewis Morris, Samuel Leonard and the justices. They were trying Moses Butterworth, who had confessed to sailing with Captain William Kidd. An innkeeper, Samuel Willett, declared that the Governor had no authority to hold court. A drummer struck up, thirty or forty men came up the stairs, and in a scuffle with drawn swords Benjamin and Richard Borden carried off the prisoner, both of them wounded. The court clerk then recorded that “Safety Grover” and the others, “to the number of about one hundred persons, did traitorously seize the Governor and the Justices,” the King's Attorney General, the clerk and the under-sheriff, and kept them under guard until 29 March.[[9]][[10]]`,
+  `Safety's name heads that list. With him were his Borden kin, Obadiah Bowne, Jonathan and James Stout, and his nephew James Grover. The uprising helped end proprietary rule: in 1702 the Proprietors surrendered the government of New Jersey to the Crown.[[9]]`,
+  `The rebel became a pillar of the county. By 1711 he was “Safety Grover of Middletown, gentleman,” buying up the Shoal Harbour meadows beside his father's old land.[[11]] In March 1714/15 he signed among the justices who ordered the first court house and gaol for Monmouth.[[12]] In 1720 he bought a share of a proprietary right, the very kind of title his neighbours had once resisted, and in the 1720s he served as juryman, overseer of the highways and bondsman.[[1]][[13]]`,
+  `His wife was probably named Mercy. Their daughter Hannah married William Taylor. Another daughter, ${sp('p106','Esther')}, whom the documents support as Safety's daughter, married ${sp('p127','Samuel Bowne')} and named a son Safety Bowne. Through that line the name, and Safety's blood, came into the Laytons.[[1]][[14]]`],
+  src:[
+   {r:'BG-0516',t:'Stillwell, Historical and Genealogical Miscellany vol. 3 (1932), no. 4, Safety Grover'},
+   {r:'S-0094',t:'Proprietors’ warrant “for Safety Grover the sonn of James,” 26 Apr 1680'},
+   {r:'BG-0493',t:'Militia commissions under the Act of 1 Dec 1683'},
+   {r:'BG-0499',t:'Court of Sessions, March–June 1685: the wild horse case'},
+   {r:'S-0076',t:'Deed of gift, James Grover to his son Safety, 18 Nov 1685'},
+   {r:'S-0102',t:'Proprietors’ patent to Safety Grover, 21 July 1686'},
+   {r:'S-0078',t:'Court of Sessions, 26 Mar 1695: guardianships'},
+   {t:'A History of the City of Newark, vol. I (1913): Governor Hamilton at Middletown, 1700',u:'https://ldsgenealogy.com/NJ/books/A-History-of-the-city-of-Newark-New-Jersey-embracing-practically-two-and-a-half-centuries-1666-1913-Volume-I-part-13.htm'},
+   {r:'BG-0491',t:'Court minutes, Middletown, 25–29 March 1701 (Joel Parker, 1872)'},
+   {t:'“Copy of proceedings at a Court of Sessions, Midletowne, March 25, 1701,” Listening Experience Database excerpt',u:'https://led.kmi.open.ac.uk/browse/http%3A-_--_-data.open.ac.uk-_-led-_-source-_-11c9a6e828c9e3388ba12ae10b6386a1-_-excerpt-_-21495b7885874382c0185d4a4053084d'},
+   {r:'S-0010',t:'Edward Taylor to Safety Grover, gentleman, 19 Feb 1711/12'},
+   {r:'BG-0496',t:'Justices and freeholders, March 1714/15: the first court house and gaol'},
+   {r:'S-0084',t:'Gawen Drummond to Safety Grover and William Winter, 5 Dec 1720'},
+   {r:'S-0023',t:'Samuel Bowne’s estate, 1756'}]}];
+
+function lifeCard(L){ return `<div class="card lifecard" onclick="go('life-${L.k}')"><div class="skick">${esc(L.kick)}</div><div class="lt">${esc(L.t)}${P[L.pid]?gtag(P[L.pid]):''}</div><div class="small">${esc(L.sub)}</div><span class="lgo">Read ›</span></div>`; }
+function vLife(k){ setTab('home'); const L=LIVES.find(x=>x.k===k); if(!L){ go('home'); return; }
+  const fn=s=>s.replace(/\[\[(\d+)\]\]/g,(m,n)=>`<sup class="fnr" onclick="event.stopPropagation();const e=document.getElementById('fn${n}');if(e){e.scrollIntoView({block:'center'});e.classList.add('hit');setTimeout(()=>e.classList.remove('hit'),1600)}">${n}</sup>`);
+  const i=LIVES.indexOf(L), nx=LIVES[(i+1)%LIVES.length];
+  app.innerHTML=topBar('Lives behind the records',true)+`<div class="wrap"><div class="card lifepage"><div class="skick">${esc(L.kick)}</div><h2>${esc(L.t)}${P[L.pid]?gtag(P[L.pid]):''}</h2><div class="lsub">${esc(L.sub)}</div>
+    ${L.body().map(p=>`<p>${fn(p)}</p>`).join('')}
+    <div class="lbtns"><button class="chip on" onclick="go('p-${L.pid}')">${esc(L.t.replace(/^Captain /,''))}'s page ›</button></div>
+    <h3 class="lsrc">Sources</h3><ol class="lsrcs">${L.src.map((s,j)=>`<li id="fn${j+1}">${s.r?`<a onclick="go('r-${s.r}')">${esc(s.t)}</a> <span class="muted">(record ${s.r})</span>`:`<a href="${s.u}" target="_blank" rel="noopener">${esc(s.t)}</a>`}</li>`).join('')}</ol>
+    <div class="tiny muted" style="margin-top:8px">Records marked with an ID are in this app's abstracts; the others are outside sources. Where the sources disagree or rest on tradition, the story says so.</div></div>
+    <button class="more" onclick="go('life-${nx.k}')">Next: ${esc(nx.t)} ›</button></div>`; }
+
 function xrow(on,ic,t,s,extra){ return `<div class="xrow" onclick="${on}"><span class="xic">${ic}</span><div class="main"><div class="t">${esc(t)} ${extra||''}</div><div class="s">${esc(s)}</div></div><span class="xgo">›</span></div>`; }
 function vFamily(){ setTab('home');
   const te=P[D.anchor], ma=te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n));
@@ -3005,7 +3098,7 @@ function route(){
   const back=RETURNING; RETURNING=false; CURKEY='';
   if((h==='map'||h.startsWith('map-'))&&!back) MHIDE.clear();
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
-  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='names') vNames(); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='mapmove') vRoad(true); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
+  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='names') vNames(); else if(h.startsWith('life-')) vLife(h.slice(5)); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='mapmove') vRoad(true); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));
   else if(h.startsWith('r-')) vRecord(h.slice(2)); else if(h.startsWith('map-')) vMap(h.slice(4)); else if(h.startsWith('pmap-')) vPMap(h.slice(5)); else if(h.startsWith('pic-')) vPic(h.slice(4)); else if(h==='pics') vPics(); else if(h==='sources') vSources(); else vHome();
   const key=NAVN+'|'+h, y=back?(SCROLLMEM[key]||0):0;

@@ -1433,8 +1433,8 @@ function vHome(){
     ${wbtn("go('lives')",'d3','<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M9 8h7M9 11.5h5"/>','Lives behind the records',LIVES.length+' stories of the people in the documents')}
     ${wbtn("go('marks')",'d1','<rect x="3" y="9" width="18" height="6" rx="1.5"/><path d="M3 19h11"/>','How to read the marks','The shading, the proof line and the G-tags')}
     <div class="hbtns">
-      ${wbtn("rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:"+(nRecNew?'true':'false')+"};go('records')",'d1 half','<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>','The records',nRec.toLocaleString()+' documents',nRecNew?`<i class="statnew">+${nRecNew}</i>`:'')}
-      ${wbtn("go('pics')",'d2 half','<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/>','Photos',NPHOTO+' pictures',nPicNew?`<i class="statnew">+${nPicNew}</i>`:'')}
+      ${wbtn("rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:"+(nRecNew?'true':'false')+"};go('records')",'d2 half','<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>','The records',nRec.toLocaleString()+' documents',nRecNew?`<i class="statnew">+${nRecNew}</i>`:'')}
+      ${wbtn("go('pics')",'d3 half','<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/>','Photos',NPHOTO+' pictures',nPicNew?`<i class="statnew">+${nPicNew}</i>`:'')}
     </div>
     <button class="storybtn helpbtn" onclick="go('help')"><span class="sbk">HELP WANTED</span><b>Can you help?</b><span class="sbs">The links still waiting for proof, most important first. A letter, a Bible page or a photo in a drawer could settle one. Share it with family.</span><span class="sbgo">See list ›</span></button>
     <div class="foot">Compiled by Stephen J. Schneider, Point Pleasant Beach<br>Data: ${['Williams','Layton','Newman','Wolcott','Bowne','Safety','Cooper'].filter(f=>D.meta[f]).map(f=>`${fname(f)} v${esc((D.meta[f]||{}).FileVersion||'')}`).join(' · ')} workbooks · Family tree reports of 6 Nov 2026</div>

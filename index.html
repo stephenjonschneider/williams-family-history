@@ -1007,6 +1007,7 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .rel{background:var(--sage-l);border-radius:10px;padding:9px 12px;margin:10px 0 0;font-size:15px}
 .rel b{color:var(--green)}
 .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.biobtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin-top:10px;padding:9px 14px;border:1.5px solid var(--clay);border-radius:12px;background:#f7ecdf;color:var(--ink);font:inherit;font-weight:600;text-align:left;cursor:pointer}.biobtn .small{font-weight:400;color:var(--muted)}
 .btn{border:1px solid var(--green);color:var(--green);background:transparent;border-radius:9px;padding:8px 12px;font-weight:600;font-size:14.5px;cursor:pointer}
 .btn.fill{background:var(--green);color:#f6f0e2}
 .mini{display:flex;flex-wrap:wrap;gap:8px}
@@ -1287,6 +1288,7 @@ function supAttr(p){ const b=band(p.sc), lv=proofOf(p); if(!b&&!lv) return '';
   return ` style="${supCss(p)}" title="${tip}"`; }
 function recLinkify(t){ return esc(t).replace(/\b([A-Z]{1,3}-\d{2,4}[a-z]?)\b/g,m=>R[m]?`<a class="rlk" onclick="go('r-${m}')">${m}</a>`:m); }
 function pbText(t){ t=String(t).replace(/^[^—]*?—\s*/,''); t=t.replace(/\s*\(P\d+[a-z]?\)/g,'').replace(/,\s*P\d+[a-z]?(?=\))/g,'').replace(/\s*\(owner[^)]*\)/gi,''); return recLinkify(t.charAt(0).toUpperCase()+t.slice(1)); }
+function firstName(p){ return String(p.n||'').replace(/^(Capt\.?|Captain|Rev\.?|Dr\.?)\s+/,'').split(/\s+/)[0]; }
 function badge(lv,text){return `<span class="badge lv-${lv}">${esc(text||LVL[lv])}</span>`}
 
 
@@ -1922,7 +1924,7 @@ function vPerson(id){
   const recs=(p.rec||[]).map(x=>R[x]).filter(Boolean).sort((a,b)=>String(a.sd).localeCompare(String(b.sd)));
   app.innerHTML=topBar(p.living?'Living relative':p.n,true)+`<div class="wrap">
    <div class="card">${portrait(p)}<div class="pname">${esc(p.n)}${gtag(p)}</div>${facts}${ps}${flag}${relLine(id)}
-     <div class="btns"><button class="btn fill" onclick="TREEP='${id}';go('chart-${id}')">Chart</button><button class="btn" onclick="TREEP='${id}';go('anc-${id}')">Ancestors list</button><button class="btn" onclick="go('desc-${id}')">Descendants</button>${pmapCount(id)?`<button class="btn" onclick="go('pmap-${id}')">📍 Map</button>`:''}${p.you?'<button class="btn" onclick="go(\'me\')">Edit my line</button>':''}</div></div>
+     <div class="btns"><button class="btn fill" onclick="TREEP='${id}';go('chart-${id}')">Chart</button><button class="btn" onclick="TREEP='${id}';go('anc-${id}')">Ancestors list</button><button class="btn" onclick="go('desc-${id}')">Descendants</button>${pmapCount(id)?`<button class="btn" onclick="go('pmap-${id}')">📍 Map</button>`:''}${p.you?'<button class="btn" onclick="go(\'me\')">Edit my line</button>':''}</div>${(typeof LIVES!=='undefined'?LIVES:[]).filter(L=>L.pid===id).map(L=>`<button class="biobtn" onclick="go('life-${L.k}')"><span>📖 Read ${esc(firstName(p))}’s story</span><span class="small">${esc(L.t)} ›</span></button>`).join('')}</div>
    ${IMGS[id]?IMGS[id].map(im=>`<div class="card"><img class="photo-hero" src="${im.src}" alt=""><div class="figcap">${esc(im.cap)}</div></div>`).join(''):''}
    ${supportCard(p)}
    ${docsCard(p)}

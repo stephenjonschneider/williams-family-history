@@ -2540,9 +2540,9 @@ const SMAP=[ // [n, label, lon, lat, years, families, chapter, app place id, lab
  [3,'Portland Point · Navesink',-74.0005,40.4135,'1664–1670','Bowne · Stout · Grover',3,'portlandpt','r','Portland Point'],
  [4,'Middletown',-74.118,40.394,'1667–1756','Layton · Bowne · Stout · Grover',4,'mtvillage','t'],
  [5,'Freehold & the Great Meadow',-74.274,40.26,'1690–1761','Layton · Williams · Stout · Bowne',5,'freehold','t'],
- [6,'Upper Freehold · Crosswicks lands & Doctors Creek',-74.53,40.165,'1688–1746','Williams · Layton · Bowne · Grover · Borden · Stout',6,'upperfreehold','t','Upper Freehold'],
+ [6,'Upper Freehold · Crosswicks lands & Doctors Creek',-74.53,40.165,'1688–1746','Williams · Layton · Bowne · Grover · Borden · Stout',6,'upperfreehold','b','Upper Freehold'],
  [7,'Burlington',-74.865,40.071,'1685–1690','Wolcott',9,'burlington','b'],
- [8,'Adelphia · Long Brook',-74.246,40.217,'1724–1801','Brewer · Cooper · Layton',7,'adelphia','r'],
+ [8,'Adelphia · Long Brook',-74.246,40.217,'1724–1801','Brewer · Cooper · Layton',7,'adelphia','r',null,-5],
  [9,'Shark River',-74.059,40.192,'1742–1850','Newman',9,'sharkriver','r'],
  [10,'Wreck Pond',-74.039,40.141,'1801–1848','Newman',9,'wreckpond','r'],
  [11,'Miery Branch · Southard (Bethel)',-74.224,40.134,'1788–1930','Williams · Layton · Newman',8,'miery','b','Southard (Bethel)'],
@@ -2563,7 +2563,7 @@ function smapSvg(){
   lp+=ring(LI)+ring(SI)+ring(MAN);
   const P={}; SMAP.forEach(s=>P[s[0]]={x:X(s[2]),y:Y(s[3]),s});
   const curve=ids=>ids.map((id,i)=>{ const p=P[id]; if(!i) return `M${p.x.toFixed(1)},${p.y.toFixed(1)}`; const q=P[ids[i-1]], mx=(q.x+p.x)/2+(p.y-q.y)*.12, my=(q.y+p.y)/2-(p.x-q.x)*.12; return `Q${mx.toFixed(1)},${my.toFixed(1)} ${p.x.toFixed(1)},${p.y.toFixed(1)}`; }).join(' ');
-  const lab=s=>{ const p=P[s[0]], d=13, a={r:[d,4,'start'],l:[-d,4,'end'],t:[0,-d+1,'middle'],b:[0,d+9,'middle']}[s[8]]; return `<text class="plab" x="${(p.x+a[0]).toFixed(1)}" y="${(p.y+a[1]).toFixed(1)}" text-anchor="${a[2]}">${esc(s[9]||s[1])}</text>`; };
+  const lab=s=>{ const p=P[s[0]], d=13, a={r:[d,4,'start'],l:[-d,4,'end'],t:[0,-d+1,'middle'],b:[0,d+9,'middle']}[s[8]]; return `<text class="plab" x="${(p.x+a[0]).toFixed(1)}" y="${(p.y+a[1]+(s[10]||0)).toFixed(1)}" text-anchor="${a[2]}">${esc(s[9]||s[1])}</text>`; };
   const rose=`<g transform="translate(${W-40},${H-46}) scale(.8)" class="rose"><circle r="30" fill="none" stroke="#7a5a32" stroke-width="1"/><circle r="24" fill="none" stroke="#7a5a32" stroke-width=".6" stroke-dasharray="2 2"/>
     <path d="M0,-38 L6,0 L0,38 L-6,0Z" fill="#7a5a32"/><path d="M-38,0 L0,6 L38,0 L0,-6Z" fill="#a8885a"/><path d="M0,-38 L6,0 L0,0Z" fill="#3f2d18"/><text y="-42" text-anchor="middle" font-size="13">N</text></g>`;
   return `<svg viewBox="0 0 ${W} ${H}" class="smapsvg" xmlns="http://www.w3.org/2000/svg">

@@ -1892,8 +1892,8 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
       if(best&&bw>=1.2) labels.push([f,best.x/best.w,best.y/best.w,bw]); });
     /* at a tour stop, every family present right there is named in a neat column beside the spot, away from the bubble */
     /* the column names only the direct-line ancestors whose dots are at the spot this year (their surnames), most first */
-    if(TSP){ const cnt={}; (window._rdots||[]).forEach(([x,y,,f])=>{ if(f&&f!=='Other'&&Math.hypot(x-TSP.x,y-TSP.y)<R*1.7) cnt[f]=(cnt[f]||0)+1; }); Object.keys(cnt).forEach(f=>{ if(f.endsWith('*')&&cnt[f.slice(0,-1)]){ cnt[f.slice(0,-1)]+=cnt[f]; delete cnt[f]; } }); Object.entries(cnt).forEach(e=>near.push(e)); }
-    if(near.length&&TSP){ const FT=(TS.cur.f||[]); near.sort((a,b)=>((FT.includes(b[0])?99:0)+b[1])-((FT.includes(a[0])?99:0)+a[1])); const L2=near.slice(0,8), lh=17, up=!!(TS&&TS.bAbove===false);
+    if(TSP&&TS.cur) sceneNames(TS.cur).forEach(f=>near.push([f,1]));
+    if(near.length&&TSP){ const L2=near.slice(0,8), lh=17, up=!!(TS&&TS.bAbove===false);
       cx.font="600 14px 'Fredoka','Trebuchet MS',sans-serif"; cx.textAlign='center'; cx.lineJoin='round';
       let y0=up?TSP.y-30-lh*(L2.length-1):TSP.y+36; y0=Math.max(14,Math.min(h-lh*L2.length-4,y0));
       L2.forEach(([f],i)=>{ const y=y0+i*lh; cx.lineWidth=4.5; cx.strokeStyle='rgba(255,252,242,.95)'; cx.strokeText(f,TSP.x,y); cx.fillStyle=colOf(f); cx.fillText(f,TSP.x,y); }); }
@@ -1975,6 +1975,13 @@ function tourBub(s){ const b=document.getElementById('tbub'), ld=document.getEle
   const recs=(s.r||[]).filter(r=>R[r]).map(r=>`<a href="#r-${r}">${r}</a>`).join(' ');
   b.innerHTML=`<div class="tbt">${esc(s.t)}</div><div class="tbx">${esc(s.x)}</div><div class="tbl">${recs}${s.ch?` <a onclick="tourEnd(1);go('story');setTimeout(()=>{const c=document.querySelectorAll('.schap')[${s.ch-1}];if(c)c.scrollIntoView({block:'start'})},350)">Read the chapter ›</a>`:''}</div>`;
   b.hidden=false; tourPos(); }
+/* the names for a tour stop: every direct-line ancestor whose dot is within about 8 km of the spot at any time during the stop
+   (from its year to its closing year), by surname; wives known only by first name go under the husband's surname, with * if he is not there */
+function rFam(o){ let f=o.fk==='Other'?surnC(surn(o.p)):o.fk; if(!f||f===o.p.n){ const h=(o.p.sp||[]).map(s=>P[Array.isArray(s)?s[0]:s]).find(Boolean); f=h?(roadKey(h)==='Other'?surnC(surn(h)):roadKey(h))+'*':''; } return f; }
+function sceneNames(s){ if(s._names) return s._names; const RD=roadData(), at=s.at||s.c, a=s.y, b=s.y2||s.y+3, cnt={};
+  RD.L.forEach(o=>{ if(!RFAM.has(o.own)) return; for(let y=a;y<=b+.001;y+=.5){ const ps=roadPos(o,y); if(!ps) continue; const dk=Math.hypot((ps[0]-at[0])*111,(ps[1]-at[1])*84.5); if(dk<8.5){ const f=rFam(o); if(f&&f!=='Other') cnt[f]=(cnt[f]||0)+1; break; } } });
+  Object.keys(cnt).forEach(f=>{ if(f.endsWith('*')&&cnt[f.slice(0,-1)]){ cnt[f.slice(0,-1)]+=cnt[f]; delete cnt[f]; } });
+  const FT=s.f||[]; s._names=Object.keys(cnt).sort((x,y)=>((FT.includes(y)?99:0)+cnt[y])-((FT.includes(x)?99:0)+cnt[x])||x.localeCompare(y)).slice(0,8); return s._names; }
 /* the bubble stands well clear of the place, wherever it covers the fewest dots, joined to it by a long leader ending in a dot */
 function tourPos(){ const b=document.getElementById('tbub'), ld=document.getElementById('tlead'); if(!b||b.hidden||!TS||!TS.cur||!MAP) return; const box=document.getElementById('map'), w=box.clientWidth, h=box.clientHeight;
   const ph=(document.getElementById('roadplayer')||{}).offsetHeight||0, bot=h-ph-24;

@@ -1758,12 +1758,17 @@ function roadData(){ if(ROADD) return ROADD;
   (D.homes||[]).forEach(h=>{ const y=yr(h.y); if(!h.ll||!y) return; (h.ppl||[]).forEach(id=>{ zone(id,y,h.ll[0],h.ll[1]); if(ids.has(id)) add(id,{y,lat:h.ll[0],lon:h.ll[1],lab:h.a}); }); });
   const out=[]; let lo=2000, hi=1500;
   dl.forEach(p=>{ const b=yr(p.b), d=yr(p.d); let pts=(byP[p.id]||[]).slice();
-    if(p.bpl&&PL[p.bpl]&&b){ pts.push({y:b,lat:PL[p.bpl].lat,lon:PL[p.bpl].lon,lab:PL[p.bpl].label,born:1}); zone(p.id,b,PL[p.bpl].lat,PL[p.bpl].lon); }
+    /* no one of the line was born on the Monmouth side before the English came in 1664: a tree birthplace there is not used */
+    const bOK=p.bpl&&PL[p.bpl]&&b&&!(b<1664&&PL[p.bpl].lat<40.55);
+    if(bOK){ pts.push({y:b,lat:PL[p.bpl].lat,lon:PL[p.bpl].lon,lab:PL[p.bpl].label,born:1}); zone(p.id,b,PL[p.bpl].lat,PL[p.bpl].lon); }
     if(p.dpl&&PL[p.dpl]&&d){ pts.push({y:d,lat:PL[p.dpl].lat,lon:PL[p.dpl].lon,lab:PL[p.dpl].label,died:1}); }
     pts=pts.filter(q=>(!b||q.y>=b)&&(!d||q.y<=d)); if(!pts.length) return;
     pts.sort((a,c)=>(a.y-c.y)||((c.born||0)-(a.born||0))||((a.died||0)-(c.died||0)));
     const Q=[]; pts.forEach(q=>{ const l=Q[Q.length-1]; if(l&&Math.abs(l.lat-q.lat)<2e-3&&Math.abs(l.lon-q.lon)<2e-3) return; Q.push(q); });
-    const last=Q[Q.length-1].y, s=b||Q[0].y, e=d||Math.max(last,b?Math.min(b+65,last+25):last+10);
+    /* the first generations were born before Monmouth (or anywhere on this map) existed for them: with no mapped birthplace
+       and a birth before 1670, the dot appears only when a record first places them, so the settlers arrive on a clean slate */
+    const s0=(!Q[0].born&&b&&b<1670)?Q[0].y:(b||Q[0].y);
+    const last=Q[Q.length-1].y, s=s0, e=d||Math.max(last,b?Math.min(b+65,last+25):last+10);
     let h=0; for(const c of p.id) h=(h*31+c.charCodeAt(0))%997; const an=h/997*2*Math.PI;
     out.push({id:p.id,p,pts:Q,s,e,fk:roadKey(p),col:roadCol(roadKey(p)),dx:Math.cos(an)*.006,dy:Math.sin(an)*.0045});
     lo=Math.min(lo,s); hi=Math.max(hi,e); });

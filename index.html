@@ -1872,7 +1872,7 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
       const g=sx.createRadialGradient(sprR,sprR,0,sprR,sprR,sprR); g.addColorStop(0,'rgba(0,0,0,.6)'); g.addColorStop(.55,'rgba(0,0,0,.32)'); g.addColorStop(1,'rgba(0,0,0,0)'); sx.fillStyle=g; sx.fillRect(0,0,s,s); }
     /* one patch per family per place: weights at the same spot add up (capped), so heavy record years glow stronger */
     const by={}; RD.Z.forEach(z=>{ if(!RFAM.has(z.own)) return; const wt=roadW(z.y,Y); if(wt<=.02) return; const F=by[z.f]=by[z.f]||{}; const k=z.lat.toFixed(3)+','+z.lon.toFixed(3); const c=F[k]=F[k]||{lat:z.lat,lon:z.lon,w:0}; c.w+=wt; });
-    const labels=[];
+    const labels=[], near=[]; const TSP=(TS&&TS.cur)?MAP.latLngToContainerPoint(TS.cur.at||TS.cur.c):null;
     const dpr=devicePixelRatio||1;
     Object.entries(by).forEach(([f,F])=>{ ox.globalCompositeOperation='source-over';
       let best=null, bw=0; const seen={}; let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; const PTS=[];
@@ -1884,7 +1884,13 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
         const k=Math.round(p.x/(R*1.5))+','+Math.round(p.y/(R*1.5)); const s=seen[k]=seen[k]||{x:0,y:0,w:0}; s.x+=p.x*wt; s.y+=p.y*wt; s.w+=wt; if(s.w>bw){ bw=s.w; best=s; } });
       ox.globalCompositeOperation='source-in'; ox.fillStyle=colOf(f); ox.fillRect(x0,y0,bw0,bh0);
       cx.globalAlpha=.62; cx.drawImage(off,x0*dpr,y0*dpr,bw0*dpr,bh0*dpr,x0,y0,bw0,bh0); cx.globalAlpha=1;
+      if(TS&&TS.cur&&TSP){ let s=0; PTS.forEach(([c,p])=>{ const d=Math.hypot(p.x-TSP.x,p.y-TSP.y); if(d<R*2.4) s+=Math.min(1.6,c.w)*(1-d/(R*2.4)); }); if(s>.12&&f!=='Other'){ near.push([f,s]); return; } }
       if(best&&bw>=1.2) labels.push([f,best.x/best.w,best.y/best.w,bw]); });
+    /* at a tour stop, every family present right there is named in a neat column beside the spot, away from the bubble */
+    if(near.length&&TSP){ near.sort((a,b)=>b[1]-a[1]); const L2=near.slice(0,8), lh=17, up=!!(TS&&TS.bAbove===false);
+      cx.font="600 14px 'Fredoka','Trebuchet MS',sans-serif"; cx.textAlign='center'; cx.lineJoin='round';
+      let y0=up?TSP.y-30-lh*(L2.length-1):TSP.y+36; y0=Math.max(14,Math.min(h-lh*L2.length-4,y0));
+      L2.forEach(([f],i)=>{ const y=y0+i*lh; cx.lineWidth=4.5; cx.strokeStyle='rgba(255,252,242,.95)'; cx.strokeText(f,TSP.x,y); cx.fillStyle=colOf(f); cx.fillText(f,TSP.x,y); }); }
     cx.font="600 13px 'Fredoka','Trebuchet MS',sans-serif"; cx.textAlign='center'; cx.lineJoin='round';
     const placed=[]; labels.sort((a,b)=>b[3]-a[3]).forEach(([f,x,y])=>{ const t=f==='Other'?'':f; y-=R*.25; const tw=cx.measureText(t).width; let tries=0; while(tries++<8&&placed.some(q=>Math.abs(q[0]-x)<(q[2]+tw)/2+4&&Math.abs(q[1]-y)<16)) y+=16; placed.push([x,y,tw]); y+=R*.25; cx.lineWidth=4; cx.strokeStyle='rgba(255,252,242,.9)'; cx.strokeText(t,x,y-R*.25); cx.fillStyle=colOf(f); cx.fillText(t,x,y-R*.25); }); };
   MAP.on('move zoom resize',()=>{ if(MAP) drawZones(); }); MAP.on('resize',size);
@@ -1972,7 +1978,7 @@ function tourPos(){ const b=document.getElementById('tbub'), ld=document.getElem
   const D=(window._rdots||[]).concat([[p.x,p.y,6]]);
   let best=null, bs=1e9; C.forEach(([l,t],i)=>{ let sc=i*.01; D.forEach(([x,y,wt])=>{ if(x>l-12&&x<l+bw+12&&y>t-12&&y<t+bh+12) sc+=(wt||1); });
     const cx=l+bw/2, cy=t+bh/2, dd=Math.hypot(cx-p.x,cy-p.y); if(dd<G*.8) sc+=3; if(sc<bs){ bs=sc; best=[l,t]; } });
-  const [left,top]=best; b.style.left=left+'px'; b.style.top=top+'px';
+  const [left,top]=best; b.style.left=left+'px'; b.style.top=top+'px'; TS.bAbove=top+bh/2<p.y;
   if(!ld) return; const ex=Math.max(left+14,Math.min(left+bw-14,p.x)), ey=Math.max(top+10,Math.min(top+bh-10,p.y));
   /* start the leader on the bubble's edge nearest the place */
   let sx=ex, sy=ey; if(p.y>top+bh) sy=top+bh; else if(p.y<top) sy=top; else sx=p.x<left?left:left+bw;

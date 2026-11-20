@@ -965,6 +965,19 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .roadtop{display:flex;align-items:center;gap:12px;margin:2px 0 4px}.roadplay{flex:none;width:52px;height:52px;border-radius:50%;border:0;background:var(--green);color:#f6f0e2;font-size:20px;cursor:pointer;box-shadow:0 3px 0 #1f3322}
 .roadyr{font-family:var(--head);font-size:40px;line-height:1;color:var(--green);font-variant-numeric:tabular-nums}
 .roadslide{width:100%;accent-color:var(--clay);margin:6px 0 2px}.roadnow{font-size:13px;min-height:19px;margin:0 2px 6px;color:#5a4a33}
+/* the three map views: edge arrows, tour bubble, tour controls, tags */
+.roadedge{position:absolute;inset:0;pointer-events:none;z-index:780}.redge{position:absolute;transform:translate(-50%,-50%);background:rgba(251,247,239,.92);border:1px solid var(--line);border-radius:999px;padding:2px 8px 2px 5px;font-size:11.5px;color:#5a4a33;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.15)}.redge b{display:inline-block;color:var(--clay);margin-right:4px;font-size:11px}
+.tbub{position:absolute;z-index:820;width:min(290px,78%);background:#fbf7ef;border:1px solid var(--line);border-radius:12px;padding:9px 11px 8px;box-shadow:0 6px 18px rgba(0,0,0,.22);font-size:13.5px;line-height:1.38;animation:tbin .35s ease}
+.tbub .tbt{font-family:var(--head);font-size:17px;color:var(--green);margin-bottom:3px}.tbub .tbl{margin-top:6px;font-size:12.5px;display:flex;flex-wrap:wrap;gap:4px 10px}.tbub .tbl a{color:var(--clay);text-decoration:underline;cursor:pointer}
+.tbub .tbp{position:absolute;bottom:-8px;width:14px;height:14px;background:#fbf7ef;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:translateX(-50%) rotate(45deg)}.tbub.below .tbp{bottom:auto;top:-8px;transform:translateX(-50%) rotate(225deg)}
+@keyframes tbin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.tbn{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff8ec;color:var(--green);font-size:13px;cursor:pointer}
+.tdots{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:4px 0 6px}.tdots button{width:9px;height:9px;padding:0;border-radius:50%;border:0;background:#d8ccb6;cursor:pointer}.tdots button.done{background:#b9a27c}.tdots button.on{background:var(--clay);transform:scale(1.35)}
+.leaflet-tooltip.gtip{background:rgba(255,252,242,.92);border:0;box-shadow:none;padding:0 4px;font-size:10.5px;font-weight:700;color:#5a4a33;border-radius:6px}.leaflet-tooltip.gtip:before{display:none}
+.leaflet-tooltip.mtip{background:#b23a48;color:#fff;border:0;font-size:11.5px;padding:2px 7px;border-radius:999px}.leaflet-tooltip.mtip:before{border-top-color:#b23a48}
+#roadera{color:#8a6a3a;font-style:italic}
+.roadstage [hidden]{display:none!important}
+.roadstage .roadtop{flex-wrap:wrap;row-gap:4px}.roadstage .roadsp{order:3;width:100%;justify-content:flex-start;gap:5px}.roadstage #roadct,.roadstage .roadtop #roadera{display:inline;font-size:11.5px}.roadstage #roadct:not(:empty)+#roadera:not(:empty):before{content:' · ';font-style:normal}.leaflet-tooltip.mtip{font-size:10.5px}
 #map.roadmap{height:calc(100vh - 205px - var(--safe-b) - var(--safe-t));height:calc(100dvh - 205px - var(--safe-b) - var(--safe-t));min-height:420px}
 .chips.rfam{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}.chips.rfam::-webkit-scrollbar{display:none}.chips.rfam .chip{flex:none}
 .roadstage{position:relative}.roadstage .roadplayer{position:absolute;left:8px;right:8px;bottom:22px;z-index:800;margin:0;padding:6px 10px 0;background:rgba(251,247,239,.88);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);box-shadow:0 2px 10px rgba(0,0,0,.18)}
@@ -1027,6 +1040,7 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .sstrip{display:flex;gap:2px;height:16px;border-radius:5px;overflow:hidden;margin:2px 0 4px}.sstrip i{flex:1}
 .sstripg{position:relative;height:14px;font-size:11px;color:var(--muted);margin:0 1px}.sstripg span{position:absolute;top:0}
 .sladder{padding:10px 12px}
+.mseg{display:inline-flex;background:rgba(246,240,226,.16);border-radius:999px;padding:2px;gap:1px}.mseg button{border:0;background:none;color:#f6f0e2;font:inherit;font-size:13px;line-height:1;padding:7px 10px;border-radius:999px;cursor:pointer}.mseg button.on{background:#d9a441;color:#2a2112;font-weight:600}
 .mtog{display:inline-flex;align-items:center;gap:7px;padding:4px 11px 4px 5px}.mtog .sw{position:relative;width:32px;height:18px;border-radius:999px;background:rgba(246,240,226,.3);transition:background .2s}
 .mtog .sw i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#f6f0e2;transition:left .2s}.mtog.on .sw{background:#d9a441}.mtog.on .sw i{left:16px}
 .scon .snote{font-size:12px;color:var(--muted);font-style:italic;margin-left:8px;line-height:1.3}
@@ -1712,7 +1726,30 @@ function fanPick(id){ const p=P[id], el=document.getElementById('faninfo'); if(!
    1657–1719, then Middletown until Aaron's Long Brook years begin */
 const ROAD_EARLY=[['Stout',40.597,-73.972,1645,1664],['Grover',40.599,-73.968,1646,1665],['Bowne',40.595,-73.976,1646,1667],
   ['Brewer',40.622,-73.925,1657,1719],['Brewer',40.394,-74.118,1719,1724]];
-let ROADD=null, ROADY=1645, ROADPLAY=false, ROADT=0, ROADSP=2.5;
+let ROADD=null, ROADY=1645, ROADPLAY=false, ROADT=0, ROADSP='auto';
+/* the eras shown under the year */
+const ROAD_ERAS=[[1645,'Dutch Long Island'],[1664,'Proprietors’ Monmouth'],[1702,'Royal New Jersey'],[1775,'The Revolution'],[1784,'The early republic'],[1861,'The Civil War'],[1866,'Railroad and shore-resort era'],[1930,'Point Pleasant years']];
+function roadEra(Y){ let e=''; ROAD_ERAS.forEach(([y,l])=>{ if(Y>=y) e=l; }); return e; }
+/* Auto speed: quick through quiet decades, slow where the records crowd together */
+function roadAuto(Y){ const A=roadData().ACT, y=Math.floor(Y); let a=0; for(let k=-2;k<=2;k++) a+=A[y+k]||0; a/=5; return Math.max(1.1,Math.min(9,9/(1+a/3))); }
+/* the guided tour: each scene comes from the story chapters, with its records */
+const RTOUR=[
+ {y:1645,y2:1649,c:[40.597,-73.972],z:11,t:'Gravesend, 1645',x:'Lady Moody’s English town on Dutch Long Island. Richard and Penelope Stout made their home here, James Grover had a house lot by 1646, and the Bownes came from Salem about the same time.',r:['BG-0306','BG-0268'],ch:1},
+ {y:1657,y2:1660,c:[40.622,-73.925],z:11,t:'Flatlands, after 1657',x:'Jan Brouwer, a blacksmith from Amsterdam, settled at Flatlands, the Dutch village beside Gravesend. His family became the Brewers.',r:['W-0394'],ch:7},
+ {y:1664,y2:1666,c:[40.5,-74.0],z:10,t:'Across the bay, 1664–1665',x:'Gravesend men looked across the bay to the Navesink country. Governor Nicolls’s patent of 8 April 1665 names twelve patentees, among them Richard Stout, James Grover and Captain John Bowne.',r:['BG-0133'],ch:3},
+ {y:1667,y2:1670,c:[40.405,-74.06],z:11,t:'Middletown, 1667–1670',x:'James Bowne had lot No. 2 at Portland Point by 1667, and William Layton drew Middletown town lot No. 14. In 1670 the purchase payments went to “James Grover & Company.”',r:['BG-0137','L-0001'],ch:3},
+ {y:1688,y2:1691,c:[40.16,-74.53],z:11,t:'The Middletown men’s lots, 1688',x:'Seven Middletown men, among them James Bowne, Joseph Grover and Benjamin Borden, were each granted 500 acres at Crosswicks. Their lots lay side by side along Doctors Creek.',r:['BG-0390','BG-0563'],ch:6},
+ {y:1698,y2:1717,c:[40.235,-74.29],z:11,t:'Inland to Freehold',x:'The next generation moved inland, and the neighbours came too. John Bowne bought at the Great Meadow in 1698, and by 1717 a Stout tract lay between Samuel Layton and Thomas Williams.',r:['BG-0346','BG-0206'],ch:5},
+ {y:1719,y2:1726,c:[40.217,-74.246],z:11,t:'The Brewers reach Long Brook',x:'The Brewers came with the wave of Dutch families from Kings County. Jan Brouwer was in Middletown by 1719; his son Aaron, born about 1724, farmed between Long Brook and the Manasquan at Blue Ball, today’s Adelphia.',r:['W-0394'],ch:7},
+ {y:1730,y2:1737,c:[40.16,-74.53],z:11,t:'Doctors Creek, 1730',x:'Thomas Williams moved to Upper Freehold by 1730 with 440 acres, in the Middletown men’s block beside Richard Borden. His son Joseph married Sarah Layton, the first Williams–Layton marriage on record.',r:['W-0469','W-0012'],ch:6},
+ {y:1766,y2:1769,c:[40.192,-74.059],z:11,t:'Shark River',x:'The Newmans lived along Shark River for generations. The line begins with John Newman of Shark River, whose will of 1768 names his wife Deliverance and their sons.',r:['N-0202'],ch:9},
+ {y:1777,y2:1781,c:[40.24,-74.25],z:11,t:'The Revolution',x:'John Williams of Freehold sided with the Crown and went over to British-held Long Island. His family’s 3,000-plus acres in Monmouth were confiscated and resold.',r:['W-0069','W-0133'],ch:6},
+ {y:1788,y2:1792,c:[40.134,-74.224],z:12,t:'The Miery Branch, 1788',x:'On 22 May 1788 Daniel Williams had land surveyed on the Miery Branch of the Metedeconk, beginning at the house he was building. His wife was Mary Brewer; her father Aaron’s will of 1800 names his daughter “Mary Williams.”',r:['W-0021'],ch:8},
+ {y:1801,y2:1805,c:[40.141,-74.039],z:11,t:'Wreck Pond, 1801',x:'Joseph I. Newman, “son of John Newman Junr,” began a farm on the Cross Branch of Wreck Pond in 1801.',r:['N-0155'],ch:9},
+ {y:1844,y2:1852,c:[40.15,-74.33],z:11,t:'Harmony and Burnt Tavern',x:'Silas Newman gave the lot for the Harmony church in 1844. To the west, Henry H. Wolcott kept a store and tavern at Burnt Tavern.',r:['N-0003'],ch:9},
+ {y:1862,y2:1866,c:[40.134,-74.224],z:11,t:'Bethel, 1862',x:'Catherine Louisa Newman married Daniel D. Williams in 1862, and Thomas Edward Williams was born at Bethel that year. On the Howell maps, Layton, Williams, Newman and Cooper farms lie within a mile or two.',r:[],ch:10},
+ {y:1930,y2:1937,c:[40.083,-74.068],z:11,t:'Point Pleasant',x:'Thomas Edward Williams later moved to Point Pleasant, where his children, including Harry Franklin Williams, raised the next generation.',r:['W-0319'],ch:10}];
+const ROAD_BROAD=[[40.075,-74.56],[40.64,-73.78]];
 /* dots: direct-line ancestors, birth to death, at the places the records put them.
    zones: every record that places a family member (direct line or not) at a place lights a soft patch in the family colour,
    fading in a few years before the record and out over the following decades, so a family's country builds up and fades */
@@ -1778,32 +1815,47 @@ function roadData(){ if(ROADD) return ROADD;
   const OWN={}; Object.entries(vote).forEach(([k,v])=>OWN[k]=Object.entries(v).sort((a,b)=>b[1]-a[1])[0][0]); RCORE.forEach(k=>OWN[k]=k);
   out.forEach(o=>o.own=o.fk==='Other'?rOwnerP(o.id):(OWN[o.fk]||rOwnerP(o.id))); Z.forEach(z=>z.own=OWN[z.f]||null);
   Z.forEach(z=>{ if(z.early&&!z.own) z.own=OWN[z.f]||(RCORE.includes(z.f)?z.f:'Williams'); });
-  ROADD={L:out,Z,OWN,lo:1645,   // Gravesend is settled in 1645; the clock starts there
+  /* activity by year, for Auto speed */
+  const ACT={}; Z.forEach(z=>{ if(!z.early) ACT[z.y]=(ACT[z.y]||0)+1; }); out.forEach(o=>o.pts.forEach(q=>{ ACT[q.y]=(ACT[q.y]||0)+2; }));
+  /* marriages between two direct-line ancestors, with a dated marriage */
+  const byId={}; out.forEach(o=>byId[o.id]=o); const MAR=[];
+  out.forEach(o=>(o.p.sp||[]).forEach(s=>{ const q=Array.isArray(s)?s[0]:s, my=yr(Array.isArray(s)?s[1]:''); if(!my||!byId[q]||o.id>q) return;
+    const sh=p=>{ const w=String(p.n).replace(/^(Capt|Captain|Judge|Rev|Dr)\.?\s+/,'').split(/\s+/); return w.length>1?w[0]+' '+w[w.length-1]:w[0]; };
+    MAR.push({a:o.id,b:q,y:my,lab:sh(o.p)+' & '+sh(P[q])}); }));
+  ROADD={L:out,Z,OWN,ACT,MAR,byId,lo:1645,   // Gravesend is settled in 1645; the clock starts there
     hi:Math.min(1960,Math.max(hi,1956))}; return ROADD; }
 /* a move between two places is spread over the three years before the record that shows the new place, eased in and out */
 function roadPos(o,Y){ if(Y<o.s||Y>=o.e+1) return null; const Q=o.pts; let k=-1; for(let i=0;i<Q.length;i++){ if(Q[i].y<=Y) k=i; else break; }
   if(k<0) return [Q[0].lat,Q[0].lon,0]; const a=Q[k], n=Q[k+1];
   if(n){ const span=Math.min(3,Math.max(1,n.y-a.y)); let f=(Y-(n.y-span))/span; if(f>0){ f=Math.min(1,f); f=f*f*(3-2*f); return [a.lat+(n.lat-a.lat)*f,a.lon+(n.lon-a.lon)*f,k]; } }
   return [a.lat,a.lon,k]; }
-function mapTog(on){ return `<button class="tbtn mtog${on?' on':''}" onclick="${on?"store('wfh-mapmode','std');go('map')":"store('wfh-mapmode','move');go('mapmove')"}" aria-pressed="${on}" aria-label="Show ancestors in motion"><span class="sw"><i></i></span>In motion</button>`; }
+function mapTog(m){ const cur=m==='tour'?'tour':m?'move':'std';
+  const b=(k,l,a)=>`<button class="${cur===k?'on':''}" onclick="${a}" aria-pressed="${cur===k}">${l}</button>`;
+  return `<div class="mseg" role="group" aria-label="Map view">${b('std','Map',"store('wfh-mapmode','std');go('map')")}${b('move','In motion',"store('wfh-mapmode','move');go('mapmove')")}${b('tour','Tour',"go('maptour')")}</div>`; }
 function roadW(y,Y){ if(Y<y-4) return 0; if(Y<y) return (Y-(y-4))/4; if(Y<=y+15) return 1; if(Y<=y+40) return 1-(Y-y-15)/25; return 0; }
-function vRoad(asMap){ RLEG=''; setTab(asMap?'map':'story'); if(asMap) store('wfh-mapmode','move'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
-  app.innerHTML=(asMap?topBar('Map',false,mapTog(true)):topBar('The road in motion',true))+`<div class="wrap roadwrap">
+function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(asMap&&!tour) store('wfh-mapmode','move'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
+  if(tour){ ROADY=1643; RFAMT=RFAM; RFAM=new Set(RCORE); } else if(RFAMT){ RFAM=RFAMT; RFAMT=null; }
+  app.innerHTML=(asMap?topBar('Map',false,mapTog(tour?'tour':true)):topBar('The road in motion',true))+`<div class="wrap roadwrap${tour?' tourmode':''}">
    <div class="chips rfam" id="rfam"><button class="chip ${RFAM.size===RCORE.length?'on':''}" data-k="*">All</button>${RCORE.map(k=>`<button class="chip ${RFAM.size<RCORE.length&&RFAM.has(k)?'on':''}" data-k="${k}"><i style="background:${roadCol(k)}"></i>${k}</button>`).join('')}</div>
-   <div class="roadstage"><div id="map" class="roadmap"></div>
-   <div class="roadplayer" id="roadplayer">
-    <div class="roadtop"><button class="roadplay" id="roadplay" onclick="roadToggle()" aria-label="Play">▶</button><div style="flex:1;min-width:0"><div class="roadyr" id="roadyr">${Math.floor(ROADY)}</div><div class="tiny muted" id="roadct"></div></div>
-      <div class="roadsp">${[[1.2,'Slow'],[2.5,'Steady'],[5,'Fast']].map(([v,l])=>`<button class="chip sm ${ROADSP===v?'on':''}" onclick="ROADSP=${v};this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===this))">${l}</button>`).join('')}</div></div>
+   <div class="roadstage"><div id="map" class="roadmap"></div><div class="roadedge" id="roadedge"></div><div class="tbub" id="tbub" hidden></div>
+   <div class="roadplayer" id="roadplayer">${tour?`
+    <div class="roadtop"><button class="tbn" onclick="tourStep(-1)" aria-label="Previous stop">⏮</button><button class="roadplay" id="roadplay" onclick="tourPause()" aria-label="Pause">❚❚</button><button class="tbn" onclick="tourStep(1)" aria-label="Next stop">⏭</button>
+      <div style="flex:1;min-width:0"><div class="roadyr" id="roadyr">${Math.floor(ROADY)}</div><div class="tiny muted" id="roadera"></div></div><button class="chip sm" onclick="tourEnd()">Exit</button></div>
+    <div class="tdots" id="tdots"></div><div id="roadct" hidden></div><input type="range" id="roadsl" hidden><div id="roadnow" hidden></div>`:`
+    <div class="roadtop"><button class="roadplay" id="roadplay" onclick="roadToggle()" aria-label="Play">▶</button><div style="flex:1;min-width:0"><div class="roadyr" id="roadyr">${Math.floor(ROADY)}</div><div class="tiny muted" id="roadct"></div><div class="tiny" id="roadera"></div></div>
+      <div class="roadsp">${[['auto','Auto'],[1.2,'Slow'],[2.5,'Steady'],[5,'Fast']].map(([v,l])=>`<button class="chip sm ${ROADSP===v?'on':''}" onclick="ROADSP=${typeof v==='string'?"'auto'":v};this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c===this))">${l}</button>`).join('')}</div></div>
     <input type="range" class="roadslide" id="roadsl" min="${RD.lo}" max="${RD.hi}" step="1" value="${Math.floor(ROADY)}" aria-label="Year">
-    <div class="roadnow" id="roadnow"></div></div></div><div class="roadoff tiny muted" id="roadoff"></div>
+    <div class="roadnow" id="roadnow"></div>`}</div></div><div class="roadoff tiny muted" id="roadoff"></div>
    <div class="fanleg roadleg" id="roadleg"></div>
-   <div class="card small">Switch families on and off at the top to follow just the ones you choose; the families that married into each line come and go with it. The soft coloured country is each family’s presence: every deed, survey, tax list, census or home that places a family member somewhere lights that spot, fading in a few years before the record and out over the following decades. Where families overlap, the colours blend, which is where marriages tend to happen. Each dot is one direct-line ancestor (${RD.L.length} of them), shown from birth to death; it drifts to a new place over the few years before a record finds them there. Tap a dot to see who it is.</div></div>`;
+   <div class="card small">Switch families on and off at the top to follow just the ones you choose; the families that married into each line come and go with it. The soft coloured country is each family’s presence: every deed, survey, tax list, census or home that places a family member somewhere lights that spot, fading in a few years before the record and out over the following decades. Where families overlap, the colours blend, which is where marriages tend to happen. Each dot is one direct-line ancestor (${RD.L.length} of them), shown from birth (or, for the first settlers, from their first record) to death; it drifts to a new place over the few years before a record finds them there and leaves a short fading trail. When few dots are on screen they carry their G-tag, a red ring marks a marriage between two of them, and arrows at the edge point to family living off the map. Auto speed slows where the records crowd together and hurries through quiet decades. Tap a dot to see who it is.</div></div>`;
   document.getElementById('rfam').onclick=e=>{ const b=e.target.closest('[data-k]'); if(!b) return; const k=b.dataset.k;
     if(k==='*') RFAM=new Set(RCORE); else if(RFAM.size===RCORE.length) RFAM=new Set([k]); else if(RFAM.has(k)){ RFAM.delete(k); if(!RFAM.size) RFAM=new Set(RCORE); } else RFAM.add(k);
     store('wfh-roadfam2',[...RFAM]); const all=RFAM.size===RCORE.length; document.querySelectorAll('#rfam .chip').forEach(c=>c.classList.toggle('on',c.dataset.k==='*'?all:(!all&&RFAM.has(c.dataset.k))));
     RLEG=''; roadDraw(); };
   const ren=mkMap(); const lay=L.layerGroup().addTo(MAP); const M={};
-  { const ph=(document.getElementById('roadplayer')||{}).offsetHeight||110; MAP.fitBounds([[40.075,-74.56],[40.64,-73.78]],{paddingTopLeft:[4,4],paddingBottomRight:[4,ph+26]}); }
+  { const ph=(document.getElementById('roadplayer')||{}).offsetHeight||110;
+  MAP.fitBounds(ROAD_BROAD,{paddingTopLeft:[4,4],paddingBottomRight:[4,ph+26]}); }
+  const trl=L.layerGroup().addTo(MAP), TR={}, MR={};
   { const pl=document.getElementById('roadplayer'); if(pl){ L.DomEvent.disableClickPropagation(pl); L.DomEvent.disableScrollPropagation(pl); } }
   /* the presence layer: one canvas over the base map, under the dots */
   const box=document.getElementById('map'), cv=document.createElement('canvas'); cv.className='roadzone';
@@ -1840,19 +1892,42 @@ function vRoad(asMap){ RLEG=''; setTab(asMap?'map':'story'); if(asMap) store('wf
       .bindPopup(()=>{ const ps=roadPos(o,ROADY), q=ps?o.pts[ps[2]]:null; return `<b>${esc(o.p.n)}</b>${gtag(o.p)}<div class="muted small">${esc(years(o.p))}</div>${q?`<div class="small" style="margin:4px 0">${q.born?'Born at':q.died?'Died at':'At'} ${esc(q.lab)}${q.born||q.died?'':' from '+q.y}${q.r?` · <a href="#r-${q.r}" style="display:inline">record</a>`:''}</div>`:''}<a href="#p-${o.id}">Open page ›</a>`; }); });
   const yrEl=document.getElementById('roadyr'), ct=document.getElementById('roadct'), now=document.getElementById('roadnow'), sl=document.getElementById('roadsl'), offEl=document.getElementById('roadoff');
   let lastNow='', lastOff='';
-  window.roadDraw=()=>{ const Y=ROADY; let n=0; const bnd=MAP.getBounds(), away={};
-    RD.L.forEach(o=>{ const ps=RFAM.has(o.own)?roadPos(o,Y):null, m=M[o.id];
-      if(!ps){ if(lay.hasLayer(m)) lay.removeLayer(m); return; }
+  const eraEl=document.getElementById('roadera'), edge=document.getElementById('roadedge'); let lastEdge='';
+  window.roadDraw=()=>{ const Y=ROADY; let n=0, nv=0; const bnd=MAP.getBounds(), away={}, vis=[];
+    RD.L.forEach(o=>{ const ps=RFAM.has(o.own)?roadPos(o,Y):null, m=M[o.id], tr=TR[o.id];
+      if(!ps){ if(lay.hasLayer(m)) lay.removeLayer(m); if(tr&&trl.hasLayer(tr)) trl.removeLayer(tr); return; }
       n++; const ll=[ps[0]+o.dy,ps[1]+o.dx]; m.setLatLng(ll); if(!lay.hasLayer(m)) lay.addLayer(m);
-      if(!bnd.contains(ll)){ const q=o.pts[ps[2]]; const k=String(q.lab||'').split(/[,(—]/)[0].trim().replace(/^(near|at)\s+/i,''); away[k]=(away[k]||0)+1; } });
+      if(bnd.contains(ll)){ nv++; vis.push(o); }
+      else { const q=o.pts[ps[2]]; const k=String(q.lab||'').split(/[,(—]/)[0].trim().replace(/^(near|at)\s+/i,''); const a=away[k]=away[k]||{c:0,lat:q.lat,lon:q.lon}; a.c++; }
+      const Q=o.pts, k=ps[2], a=Q[k]; let from=null, op=0;
+      if(a&&Q[k+1]&&(Math.abs(ps[0]-a.lat)+Math.abs(ps[1]-a.lon))>1e-4){ from=[a.lat+o.dy,a.lon+o.dx]; op=.85; }
+      else if(a&&k>0&&Y-a.y<6&&Y>=a.y){ const pr=Q[k-1]; if(Math.abs(pr.lat-a.lat)+Math.abs(pr.lon-a.lon)>2e-3){ from=[pr.lat+o.dy,pr.lon+o.dx]; op=.85*(1-(Y-a.y)/6); } }
+      if(from&&op>.04){ if(!tr) TR[o.id]=L.polyline([from,ll],{color:o.col,weight:3,opacity:op,dashArray:'5 6',renderer:ren,interactive:false}).addTo(trl); else { tr.setLatLngs([from,ll]); tr.setStyle({opacity:op}); if(!trl.hasLayer(tr)) trl.addLayer(tr); } }
+      else if(tr&&trl.hasLayer(tr)) trl.removeLayer(tr); });
+    const showG=nv<=14; RD.L.forEach(o=>{ const m=M[o.id]; const want=showG&&vis.includes(o)&&o.p.G;
+      if(want&&!m._gt){ m.bindTooltip('G'+o.p.G,{permanent:true,direction:'right',className:'gtip',offset:[7,0]}); m._gt=1; }
+      else if(!want&&m._gt){ m.unbindTooltip(); m._gt=0; } });
+    RD.MAR.forEach((mr,i)=>{ const dy=Y-mr.y, oa=RD.byId[mr.a], ob=RD.byId[mr.b]; let mk=MR[i];
+      const on=dy>=0&&dy<3&&RFAM.has(oa.own)&&RFAM.has(ob.own); const ps=on?(roadPos(oa,Y)||roadPos(ob,Y)):null;
+      if(!ps){ if(mk&&lay.hasLayer(mk)) lay.removeLayer(mk); return; }
+      if(!mk) mk=MR[i]=L.circleMarker([0,0],{radius:8,color:'#b23a48',weight:2.5,fill:false,interactive:false,renderer:ren,pane:'pins'}).bindTooltip('♥ '+mr.lab+', m. '+mr.y,{permanent:true,direction:'top',className:'mtip',offset:[0,-10]});
+      mk.setLatLng([ps[0],ps[1]]); mk.setRadius(8+dy*9); mk.setStyle({opacity:Math.max(0,1-dy/3)}); if(!lay.hasLayer(mk)) lay.addLayer(mk);
+      const tt=mk.getTooltip(); if(tt&&tt.getElement()) tt.getElement().style.opacity=Math.max(0,1-dy/2.2); });
+    if(eraEl) eraEl.textContent=roadEra(Y);
+    if(edge){ const w=box.clientWidth, h=box.clientHeight, cxp=w/2, cyp=h/2; const ph=(document.getElementById('roadplayer')||{}).offsetHeight||0;
+      const html=Object.entries(away).slice(0,5).map(([k,a])=>{ const p=MAP.latLngToContainerPoint([a.lat,a.lon]); const ang=Math.atan2(p.y-cyp,p.x-cxp);
+        const x=Math.max(46,Math.min(w-46,p.x)), y=Math.max(30,Math.min(h-ph-40,p.y)); return `<div class="redge" style="left:${x.toFixed(0)}px;top:${y.toFixed(0)}px"><b style="transform:rotate(${(ang*180/Math.PI).toFixed(0)}deg)">➤</b>${esc(k)}${a.c>1?' ('+a.c+')':''}</div>`; }).join('');
+      if(html!==lastEdge){ lastEdge=html; edge.innerHTML=html; } }
+    if(TS&&TS.cur) tourPos();
     /* while playing, the zones only need redrawing every fifth of a year; the dots still move every frame */
     if(!ROADPLAY||Math.abs(Y-(window._rzY||-1e9))>=.2){ window._rzY=Y; drawZones(); roadLegend(Y); }
     yrEl.textContent=Math.floor(Y); ct.textContent=n?`${n} ancestor${n>1?'s':''} living`:'No direct-line ancestor on record this year'; if(!ROADPLAY) sl.value=Math.floor(Y);
-    const ot=Object.entries(away).map(([k,c])=>`${k}${c>1?' ('+c+')':''}`).join(' · '); if(ot!==lastOff){ lastOff=ot; offEl.textContent=ot?'Also living, off this map: '+ot:''; }
+    const ot=Object.entries(away).map(([k,a])=>`${k}${a.c>1?' ('+a.c+')':''}`).join(' · '); if(ot!==lastOff){ lastOff=ot; offEl.textContent=ot?'Off this map: '+ot:''; }
     const yi=Math.floor(Y), ch=SMAP.filter(s=>{ const m=String(s[4]).match(/(\d{4})s?\D*(\d{4})?/); if(!m) return false; const a=+m[1], z=/→/.test(s[4])?2100:(m[2]?+m[2]+(/s$/.test(s[4])?9:0):a); return yi>=a&&yi<=z; }).map(s=>s[1]).join(' · ');
     if(ch!==lastNow){ lastNow=ch; now.innerHTML=ch?`<b>On the road:</b> ${esc(ch)}`:'&nbsp;'; } };
   sl.oninput=e=>{ ROADY=+e.target.value; if(ROADPLAY) roadToggle(); roadDraw(); };
-  roadDraw(); setTimeout(()=>{ if(MAP&&document.getElementById('roadyr')){ MAP.invalidateSize(); roadDraw(); } },200); MAP.on('moveend',()=>{ if(!ROADPLAY&&document.getElementById('roadyr')) roadDraw(); }); }
+  roadDraw(); setTimeout(()=>{ if(MAP&&document.getElementById('roadyr')){ MAP.invalidateSize(); roadDraw(); } },200); MAP.on('moveend',()=>{ if(!ROADPLAY&&document.getElementById('roadyr')) roadDraw(); });
+  if(tour) setTimeout(()=>{ if(document.getElementById('tdots')) tourStart(0); },700); }
 /* the key lists every family on the map this year (zone or dot), the busiest first */
 let RLEG='';
 function roadLegend(Y){ const el=document.getElementById('roadleg'); if(!el) return; const RD=roadData(), w={};
@@ -1864,10 +1939,40 @@ function roadLegend(Y){ const el=document.getElementById('roadleg'); if(!el) ret
 function roadToggle(){ const btn=document.getElementById('roadplay'); if(!btn) return; ROADPLAY=!ROADPLAY; btn.textContent=ROADPLAY?'❚❚':'▶'; btn.setAttribute('aria-label',ROADPLAY?'Pause':'Play');
   const RD=roadData(); if(ROADPLAY&&ROADY>=RD.hi) ROADY=RD.lo; ROADT=0;
   if(ROADPLAY){ const m=document.getElementById('map'), tb=document.querySelector('.topbar'); if(m){ const y=m.getBoundingClientRect().top+window.scrollY-((tb&&tb.offsetHeight)||50)-6; window.scrollTo({top:Math.max(0,y),behavior:'smooth'}); } }
-  const step=ts=>{ if(!ROADPLAY||!document.getElementById('roadyr')){ ROADPLAY=false; return; } if(ROADT){ ROADY=Math.min(RD.hi,ROADY+Math.min(.1,(ts-ROADT)/1000)*ROADSP); } ROADT=ts;
+  const step=ts=>{ if(!ROADPLAY||!document.getElementById('roadyr')){ ROADPLAY=false; return; } if(ROADT){ ROADY=Math.min(RD.hi,ROADY+Math.min(.1,(ts-ROADT)/1000)*(ROADSP==='auto'?roadAuto(ROADY):ROADSP)); } ROADT=ts;
     roadDraw(); const sl=document.getElementById('roadsl'); if(sl) sl.value=Math.floor(ROADY);
     if(ROADY>=RD.hi){ ROADPLAY=false; btn.textContent='▶'; return; } requestAnimationFrame(step); };
   if(ROADPLAY) requestAnimationFrame(step); }
+/* ---- the guided tour ---- */
+let TS=null, RFAMT=null; const RMOT=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function tourOK(tok){ return TS&&TS.tok===tok&&document.getElementById('tdots'); }
+function tourDots(){ const el=document.getElementById('tdots'); if(!el||!TS) return; el.innerHTML=RTOUR.map((s,i)=>`<button class="${i===TS.i?'on':i<TS.i?'done':''}" onclick="tourGo(${i})" aria-label="${esc(s.t)}"></button>`).join(''); }
+function tourClock(tok,target,ms){ return new Promise(res=>{ const y0=ROADY; let t0=null, el=0;
+  const f=ts=>{ if(!tourOK(tok)) return res(); if(TS.paused){ t0=null; requestAnimationFrame(f); return; } if(t0==null) t0=ts-el; el=ts-t0;
+    const k=Math.min(1,el/ms), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; ROADY=y0+(target-y0)*e; roadDraw(); if(k<1) requestAnimationFrame(f); else res(); };
+  requestAnimationFrame(f); }); }
+function tourBub(s){ const b=document.getElementById('tbub'); if(!b) return; if(TS) TS.cur=s||null; if(!s){ b.hidden=true; return; }
+  const recs=(s.r||[]).filter(r=>R[r]).map(r=>`<a href="#r-${r}">${r}</a>`).join(' ');
+  b.innerHTML=`<div class="tbt">${esc(s.t)}</div><div class="tbx">${esc(s.x)}</div><div class="tbl">${recs}${s.ch?` <a onclick="tourEnd(1);go('story');setTimeout(()=>{const c=document.querySelectorAll('.schap')[${s.ch-1}];if(c)c.scrollIntoView({block:'start'})},350)">Read the chapter ›</a>`:''}</div><i class="tbp"></i>`;
+  b.hidden=false; tourPos(); }
+function tourPos(){ const b=document.getElementById('tbub'); if(!b||b.hidden||!TS||!TS.cur||!MAP) return; const box=document.getElementById('map'), w=box.clientWidth;
+  const p=MAP.latLngToContainerPoint(TS.cur.c), bw=b.offsetWidth, bh=b.offsetHeight, below=p.y-bh-20<6;
+  b.style.left=Math.max(6,Math.min(w-bw-6,p.x-bw/2))+'px'; b.style.top=(below?p.y+20:p.y-bh-20)+'px'; b.classList.toggle('below',below);
+  const pt=b.querySelector('.tbp'); if(pt) pt.style.left=Math.max(14,Math.min(bw-14,p.x-parseFloat(b.style.left)))+'px'; }
+async function tourRun(tok){ while(tourOK(tok)&&TS.i<RTOUR.length){ const s=RTOUR[TS.i]; tourDots(); tourBub(null);
+    const far=Math.abs(s.y-ROADY), ms=Math.max(1800,Math.min(4200,far*90));
+    if(RMOT) MAP.setView(s.c,s.z); else MAP.flyTo(s.c,s.z,{duration:Math.min(2.6,ms/1000)});
+    await tourClock(tok,s.y,ms); if(!tourOK(tok)) return;
+    tourBub(s); await tourClock(tok,s.y2||s.y+3,Math.max(6500,s.x.length*48)); if(!tourOK(tok)) return; TS.i++; }
+  if(!tourOK(tok)) return; tourBub(null); tourDots(); MAP.flyToBounds(ROAD_BROAD,{duration:RMOT?0:2,paddingBottomRight:[4,((document.getElementById('roadplayer')||{}).offsetHeight||110)+26]});
+  await tourClock(tok,1956,3000); if(!tourOK(tok)) return;
+  tourBub({c:[40.30,-74.2],t:'The families’ road',x:'From Gravesend in 1645 to Point Pleasant: Stout, Bowne, Grover, Layton, Brewer, Cooper, Newman, Wolcott and more all come together in the Williams family. Switch to In motion to explore it at your own pace.',r:[],ch:10});
+  const bt=document.getElementById('roadplay'); if(bt){ bt.textContent='↺'; bt.setAttribute('aria-label','Start again'); bt.onclick=()=>{ ROADY=1643; tourStart(0); }; } }
+function tourStart(i){ TS={i:i||0,paused:false,tok:{},cur:null}; const bt=document.getElementById('roadplay'); if(bt){ bt.textContent='❚❚'; bt.onclick=tourPause; } tourRun(TS.tok); }
+function tourGo(i){ if(!TS) return; i=Math.max(0,Math.min(RTOUR.length-1,i)); ROADY=Math.max(roadData().lo,RTOUR[i].y-2); tourStart(i); }
+function tourStep(d){ if(TS) tourGo(TS.i+d); }
+function tourPause(){ if(!TS) return; TS.paused=!TS.paused; const bt=document.getElementById('roadplay'); if(bt){ bt.textContent=TS.paused?'▶':'❚❚'; bt.setAttribute('aria-label',TS.paused?'Resume':'Pause'); } }
+function tourEnd(stay){ TS=null; if(RFAMT){ RFAM=RFAMT; RFAMT=null; } if(!stay) go('mapmove'); }
 function goStoryMap(){ go('story'); const f=()=>{ const m=document.getElementById('storymap'); if(m) m.scrollIntoView({block:'start'}); }; setTimeout(f,80); setTimeout(f,400); }
 function goMarks(){ go('marks'); }
 function vPeople(){
@@ -3132,7 +3237,7 @@ function route(){
   const back=RETURNING; RETURNING=false; CURKEY='';
   if((h==='map'||h.startsWith('map-'))&&!back) MHIDE.clear();
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
-  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='names') vNames(); else if(h==='lives') vLives(); else if(h.startsWith('life-')) vLife(h.slice(5)); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='mapmove') vRoad(true); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
+  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='names') vNames(); else if(h==='lives') vLives(); else if(h.startsWith('life-')) vLife(h.slice(5)); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='maptour') vRoad(true,true); else if(h==='mapmove') vRoad(true); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));
   else if(h.startsWith('r-')) vRecord(h.slice(2)); else if(h.startsWith('map-')) vMap(h.slice(4)); else if(h.startsWith('pmap-')) vPMap(h.slice(5)); else if(h.startsWith('pic-')) vPic(h.slice(4)); else if(h==='pics') vPics(); else if(h==='sources') vSources(); else vHome();
   const key=NAVN+'|'+h, y=back?(SCROLLMEM[key]||0):0;

@@ -1727,6 +1727,8 @@ function fanPick(id){ const p=P[id], el=document.getElementById('faninfo'); if(!
    1657–1719, then Middletown until Aaron's Long Brook years begin */
 const ROAD_EARLY=[['Stout',40.597,-73.972,1645,1664],['Grover',40.599,-73.968,1646,1665],['Bowne',40.595,-73.976,1646,1667],
   ['Brewer',40.622,-73.925,1657,1719],['Brewer',40.394,-74.118,1719,1724]];
+/* direct-line ancestors whose only placing is in the story text (no record yet): [person, year, lat, lon, place] */
+const ROAD_STORYPTS=[['p681',1657,40.622,-73.925,'Flatlands, Long Island'],['p124',1660,40.622,-73.925,'Flatlands, Long Island'],['p69',1719,40.394,-74.118,'Middletown']];
 let ROADD=null, ROADY=1645, ROADPLAY=false, ROADT=0, ROADSP='auto';
 /* the eras shown under the year */
 const ROAD_ERAS=[[1645,'Dutch Long Island'],[1664,'Proprietors’ Monmouth'],[1702,'Royal New Jersey'],[1775,'The Revolution'],[1784,'The early republic'],[1861,'The Civil War'],[1866,'Railroad and shore-resort era'],[1930,'Point Pleasant years']];
@@ -1741,10 +1743,11 @@ const RTOUR=[
  {y:1667,y2:1670,c:[40.405,-74.06],z:11,t:'Middletown, 1667–1670',x:'James Bowne had lot No. 2 at Portland Point by 1667, and William Layton drew Middletown town lot No. 14. In 1670 the purchase payments went to “James Grover & Company.”',r:['BG-0137','L-0001'],ch:3},
  {y:1688,y2:1691,c:[40.16,-74.53],z:11,t:'The Middletown men’s lots, 1688',x:'Seven Middletown men, among them James Bowne, Joseph Grover and Benjamin Borden, were each granted 500 acres at Crosswicks. Their lots lay side by side along Doctors Creek.',r:['BG-0390','BG-0563'],ch:6},
  {y:1698,y2:1717,c:[40.235,-74.29],z:11,t:'Inland to Freehold',x:'The next generation moved inland, and the neighbours came too. John Bowne bought at the Great Meadow in 1698, and by 1717 a Stout tract lay between Samuel Layton and Thomas Williams.',r:['BG-0346','BG-0206'],ch:5},
- {y:1719,y2:1726,c:[40.217,-74.246],z:11,t:'The Brewers reach Long Brook',x:'The Brewers came with the wave of Dutch families from Kings County. Jan Brouwer was in Middletown by 1719; his son Aaron, born about 1724, farmed between Long Brook and the Manasquan at Blue Ball, today’s Adelphia.',r:['W-0394'],ch:7},
+ {y:1719,y2:1724,c:[40.394,-74.118],z:11,t:'The Brewers come to Monmouth',f:['Brewer'],x:'The Brewers came with the wave of Dutch farm families from Kings County. Jan Brouwer was in Middletown by 1719 and married Helena Van Cleef, probably of a Gravesend family.',r:['W-0394'],ch:7},
  {y:1730,y2:1737,c:[40.16,-74.53],z:11,t:'Doctors Creek, 1730',x:'Thomas Williams moved to Upper Freehold by 1730 with 440 acres, in the Middletown men’s block beside Richard Borden. His son Joseph married Sarah Layton, the first Williams–Layton marriage on record.',r:['W-0469','W-0012'],ch:6},
  {y:1766,y2:1769,c:[40.192,-74.059],z:11,t:'Shark River',x:'The Newmans lived along Shark River for generations. The line begins with John Newman of Shark River, whose will of 1768 names his wife Deliverance and their sons.',r:['N-0202'],ch:9},
  {y:1777,y2:1781,c:[40.24,-74.25],z:11,t:'The Revolution',x:'John Williams of Freehold sided with the Crown and went over to British-held Long Island. His family’s 3,000-plus acres in Monmouth were confiscated and resold.',r:['W-0069','W-0133'],ch:6},
+ {y:1784,y2:1786,c:[40.217,-74.246],z:11,t:'The Brewers at Long Brook',f:['Brewer','Cooper'],x:'Jan’s son Aaron Brewer, born about 1724, farmed between Long Brook and the Manasquan at Blue Ball, today’s Adelphia. His wife Ellenor Neeltje Cooper’s 1785 gravestone is the earliest dated burial in the Adelphia churchyard.',r:['W-0334','W-0324'],ch:7},
  {y:1788,y2:1792,c:[40.134,-74.224],z:12,t:'The Miery Branch, 1788',x:'On 22 May 1788 Daniel Williams had land surveyed on the Miery Branch of the Metedeconk, beginning at the house he was building. His wife was Mary Brewer; her father Aaron’s will of 1800 names his daughter “Mary Williams.”',r:['W-0021'],ch:8},
  {y:1801,y2:1805,c:[40.141,-74.039],z:11,t:'Wreck Pond, 1801',x:'Joseph I. Newman, “son of John Newman Junr,” began a farm on the Cross Branch of Wreck Pond in 1801.',r:['N-0155'],ch:9},
  {y:1844,y2:1852,c:[40.15,-74.33],z:11,t:'Harmony and Burnt Tavern',x:'Silas Newman gave the lot for the Harmony church in 1844. To the west, Henry H. Wolcott kept a store and tavern at Burnt Tavern.',r:['N-0003'],ch:9},
@@ -1793,6 +1796,7 @@ function roadData(){ if(ROADD) return ROADD;
   /* the Long Island years, from the story: these families were at Gravesend and Flatlands before any Monmouth record,
      so their country there is lit one point every three years across the span the story gives */
   ROAD_EARLY.forEach(([f,lat,lon,a,b])=>{ for(let y=a;y<=b;y+=3) Z.push({f,y,lat,lon,id:null,early:1}); });
+  ROAD_STORYPTS.forEach(([id,y,lat,lon,lab])=>{ if(ids.has(id)) add(id,{y,lat,lon,lab:lab+' (from the story)',story:1}); });
   (D.homes||[]).forEach(h=>{ const y=yr(h.y); if(!h.ll||!y) return; (h.ppl||[]).forEach(id=>{ zone(id,y,h.ll[0],h.ll[1]); if(ids.has(id)) add(id,{y,lat:h.ll[0],lon:h.ll[1],lab:h.a}); }); });
   const out=[]; let lo=2000, hi=1500;
   dl.forEach(p=>{ const b=yr(p.b), d=yr(p.d); let pts=(byP[p.id]||[]).slice();
@@ -1805,7 +1809,7 @@ function roadData(){ if(ROADD) return ROADD;
     const Q=[]; pts.forEach(q=>{ const l=Q[Q.length-1]; if(l&&Math.abs(l.lat-q.lat)<2e-3&&Math.abs(l.lon-q.lon)<2e-3) return; Q.push(q); });
     /* the first generations were born before Monmouth (or anywhere on this map) existed for them: with no mapped birthplace
        and a birth before 1670, the dot appears only when a record first places them, so the settlers arrive on a clean slate */
-    const s0=(!Q[0].born&&b&&b<1670)?Q[0].y:(b||Q[0].y);
+    const s0=(!Q[0].born&&b&&(b<1670||Q[0].story))?Q[0].y:(b||Q[0].y);
     const last=Q[Q.length-1].y, s=s0, e=d||Math.max(last,b?Math.min(b+65,last+25):last+10);
     let h=0; for(const c of p.id) h=(h*31+c.charCodeAt(0))%997; const an=h/997*2*Math.PI;
     out.push({id:p.id,p,pts:Q,s,e,fk:roadKey(p),col:roadCol(roadKey(p)),dx:Math.cos(an)*.006,dy:Math.sin(an)*.0045});
@@ -1889,7 +1893,7 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
     /* at a tour stop, every family present right there is named in a neat column beside the spot, away from the bubble */
     /* the column names only the direct-line ancestors whose dots are at the spot this year (their surnames), most first */
     if(TSP){ const cnt={}; (window._rdots||[]).forEach(([x,y,,f])=>{ if(f&&f!=='Other'&&Math.hypot(x-TSP.x,y-TSP.y)<R*1.7) cnt[f]=(cnt[f]||0)+1; }); Object.keys(cnt).forEach(f=>{ if(f.endsWith('*')&&cnt[f.slice(0,-1)]){ cnt[f.slice(0,-1)]+=cnt[f]; delete cnt[f]; } }); Object.entries(cnt).forEach(e=>near.push(e)); }
-    if(near.length&&TSP){ near.sort((a,b)=>b[1]-a[1]); const L2=near.slice(0,8), lh=17, up=!!(TS&&TS.bAbove===false);
+    if(near.length&&TSP){ const FT=(TS.cur.f||[]); near.sort((a,b)=>((FT.includes(b[0])?99:0)+b[1])-((FT.includes(a[0])?99:0)+a[1])); const L2=near.slice(0,8), lh=17, up=!!(TS&&TS.bAbove===false);
       cx.font="600 14px 'Fredoka','Trebuchet MS',sans-serif"; cx.textAlign='center'; cx.lineJoin='round';
       let y0=up?TSP.y-30-lh*(L2.length-1):TSP.y+36; y0=Math.max(14,Math.min(h-lh*L2.length-4,y0));
       L2.forEach(([f],i)=>{ const y=y0+i*lh; cx.lineWidth=4.5; cx.strokeStyle='rgba(255,252,242,.95)'; cx.strokeText(f,TSP.x,y); cx.fillStyle=colOf(f); cx.fillText(f,TSP.x,y); }); }

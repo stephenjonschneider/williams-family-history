@@ -1448,7 +1448,7 @@ function vHome(){
   archWire();
 }
 function photo(n){ const src=(window.PHOTOS||{})[n]; return src?`<img src="${src}" alt="" style="height:calc(100% - 2px)"><div class="cap">${esc((window.PHOTO_CAPS||{})[n]||'')}</div>`:`<div class="ph">Family photo<br>coming soon</div><div class="cap">&nbsp;</div>`; }
-function findP(n,y){return (D.people.find(p=>p.n===n&&yr(p.b)===y)||{}).id}
+function findP(n,y){ const a=D.people.filter(p=>p.n===n); return ((a.find(p=>yr(p.b)===y)||a.find(p=>p.G&&!p.living&&p.b&&String(p.b).includes(String(y)))||a.filter(p=>p.G).sort((x,z)=>Math.abs((yr(x.b)||9999)-y)-Math.abs((yr(z.b)||9999)-y))[0]||a.sort((x,z)=>Math.abs((yr(x.b)||9999)-y)-Math.abs((yr(z.b)||9999)-y))[0])||{}).id; }
 
 let pState={q:'',f:'dl',lim:80};
 function peopleBy(f){ pState={q:'',f,lim:200}; go('people'); }

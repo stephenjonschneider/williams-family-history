@@ -969,6 +969,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .roadedge{position:absolute;inset:0;pointer-events:none;z-index:780}.redge{position:absolute;transform:translate(-50%,-50%);background:rgba(251,247,239,.92);border:1px solid var(--line);border-radius:999px;padding:2px 8px 2px 5px;font-size:11.5px;color:#5a4a33;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.15)}.redge b{display:inline-block;color:var(--clay);margin-right:4px;font-size:11px}
 .tbub{position:absolute;z-index:820;width:min(290px,78%);background:#fbf7ef;border:1px solid var(--line);border-radius:12px;padding:9px 11px 8px;box-shadow:0 6px 18px rgba(0,0,0,.22);font-size:13.5px;line-height:1.38;animation:tbin .35s ease}
 .tbub .tbt{font-family:var(--head);font-size:17px;color:var(--green);margin-bottom:3px}.tbub .tbl{margin-top:6px;font-size:12.5px;display:flex;flex-wrap:wrap;gap:4px 10px}.tbub .tbl a{color:var(--clay);text-decoration:underline;cursor:pointer}
+.tlead{position:absolute;inset:0;pointer-events:none;z-index:815}.tlead i{position:absolute;height:2px;background:#7a5a33;transform-origin:0 50%;box-shadow:0 0 0 1px rgba(255,250,240,.7)}.tlead b{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#fbf7ef;border:3px solid #7a5a33;box-shadow:0 0 0 2px rgba(255,250,240,.7)}
 .tbub .tbp{position:absolute;bottom:-8px;width:14px;height:14px;background:#fbf7ef;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:translateX(-50%) rotate(45deg)}.tbub.below .tbp{bottom:auto;top:-8px;transform:translateX(-50%) rotate(225deg)}
 @keyframes tbin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .tbn{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff8ec;color:var(--green);font-size:13px;cursor:pointer}
@@ -1736,7 +1737,7 @@ function roadAuto(Y){ const A=roadData().ACT, y=Math.floor(Y); let a=0; for(let 
 const RTOUR=[
  {y:1645,y2:1649,c:[40.597,-73.972],z:11,t:'Gravesend, 1645',x:'Lady Moody’s English town on Dutch Long Island. Richard and Penelope Stout made their home here, James Grover had a house lot by 1646, and the Bownes came from Salem about the same time.',r:['BG-0306','BG-0268'],ch:1},
  {y:1657,y2:1660,c:[40.622,-73.925],z:11,t:'Flatlands, after 1657',x:'Jan Brouwer, a blacksmith from Amsterdam, settled at Flatlands, the Dutch village beside Gravesend. His family became the Brewers.',r:['W-0394'],ch:7},
- {y:1664,y2:1666,c:[40.5,-74.0],z:10,t:'Across the bay, 1664–1665',x:'Gravesend men looked across the bay to the Navesink country. Governor Nicolls’s patent of 8 April 1665 names twelve patentees, among them Richard Stout, James Grover and Captain John Bowne.',r:['BG-0133'],ch:3},
+ {y:1664,y2:1666,c:[40.5,-74.0],at:[40.413,-74.0],z:10,t:'Across the bay, 1664–1665',x:'Gravesend men looked across the bay to the Navesink country. Governor Nicolls’s patent of 8 April 1665 names twelve patentees, among them Richard Stout, James Grover and Captain John Bowne.',r:['BG-0133'],ch:3},
  {y:1667,y2:1670,c:[40.405,-74.06],z:11,t:'Middletown, 1667–1670',x:'James Bowne had lot No. 2 at Portland Point by 1667, and William Layton drew Middletown town lot No. 14. In 1670 the purchase payments went to “James Grover & Company.”',r:['BG-0137','L-0001'],ch:3},
  {y:1688,y2:1691,c:[40.16,-74.53],z:11,t:'The Middletown men’s lots, 1688',x:'Seven Middletown men, among them James Bowne, Joseph Grover and Benjamin Borden, were each granted 500 acres at Crosswicks. Their lots lay side by side along Doctors Creek.',r:['BG-0390','BG-0563'],ch:6},
  {y:1698,y2:1717,c:[40.235,-74.29],z:11,t:'Inland to Freehold',x:'The next generation moved inland, and the neighbours came too. John Bowne bought at the Great Meadow in 1698, and by 1717 a Stout tract lay between Samuel Layton and Thomas Williams.',r:['BG-0346','BG-0206'],ch:5},
@@ -1837,7 +1838,7 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
   if(tour){ ROADY=1643; RFAMT=RFAM; RFAM=new Set(RCORE); } else if(RFAMT){ RFAM=RFAMT; RFAMT=null; }
   app.innerHTML=(asMap?topBar('Map',false,mapTog(tour?'tour':true)):topBar('The road in motion',true))+`<div class="wrap roadwrap${tour?' tourmode':''}">
    <div class="chips rfam" id="rfam"><button class="chip ${RFAM.size===RCORE.length?'on':''}" data-k="*">All</button>${RCORE.map(k=>`<button class="chip ${RFAM.size<RCORE.length&&RFAM.has(k)?'on':''}" data-k="${k}"><i style="background:${roadCol(k)}"></i>${k}</button>`).join('')}</div>
-   <div class="roadstage"><div id="map" class="roadmap"></div><div class="roadedge" id="roadedge"></div><div class="tbub" id="tbub" hidden></div>
+   <div class="roadstage"><div id="map" class="roadmap"></div><div class="roadedge" id="roadedge"></div><div class="tlead" id="tlead" hidden><i></i><b></b></div><div class="tbub" id="tbub" hidden></div>
    <div class="roadplayer" id="roadplayer">${tour?`
     <div class="roadtop"><button class="tbn" onclick="tourStep(-1)" aria-label="Previous stop">⏮</button><button class="roadplay" id="roadplay" onclick="tourPause()" aria-label="Pause">❚❚</button><button class="tbn" onclick="tourStep(1)" aria-label="Next stop">⏭</button>
       <div style="flex:1;min-width:0"><div class="roadyr" id="roadyr">${Math.floor(ROADY)}</div><div class="tiny muted" id="roadera"></div></div><button class="chip sm" onclick="tourEnd()">Exit</button></div>
@@ -1918,7 +1919,7 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
       const html=Object.entries(away).slice(0,5).map(([k,a])=>{ const p=MAP.latLngToContainerPoint([a.lat,a.lon]); const ang=Math.atan2(p.y-cyp,p.x-cxp);
         const x=Math.max(46,Math.min(w-46,p.x)), y=Math.max(30,Math.min(h-ph-40,p.y)); return `<div class="redge" style="left:${x.toFixed(0)}px;top:${y.toFixed(0)}px"><b style="transform:rotate(${(ang*180/Math.PI).toFixed(0)}deg)">➤</b>${esc(k)}${a.c>1?' ('+a.c+')':''}</div>`; }).join('');
       if(html!==lastEdge){ lastEdge=html; edge.innerHTML=html; } }
-    if(TS&&TS.cur) tourPos();
+    if(TS){ window._rdots=vis.map(o=>{ const q=MAP.latLngToContainerPoint(M[o.id].getLatLng()); return [q.x,q.y,1]; }); if(TS.cur) tourPos(); }
     /* while playing, the zones only need redrawing every fifth of a year; the dots still move every frame */
     if(!ROADPLAY||Math.abs(Y-(window._rzY||-1e9))>=.2){ window._rzY=Y; drawZones(); roadLegend(Y); }
     yrEl.textContent=Math.floor(Y); ct.textContent=n?`${n} ancestor${n>1?'s':''} living`:'No direct-line ancestor on record this year'; if(!ROADPLAY) sl.value=Math.floor(Y);
@@ -1958,14 +1959,26 @@ function tourClock(tok,target,ms){ return new Promise(res=>{ const y0=ROADY; let
   const f=ts=>{ if(!tourOK(tok)) return res(); if(TS.paused){ t0=null; requestAnimationFrame(f); return; } if(t0==null) t0=ts-el; el=ts-t0;
     const k=Math.min(1,el/ms), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; ROADY=y0+(target-y0)*e; roadDraw(); if(k<1) requestAnimationFrame(f); else res(); };
   requestAnimationFrame(f); }); }
-function tourBub(s){ const b=document.getElementById('tbub'); if(!b) return; if(TS) TS.cur=s||null; if(!s){ b.hidden=true; return; }
+function tourBub(s){ const b=document.getElementById('tbub'), ld=document.getElementById('tlead'); if(!b) return; if(TS) TS.cur=s||null; if(!s){ b.hidden=true; if(ld) ld.hidden=true; return; }
   const recs=(s.r||[]).filter(r=>R[r]).map(r=>`<a href="#r-${r}">${r}</a>`).join(' ');
-  b.innerHTML=`<div class="tbt">${esc(s.t)}</div><div class="tbx">${esc(s.x)}</div><div class="tbl">${recs}${s.ch?` <a onclick="tourEnd(1);go('story');setTimeout(()=>{const c=document.querySelectorAll('.schap')[${s.ch-1}];if(c)c.scrollIntoView({block:'start'})},350)">Read the chapter ›</a>`:''}</div><i class="tbp"></i>`;
+  b.innerHTML=`<div class="tbt">${esc(s.t)}</div><div class="tbx">${esc(s.x)}</div><div class="tbl">${recs}${s.ch?` <a onclick="tourEnd(1);go('story');setTimeout(()=>{const c=document.querySelectorAll('.schap')[${s.ch-1}];if(c)c.scrollIntoView({block:'start'})},350)">Read the chapter ›</a>`:''}</div>`;
   b.hidden=false; tourPos(); }
-function tourPos(){ const b=document.getElementById('tbub'); if(!b||b.hidden||!TS||!TS.cur||!MAP) return; const box=document.getElementById('map'), w=box.clientWidth;
-  const p=MAP.latLngToContainerPoint(TS.cur.c), bw=b.offsetWidth, bh=b.offsetHeight, below=p.y-bh-20<6;
-  b.style.left=Math.max(6,Math.min(w-bw-6,p.x-bw/2))+'px'; b.style.top=(below?p.y+20:p.y-bh-20)+'px'; b.classList.toggle('below',below);
-  const pt=b.querySelector('.tbp'); if(pt) pt.style.left=Math.max(14,Math.min(bw-14,p.x-parseFloat(b.style.left)))+'px'; }
+/* the bubble stands well clear of the place, wherever it covers the fewest dots, joined to it by a long leader ending in a dot */
+function tourPos(){ const b=document.getElementById('tbub'), ld=document.getElementById('tlead'); if(!b||b.hidden||!TS||!TS.cur||!MAP) return; const box=document.getElementById('map'), w=box.clientWidth, h=box.clientHeight;
+  const ph=(document.getElementById('roadplayer')||{}).offsetHeight||0, bot=h-ph-24;
+  const p=MAP.latLngToContainerPoint(TS.cur.at||TS.cur.c), bw=b.offsetWidth, bh=b.offsetHeight, G=110;
+  const fit=(l,t)=>[Math.max(6,Math.min(w-bw-6,l)),Math.max(8,Math.min(bot-bh,t))];
+  const C=[fit(p.x-bw/2,p.y-G-bh),fit(p.x-bw/2,p.y+G),fit(p.x-G-bw,p.y-bh/2),fit(p.x+G,p.y-bh/2),fit(p.x-G*.7-bw,p.y-G*.7-bh),fit(p.x+G*.7,p.y-G*.7-bh),fit(p.x-G*.7-bw,p.y+G*.7),fit(p.x+G*.7,p.y+G*.7)];
+  const D=(window._rdots||[]).concat([[p.x,p.y,6]]);
+  let best=null, bs=1e9; C.forEach(([l,t],i)=>{ let sc=i*.01; D.forEach(([x,y,wt])=>{ if(x>l-12&&x<l+bw+12&&y>t-12&&y<t+bh+12) sc+=(wt||1); });
+    const cx=l+bw/2, cy=t+bh/2, dd=Math.hypot(cx-p.x,cy-p.y); if(dd<G*.8) sc+=3; if(sc<bs){ bs=sc; best=[l,t]; } });
+  const [left,top]=best; b.style.left=left+'px'; b.style.top=top+'px';
+  if(!ld) return; const ex=Math.max(left+14,Math.min(left+bw-14,p.x)), ey=Math.max(top+10,Math.min(top+bh-10,p.y));
+  /* start the leader on the bubble's edge nearest the place */
+  let sx=ex, sy=ey; if(p.y>top+bh) sy=top+bh; else if(p.y<top) sy=top; else sx=p.x<left?left:left+bw;
+  const dx=p.x-sx, dy=p.y-sy, len=Math.hypot(dx,dy); ld.hidden=len<18;
+  const ln=ld.querySelector('i'), dt=ld.querySelector('b'); ln.style.left=sx+'px'; ln.style.top=sy+'px'; ln.style.width=len+'px'; ln.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;
+  dt.style.left=p.x+'px'; dt.style.top=p.y+'px'; }
 async function tourRun(tok){ while(tourOK(tok)&&TS.i<RTOUR.length){ const s=RTOUR[TS.i]; tourDots(); tourBub(null);
     const far=Math.abs(s.y-ROADY), ms=Math.max(1800,Math.min(4200,far*90));
     if(RMOT) MAP.setView(s.c,s.z); else MAP.flyTo(s.c,s.z,{duration:Math.min(2.6,ms/1000)});

@@ -1936,13 +1936,20 @@ function roadLegend(Y){ const el=document.getElementById('roadleg'); if(!el) ret
   const ks=Object.keys(w).filter(k=>k!=='Other').sort((a,b)=>w[b]-w[a]); const other=!!w.Other;
   const h=ks.map(k=>`<span><i style="background:${roadCol(k)};border-radius:50%"></i>${k}</span>`).join('')+(other?`<span><i style="background:${roadCol('Other')};border-radius:50%"></i>Other surnames</span>`:'');
   if(h!==RLEG){ RLEG=h; el.innerHTML=`<b style="color:var(--ink,#333);margin-right:2px">On the map now:</b>`+h; } }
-function roadToggle(){ const btn=document.getElementById('roadplay'); if(!btn) return; ROADPLAY=!ROADPLAY; btn.textContent=ROADPLAY?'❚❚':'▶'; btn.setAttribute('aria-label',ROADPLAY?'Pause':'Play');
+function roadToggle(){ const btn=document.getElementById('roadplay'); if(!btn) return; ROADPLAY=!ROADPLAY; if(ROADPLAY) wakeOn(); else wakeOff(); btn.textContent=ROADPLAY?'❚❚':'▶'; btn.setAttribute('aria-label',ROADPLAY?'Pause':'Play');
   const RD=roadData(); if(ROADPLAY&&ROADY>=RD.hi) ROADY=RD.lo; ROADT=0;
   if(ROADPLAY){ const m=document.getElementById('map'), tb=document.querySelector('.topbar'); if(m){ const y=m.getBoundingClientRect().top+window.scrollY-((tb&&tb.offsetHeight)||50)-6; window.scrollTo({top:Math.max(0,y),behavior:'smooth'}); } }
   const step=ts=>{ if(!ROADPLAY||!document.getElementById('roadyr')){ ROADPLAY=false; return; } if(ROADT){ ROADY=Math.min(RD.hi,ROADY+Math.min(.1,(ts-ROADT)/1000)*(ROADSP==='auto'?roadAuto(ROADY):ROADSP)); } ROADT=ts;
     roadDraw(); const sl=document.getElementById('roadsl'); if(sl) sl.value=Math.floor(ROADY);
-    if(ROADY>=RD.hi){ ROADPLAY=false; btn.textContent='▶'; return; } requestAnimationFrame(step); };
+    if(ROADY>=RD.hi){ ROADPLAY=false; btn.textContent='▶'; wakeOff(); return; } requestAnimationFrame(step); };
   if(ROADPLAY) requestAnimationFrame(step); }
+/* ---- keep the screen awake while a map in motion is playing (Screen Wake Lock; released on pause, end or leaving) ---- */
+let WL=null;
+function wakeOn(){ if(!('wakeLock' in navigator)||WL) return; navigator.wakeLock.request('screen').then(l=>{ WL=l; l.addEventListener('release',()=>{ if(WL===l) WL=null; }); }).catch(()=>{}); }
+function wakeOff(){ if(WL){ const l=WL; WL=null; l.release().catch(()=>{}); } }
+function wakeWant(){ return document.getElementById('roadyr')&&(ROADPLAY||(TS&&!TS.paused&&document.getElementById('tdots'))); }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'&&wakeWant()) wakeOn(); });
+setInterval(()=>{ if(!wakeWant()) wakeOff(); },1500);
 /* ---- the guided tour ---- */
 let TS=null, RFAMT=null; const RMOT=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 function tourOK(tok){ return TS&&TS.tok===tok&&document.getElementById('tdots'); }
@@ -1967,12 +1974,12 @@ async function tourRun(tok){ while(tourOK(tok)&&TS.i<RTOUR.length){ const s=RTOU
   if(!tourOK(tok)) return; tourBub(null); tourDots(); MAP.flyToBounds(ROAD_BROAD,{duration:RMOT?0:2,paddingBottomRight:[4,((document.getElementById('roadplayer')||{}).offsetHeight||110)+26]});
   await tourClock(tok,1956,3000); if(!tourOK(tok)) return;
   tourBub({c:[40.30,-74.2],t:'The families’ road',x:'From Gravesend in 1645 to Point Pleasant: Stout, Bowne, Grover, Layton, Brewer, Cooper, Newman, Wolcott and more all come together in the Williams family. Switch to In motion to explore it at your own pace.',r:[],ch:10});
-  const bt=document.getElementById('roadplay'); if(bt){ bt.textContent='↺'; bt.setAttribute('aria-label','Start again'); bt.onclick=()=>{ ROADY=1643; tourStart(0); }; } }
-function tourStart(i){ TS={i:i||0,paused:false,tok:{},cur:null}; const bt=document.getElementById('roadplay'); if(bt){ bt.textContent='❚❚'; bt.onclick=tourPause; } tourRun(TS.tok); }
+  wakeOff(); const bt=document.getElementById('roadplay'); if(bt){ bt.textContent='↺'; bt.setAttribute('aria-label','Start again'); bt.onclick=()=>{ ROADY=1643; tourStart(0); }; } }
+function tourStart(i){ TS={i:i||0,paused:false,tok:{},cur:null}; wakeOn(); const bt=document.getElementById('roadplay'); if(bt){ bt.textContent='❚❚'; bt.onclick=tourPause; } tourRun(TS.tok); }
 function tourGo(i){ if(!TS) return; i=Math.max(0,Math.min(RTOUR.length-1,i)); ROADY=Math.max(roadData().lo,RTOUR[i].y-2); tourStart(i); }
 function tourStep(d){ if(TS) tourGo(TS.i+d); }
-function tourPause(){ if(!TS) return; TS.paused=!TS.paused; const bt=document.getElementById('roadplay'); if(bt){ bt.textContent=TS.paused?'▶':'❚❚'; bt.setAttribute('aria-label',TS.paused?'Resume':'Pause'); } }
-function tourEnd(stay){ TS=null; if(RFAMT){ RFAM=RFAMT; RFAMT=null; } if(!stay) go('mapmove'); }
+function tourPause(){ if(!TS) return; TS.paused=!TS.paused; if(TS.paused) wakeOff(); else wakeOn(); const bt=document.getElementById('roadplay'); if(bt){ bt.textContent=TS.paused?'▶':'❚❚'; bt.setAttribute('aria-label',TS.paused?'Resume':'Pause'); } }
+function tourEnd(stay){ TS=null; wakeOff(); if(RFAMT){ RFAM=RFAMT; RFAMT=null; } if(!stay) go('mapmove'); }
 function goStoryMap(){ go('story'); const f=()=>{ const m=document.getElementById('storymap'); if(m) m.scrollIntoView({block:'start'}); }; setTimeout(f,80); setTimeout(f,400); }
 function goMarks(){ go('marks'); }
 function vPeople(){

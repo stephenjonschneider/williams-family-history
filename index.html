@@ -2540,18 +2540,17 @@ const SMAP=[ // [n, label, lon, lat, years, families, chapter, app place id, lab
  [3,'Portland Point · Navesink',-74.0005,40.4135,'1664–1670','Bowne · Stout · Grover',3,'portlandpt','r','Portland Point'],
  [4,'Middletown',-74.118,40.394,'1667–1756','Layton · Bowne · Stout · Grover',4,'mtvillage','t'],
  [5,'Freehold & the Great Meadow',-74.274,40.26,'1690–1761','Layton · Williams · Stout · Bowne',5,'freehold','t'],
- [6,'Crosswicks',-74.649,40.15,'1688–1737','Bowne · Stout · Borden · Williams',6,'upperfreehold','t','Crosswicks lands (Upper Freehold)'],
- [7,'Upper Freehold · Doctors Creek',-74.53,40.165,'1688–1746','Williams · Layton · Bowne · Grover · Borden · Stout',6,'upperfreehold','b','Upper Freehold'],
- [8,'Burlington',-74.865,40.071,'1685–1690','Wolcott',9,'burlington','b'],
- [9,'Adelphia · Long Brook',-74.246,40.217,'1724–1801','Brewer · Cooper · Layton',7,'adelphia','r'],
- [10,'Shark River',-74.059,40.192,'1742–1850','Newman',9,'sharkriver','r'],
- [11,'Wreck Pond',-74.039,40.141,'1801–1848','Newman',9,'wreckpond','r'],
- [12,'Miery Branch · Southard (Bethel)',-74.224,40.134,'1788–1930','Williams · Layton · Newman',8,'miery','b','Southard (Bethel)'],
- [13,'Harmony',-74.30,40.135,'1844–1859','Newman',9,'harmony','t'],
- [14,'Burnt Tavern',-74.42,40.162,'1840s–1870s','Wolcott',9,'burnt','t'],
- [15,'Point Pleasant',-74.068,40.083,'1930 →','Williams',10,'ptpleasant','r']];
+ [6,'Upper Freehold · Crosswicks lands & Doctors Creek',-74.53,40.165,'1688–1746','Williams · Layton · Bowne · Grover · Borden · Stout',6,'upperfreehold','t','Upper Freehold'],
+ [7,'Burlington',-74.865,40.071,'1685–1690','Wolcott',9,'burlington','b'],
+ [8,'Adelphia · Long Brook',-74.246,40.217,'1724–1801','Brewer · Cooper · Layton',7,'adelphia','r'],
+ [9,'Shark River',-74.059,40.192,'1742–1850','Newman',9,'sharkriver','r'],
+ [10,'Wreck Pond',-74.039,40.141,'1801–1848','Newman',9,'wreckpond','r'],
+ [11,'Miery Branch · Southard (Bethel)',-74.224,40.134,'1788–1930','Williams · Layton · Newman',8,'miery','b','Southard (Bethel)'],
+ [12,'Harmony',-74.30,40.135,'1844–1859','Newman',9,'harmony','t'],
+ [13,'Burnt Tavern',-74.42,40.162,'1840s–1870s','Wolcott',9,'burnt','t'],
+ [14,'Point Pleasant',-74.068,40.083,'1930 →','Williams',10,'ptpleasant','r']];
 SMAP.forEach(s=>{ s[5]=s[5].split(' · ').sort((a,b)=>a.localeCompare(b)).join(' · '); });   // families listed alphabetically
-const SMAP_ROAD=[1,3,4,5,6,7,9,12,15], SMAP_SIDE=[[2,4],[8,14,12],[10,11,12],[13,12]];
+const SMAP_ROAD=[1,3,4,5,6,8,11,14], SMAP_SIDE=[[2,4],[7,13,11],[9,10,11],[12,11]];
 function smapSvg(){
   const lon0=-74.98,lon1=-73.72,lat0=39.98,lat1=40.80,k=560/((lon1-lon0)*Math.cos(40.35*Math.PI/180)), W=560, H=Math.round((lat1-lat0)*k);
   const X=lon=>((lon-lon0)*Math.cos(40.35*Math.PI/180)*k), Y=lat=>((lat1-lat)*k);

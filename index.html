@@ -795,7 +795,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .kstwrap{padding-top:8px}
 .kstage{position:relative;width:100%;aspect-ratio:4/5;max-height:58vh;margin:0 auto;border-radius:18px;overflow:hidden;box-shadow:0 3px 12px #0003;background:#9ed8f5}
 .kstage .kbg{position:absolute;inset:0;width:100%;height:100%}
-.kchar{position:absolute;left:1%;bottom:0;width:40%;max-width:200px;pointer-events:none}
+.kchar{position:absolute;left:15%;bottom:0;width:40%;max-width:200px;pointer-events:none}
 .kcappy .kpaw,.kcappy .kwavepaw,.kcappy .kheyes,.kcappy .kthink,.kcappy .khearts,.kcappy .kspark,.kcappy .kwater,.kcappy .kglass{opacity:0;transition:opacity .35s}
 .kcappy .kbrow{opacity:0;transition:opacity .3s,transform .3s}
 .kcappy .kall{transform-box:view-box;transform-origin:62px 112px}
@@ -852,6 +852,20 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .kchar.m-peer .kglass{opacity:1;animation:kpeer 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:0 100%}
 @keyframes kpeer{0%,100%{transform:rotate(0)}50%{transform:rotate(-10deg) translateY(-4px)}}
 .kchar.swim.m-hop .kall{animation:khop .7s ease 3}
+.ktaco{position:absolute;left:8px;bottom:8px;z-index:3;display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 6px 4px;border-radius:12px;border:2px solid #c98a12;background:#fff8e1cc;font:800 10px system-ui,sans-serif;color:#7a4a00;cursor:pointer}
+.ktaco svg{width:40px;height:28px}
+.ktaco.on{background:#7b2cbf;border-color:#ffcf2e;color:#fff;box-shadow:0 0 0 3px #ffcf2e88,0 0 14px #b5d65a}
+.ktaco.on svg{animation:ktacobob 1s ease-in-out infinite}
+@keyframes ktacobob{50%{transform:rotate(-8deg) scale(1.08)}}
+.kchar .kgas{pointer-events:none}
+.kpuff{animation:kpuff 2.4s ease-out forwards;opacity:0;transform-box:fill-box;transform-origin:center}
+@keyframes kpuff{0%{transform:translate(0,0) scale(.3);opacity:0}12%{opacity:.95}100%{transform:translate(var(--dx),var(--dy)) scale(1.9);opacity:0}}
+.kchar.oops .kblush{opacity:1;fill:#e74c3c}
+.kchar.oops .keye{transform:scaleY(.35)}
+.kchar.mega .kall{animation:kshake .09s linear infinite}
+@keyframes kshake{0%{transform:translate(-1.5px,0)}50%{transform:translate(1.5px,-1px)}100%{transform:translate(-1px,1px)}}
+.kstage.gassy::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 85%,#b5d65a66,transparent 65%);pointer-events:none;animation:kgreen 2.6s ease-out forwards;z-index:2}
+@keyframes kgreen{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
 .kchar.r{left:auto;right:1%}.kchar.r .kcappy{transform:scaleX(-1)}
 .kcappy{width:100%;height:auto;display:block;overflow:visible}
 .kcappy .keye{transform-origin:84px 42px;animation:kblink 4.2s infinite}
@@ -2797,21 +2811,21 @@ const KST_SCENES=[
    <path d="M0 330 Q100 280 200 320 T400 300 V500 H0Z" fill="#8cc46a"/><path d="M0 380 Q120 340 240 370 T400 360 V500 H0Z" fill="#6fb04f"/>
    <g data-at="1" class="kstpop"><rect x="230" y="250" width="120" height="64" rx="8" fill="#f8efd8" stroke="#8a5a30" stroke-width="3"/><text x="290" y="276" text-anchor="middle" class="kpl" fill="#8a5a30">OLD DEEDS</text><text x="290" y="298" text-anchor="middle" class="kpl" fill="#8a5a30">WILLS · MAPS</text><rect x="284" y="314" width="12" height="40" fill="#8a5a30"/></g>
    <text data-at="2" class="kstpop kstbig" x="200" y="190" text-anchor="middle">350 years ago…</text></svg>`,
-   hat:'det', t:["Hi there! I'm Cappy the capybara, and I'm a family history detective.","I dig through old papers, like deeds, wills and maps, to find out who your family really were.","Come along! Our story starts more than three hundred and fifty years ago."] },
+   pos:['l',52,-3], hat:'det', t:["Hi there! I'm Cappy the capybara, and I'm a family history detective.","I dig through old papers, like deeds, wills and maps, to find out who your family really were.","Come along! Our story starts more than three hundred and fifty years ago."] },
  { bg:()=>`<svg class="kbg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><rect width="400" height="500" fill="#5b7fa8"/><rect y="300" width="400" height="200" fill="#2f5f8a"/>
    <g class="kship"><path d="M120 300 L280 300 L260 335 L140 335Z" fill="#7a4c28"/><rect x="196" y="180" width="6" height="122" fill="#5a3a1c"/><path d="M202 188 Q250 220 202 280Z" fill="#fff8e7"/><path d="M196 196 Q160 230 196 270Z" fill="#fff8e7"/><path d="M202 180 l22 6 l-22 6z" fill="#c0392b"/></g>
    <g class="kwave2" fill="none" stroke="#cfe6ff" stroke-width="3"><path d="M0 340 q25 -14 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/><path d="M-25 380 q25 -14 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/></g>
    ${[['Bowne','Yorkshire, England',1,60],['Grover','Chesham, England',1,95],['Borden','Kent, England',1,130],['Stout','Penelope from Holland',2,165]].map(([f,w,at,y])=>`<g data-at="${at}" class="kstpop"><rect x="14" y="${y-18}" rx="10" width="${w.length*7+90}" height="28" fill="#fff" opacity=".92"/><text x="24" y="${y+1}" class="kpl" fill="${KST_FAM[f]}">${f}</text><text x="${24+f.length*9+8}" y="${y+1}" class="kpl" fill="#444">${esc(w)}</text></g>`).join('')}
    <g data-at="3" class="kstpop"><text x="390" y="240" text-anchor="end" class="kstbig" fill="#fff" style="font-size:22px">→ Gravesend,</text><text x="390" y="268" text-anchor="end" class="kstbig" fill="#fff" style="font-size:22px">Long Island</text></g></svg>`,
-   hat:'tri', t:["In the 1600s, brave families crossed the stormy Atlantic Ocean in little wooden sailing ships.","The Bownes came from Yorkshire, in England. The Grovers came from Chesham, and the Bordens came from Kent.","Penelope Stout came from Holland. An old family legend says her ship ran aground near Sandy Hook, and she hid in a hollow tree until a kind Lenape man helped her. Nobody has found a record of that shipwreck yet!","Many of these families first lived at Gravesend, on Long Island, close to where New York City is today."] },
+   pos:['r',46,-1], hat:'tri', t:["In the 1600s, brave families crossed the stormy Atlantic Ocean in little wooden sailing ships.","The Bownes came from Yorkshire, in England. The Grovers came from Chesham, and the Bordens came from Kent.","Penelope Stout came from Holland. An old family legend says her ship ran aground near Sandy Hook, and she hid in a hollow tree until a kind Lenape man helped her. Nobody has found a record of that shipwreck yet!","Many of these families first lived at Gravesend, on Long Island, close to where New York City is today."] },
  { bg:()=>kstMap(kstPin('gravesend','Gravesend','Grover',0,-96,-20)+`<path data-at="1" class="kdraw" d="${kstPath([[40.59,-73.98],[40.52,-74.02],[40.44,-74.09],[40.40,-74.11]])}" pathLength="1" stroke="#c0392b" stroke-width="4" stroke-dasharray=".04 .03" fill="none"/>`+kstPin('middletown','Middletown','Bowne',1,-96,-26)+kstPin('shrewsbury','Shrewsbury','Borden',2,8,-6)+`<g data-at="2" class="kstpop"><text x="120" y="300" class="kstbig" fill="#2e6b1e">Monmouth!</text></g>`),
-   cr:1, hat:'tri', t:["Around 1665, these families sailed across the bay to a wild, green land in New Jersey called Monmouth.","The Lenape people had lived here for thousands of years. The newcomers bought land from them and cleared it for farms.","They started two towns, Middletown and Shrewsbury, and you can still visit both of them today."] },
+   pos:['r',38,0], cr:1, hat:'tri', t:["Around 1665, these families sailed across the bay to a wild, green land in New Jersey called Monmouth.","The Lenape people had lived here for thousands of years. The newcomers bought land from them and cleared it for farms.","They started two towns, Middletown and Shrewsbury, and you can still visit both of them today."] },
  { bg:()=>kstMap(kstPin('middletown','Captain Safety Grover','Grover',0,-150,-30)+`<g data-at="1" class="kstpop"><rect x="60" y="250" width="240" height="70" rx="14" fill="#fff" stroke="#7d6608" stroke-width="3"/><text x="180" y="296" text-anchor="middle" class="ksafety">SAFETY</text></g>`+`<g data-at="2" class="kstpop">${['Safety Layton','Safety Bowne','Safety Borden','Safety Taylor'].map((n,i)=>`<text x="${50+(i%2)*130}" y="${360+Math.floor(i/2)*28}" class="kpl" fill="#7d6608">${n}</text>`).join('')}</g>`),
-   cr:1, hat:'tri', t:["Here's a funny name. Captain Safety Grover was born around 1658.","Safety was his real first name! His family liked it so much that they kept giving it to new babies for three hundred years.","That name is a clue. When a detective like me finds a Safety, it points back to the Grover family."] },
+   pos:['r',47,-2], cr:1, hat:'tri', t:["Here's a funny name. Captain Safety Grover was born around 1658.","Safety was his real first name! His family liked it so much that they kept giving it to new babies for three hundred years.","That name is a clue. When a detective like me finds a Safety, it points back to the Grover family."] },
  { bg:()=>kstMap(kstPin('middletown','Bownes','Bowne',0,-70,-30)+kstPin('mtvillage','Laytons','Layton',0,8,-2)+`<g data-at="1" class="kstpop"><path transform="translate(170 245) scale(1.6)" d="M12 21 C-4 10 2 0 12 6 C22 0 28 10 12 21Z" fill="#e74c3c"/><rect x="100" y="285" width="180" height="50" rx="12" fill="#fff"/><text x="190" y="307" text-anchor="middle" class="kpl" fill="#a04000">Catherine Bowne</text><text x="190" y="326" text-anchor="middle" class="kpl" fill="#2471a3">+ John Layton · 1735</text></g><g data-at="2" class="kstpop"><text x="190" y="375" text-anchor="middle" class="kstbig" fill="#7d6608">baby Safety!</text></g>`),
-   cr:1, hat:'tri', t:["The Grovers, the Bownes and the Laytons lived right next to each other in Middletown.","Around 1735, Catherine Bowne married John Layton.","And guess what they named their first son? Safety! Just like great-grandpa."] },
+   pos:['r',40,0], cr:1, hat:'tri', t:["The Grovers, the Bownes and the Laytons lived right next to each other in Middletown.","Around 1735, Catherine Bowne married John Layton.","And guess what they named their first son? Safety! Just like great-grandpa."] },
  { bg:()=>kstMap(kstPin('sharkriver','Newmans','Newman',0,8,-14)+kstPin('eatontown','Wolcotts','Wolcott',0,8,-20)+kstPin('howell','Coopers','Cooper',0,-84,-22)+kstPin('southard','Laytons','Layton',1,8,-4)+kstPin('metedeconk','Williamses','Williams',2,-60,24)+`<g data-at="3" class="kstpop"><text x="120" y="190" text-anchor="middle" class="kstbig" fill="#c0392b">? mystery ?</text></g>`),
-   cr:1, hat:'tri', t:["As the years went by, more families made Monmouth their home. The Newmans lived near Shark River, the Wolcotts at Eatontown, and the Coopers in Howell.","Some of the Laytons moved south, to a place called Southard.","The Williams family farmed by the Metedeconk River, and that land stayed in the family for more than two hundred years.","But the oldest Williams papers are still a mystery. Who was the very first Williams in this line? Detectives are still searching!"] },
+   pos:['r',44,-2], cr:1, hat:'tri', t:["As the years went by, more families made Monmouth their home. The Newmans lived near Shark River, the Wolcotts at Eatontown, and the Coopers in Howell.","Some of the Laytons moved south, to a place called Southard.","The Williams family farmed by the Metedeconk River, and that land stayed in the family for more than two hundred years.","But the oldest Williams papers are still a mystery. Who was the very first Williams in this line? Detectives are still searching!"] },
  { bg:()=>{ const X={Williams:50,Layton:125,Newman:200,Cooper:275,Wolcott:350}, top=70;
    const L=(d,at,c)=>`<path data-at="${at}" class="kdraw" d="${d}" pathLength="1" stroke="${c}" stroke-width="7" stroke-linecap="round" fill="none"/>`;
    const H=(x,y,yr,at)=>`<g data-at="${at}" class="kstpop"><circle cx="${x}" cy="${y}" r="17" fill="#fff" stroke="#e74c3c" stroke-width="3"/><text x="${x}" y="${y+5}" text-anchor="middle" class="kyr">${yr}</text></g>`;
@@ -2821,16 +2835,16 @@ const KST_SCENES=[
    ${L(`M200 ${top+8} V170 Q200 200 237 205`,2,KST_FAM.Newman)}${L(`M275 ${top+8} V170 Q275 200 238 205`,2,KST_FAM.Cooper)}${H(237,208,1831,2)}
    ${L(`M87 196 V270 Q87 300 160 305`,3,KST_FAM.Layton)}${L(`M237 226 V270 Q237 300 162 305`,3,KST_FAM.Newman)}${H(161,308,1862,3)}
    ${L(`M161 326 V370 Q161 395 250 400`,4,KST_FAM.Williams)}${L(`M350 ${top+8} V370 Q350 395 252 400`,4,KST_FAM.Wolcott)}${H(251,403,1882,4)}
-   <g data-at="5" class="kstpop"><text x="262" y="470" text-anchor="middle" class="kstbig" fill="#2e6b1e">one big family!</text></g></svg>`; },
-   hat:'straw', t:["Then, one wedding at a time, the families joined together.","In 1826, Daniel Williams married Elizabeth Layton.","In 1831, Silas Newman married Mary Elizabeth Cooper.","In 1862, their children met: Daniel David Williams married Catherine Newman.","And in 1882, Thomas Edward Williams married Mary Wolcott.","Williams, Layton, Newman, Cooper and Wolcott, all braided together into one big family!"] },
+   <g data-at="5" class="kstpop"><text x="392" y="472" text-anchor="end" class="kstbig" fill="#2e6b1e">one big family!</text></g></svg>`; },
+   pos:['l',40,0], hat:'straw', t:["Then, one wedding at a time, the families joined together.","In 1826, Daniel Williams married Elizabeth Layton.","In 1831, Silas Newman married Mary Elizabeth Cooper.","In 1862, their children met: Daniel David Williams married Catherine Newman.","And in 1882, Thomas Edward Williams married Mary Wolcott.","Williams, Layton, Newman, Cooper and Wolcott, all braided together into one big family!"] },
  { bg:()=>`<svg class="kbg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><rect width="400" height="500" fill="#a9dcf7"/><circle cx="70" cy="80" r="32" fill="#ffd84d" class="ksun"/>
    <rect y="250" width="400" height="110" fill="#4aa3df"/><g class="kwave2" fill="none" stroke="#fff" stroke-width="3"><path d="M-25 280 q25 -12 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/><path d="M0 320 q25 -12 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/></g>
    <path d="M0 350 Q200 335 400 350 V500 H0Z" fill="#f3dca0"/>
    <g data-at="0" class="kstpop"><rect x="230" y="120" width="140" height="54" rx="10" fill="#fff"/><text x="300" y="142" text-anchor="middle" class="kpl" fill="#c0392b">Harry Franklin Williams</text><text x="300" y="162" text-anchor="middle" class="kpl" fill="#555">born 1900, Southard</text></g>
    <g data-at="1" class="kstpop"><rect x="200" y="186" width="170" height="54" rx="10" fill="#fff"/><text x="285" y="208" text-anchor="middle" class="kpl" fill="#1a5276">Ruth Lomell</text><text x="285" y="228" text-anchor="middle" class="kpl" fill="#555">family from Sweden &amp; Norway</text></g>
-   <g data-at="2" class="kstpop"><rect x="150" y="380" width="200" height="54" rx="10" fill="#fff"/><text x="250" y="402" text-anchor="middle" class="kpl" fill="#c0392b">Mavis Williams</text><text x="250" y="422" text-anchor="middle" class="kpl" fill="#555">born 1924, Point Pleasant</text></g>
-   <g data-at="3" class="kstpop"><path transform="translate(330 360) scale(1.3)" d="M12 21 C-4 10 2 0 12 6 C22 0 28 10 12 21Z" fill="#e74c3c"/></g></svg>`,
-   hat:'straw', t:["In 1900, Harry Franklin Williams was born at Southard, in Howell.","He married Ruth Lomell, whose parents came all the way from Sweden and Norway.","Their daughter Mavis was born in 1924, in Point Pleasant, right by the ocean.","Mavis married Michael DiCorcia, and the family kept on growing."] },
+   <g data-at="2" class="kstpop"><rect x="192" y="380" width="200" height="54" rx="10" fill="#fff"/><text x="292" y="402" text-anchor="middle" class="kpl" fill="#c0392b">Mavis Williams</text><text x="292" y="422" text-anchor="middle" class="kpl" fill="#555">born 1924, Point Pleasant</text></g>
+   <g data-at="3" class="kstpop"><path transform="translate(352 440) scale(1.3)" d="M12 21 C-4 10 2 0 12 6 C22 0 28 10 12 21Z" fill="#e74c3c"/></g></svg>`,
+   pos:['l',38,0], hat:'straw', t:["In 1900, Harry Franklin Williams was born at Southard, in Howell.","He married Ruth Lomell, whose parents came all the way from Sweden and Norway.","Their daughter Mavis was born in 1924, in Point Pleasant, right by the ocean.","Mavis married Michael DiCorcia, and the family kept on growing."] },
  { bg:()=>{ const leaves=['Williams','Layton','Bowne','Grover','Stout','Borden','Newman','Cooper','Wolcott','Lomell','DiCorcia','Clevenger'];
    return `<svg class="kbg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><rect width="400" height="500" fill="#e8f6ff"/><path d="M0 440 Q200 420 400 440 V500 H0Z" fill="#8cc46a"/>
    <path d="M185 445 C185 380 175 330 160 290 M215 445 C215 380 225 330 240 290 M200 445 V250" stroke="#8a5a30" stroke-width="22" stroke-linecap="round" fill="none"/>
@@ -2838,7 +2852,7 @@ const KST_SCENES=[
    ${leaves.map((n,i)=>{ const a=[[80,205],[320,205],[140,148],[260,148],[60,270],[340,270],[110,100],[290,100],[200,240],[150,320],[250,320],[200,170]][i]; const c=Object.values(KST_FAM)[i%9];
      return `<g data-at="${i<6?0:1}" class="kstpop" style="transition-delay:${(i%6)*.25}s"><ellipse cx="${a[0]}" cy="${a[1]}" rx="${n.length*4.6+12}" ry="16" fill="#7ac35b"/><text x="${a[0]}" y="${a[1]+5}" text-anchor="middle" class="kpl" fill="#fff" style="font-size:13px">${n}</text></g>`; }).join('')}
    <g data-at="2" class="kstpop kstar"><path transform="translate(200 62)" d="M0 -30 L9 -9 L31 -9 L13 5 L20 27 L0 13 L-20 27 L-13 5 L-31 -9 L-9 -9Z" fill="#ffcf2e" stroke="#e08e0b" stroke-width="3"/><text x="200" y="70" text-anchor="middle" class="kyou">YOU</text></g></svg>`; },
-   hat:'det', t:["Hundreds of people, from England, Holland, Sweden, Norway and more, are part of your family's story.","Every name I told you about comes from a real record that somebody saved for hundreds of years.","And right at the top of this great big tree… is you!","Want to be a detective like me? Try the games on the Kids page. See you there!"] }
+   pos:['r',47,-2], hat:'det', t:["Hundreds of people, from England, Holland, Sweden, Norway and more, are part of your family's story.","Every name I told you about comes from a real record that somebody saved for hundreds of years.","And right at the top of this great big tree… is you!","Want to be a detective like me? Try the games on the Kids page. See you there!"] }
 ];
 function kCappy(hat){
   const H={det:`<path d="M58 22 Q80 4 102 22 Z" fill="#4e6b3a"/><rect x="54" y="20" width="52" height="6" rx="3" fill="#3b5229"/>`,
@@ -2847,7 +2861,7 @@ function kCappy(hat){
   const glass=hat==='det'?`<g class="kglass"><rect x="104" y="80" width="5" height="22" rx="2" fill="#5a3a1c" transform="rotate(-35 106 91)"/><circle cx="116" cy="74" r="10" fill="#d8f0ff" fill-opacity=".55" stroke="#8a6d1f" stroke-width="3.5"/><path d="M111 70 q4 -4 9 -1" stroke="#fff" stroke-width="2" fill="none"/></g>`:'';
   return `<svg class="kcappy" viewBox="-6 -26 150 150" aria-label="Cappy the capybara">
    <ellipse class="kshadow" cx="62" cy="112" rx="44" ry="6" fill="#000" opacity=".15"/>
-   <g class="kall"><g class="kbody">
+   <g class="kgas"></g><g class="kall"><g class="kbody">
    <rect class="kleg kl1" x="26" y="92" width="12" height="18" rx="5" fill="#7a4c28"/><rect class="kleg kl2" x="40" y="94" width="11" height="16" rx="5" fill="#6b4122"/>
    <rect class="kleg kl2" x="68" y="92" width="12" height="18" rx="5" fill="#7a4c28"/><rect class="kleg kl1" x="80" y="94" width="11" height="16" rx="5" fill="#6b4122"/>
    <ellipse cx="56" cy="78" rx="44" ry="28" fill="#a8743f"/><ellipse cx="50" cy="84" rx="24" ry="14" fill="#c08a52" opacity=".6"/>
@@ -2885,25 +2899,59 @@ function kstIdle(){ clearInterval(KST&&KST.idle); if(!KST) return;
 async function kstWake(on){ try{ if(on){ if(!KST||KST.wl||!('wakeLock' in navigator)) return; KST.wl=await navigator.wakeLock.request('screen'); KST.wl.addEventListener('release',()=>{ if(KST) KST.wl=null; }); }
   else if(KST&&KST.wl){ const w=KST.wl; KST.wl=null; await w.release(); } }catch(e){} }
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'&&KST&&KST.play) kstWake(true); });
+
+/* ---------- Taco Mode: Cappy toots now and then while she talks ---------- */
+function kTacoIcon(){ return `<svg viewBox="0 0 48 34" aria-hidden="true"><path d="M3 30 Q3 4 24 4 Q45 4 45 30Z" fill="#f4c542" stroke="#c98a12" stroke-width="2"/><path d="M7 27 Q9 12 24 10 Q39 12 41 27" fill="none" stroke="#e0a526" stroke-width="1.5"/><path d="M6 27 q4 -7 8 -2 q4 -7 8 -2 q4 -7 8 -2 q4 -7 8 -2 q3 -5 5 0" fill="#4caf50" stroke="#2e7d32" stroke-width="1.2"/><circle cx="15" cy="21" r="2.4" fill="#e53935"/><circle cx="25" cy="19" r="2.4" fill="#e53935"/><circle cx="34" cy="21" r="2.4" fill="#e53935"/><path d="M12 25 l3 -3 M20 24 l2 -3 M29 24 l3 -3" stroke="#fff3c4" stroke-width="1.6"/></svg>`; }
+let KAC=null;
+function kAudio(){ try{ if(!KAC) KAC=new (window.AudioContext||window.webkitAudioContext)(); if(KAC.state==='suspended') KAC.resume(); }catch(e){ KAC=null; } return KAC; }
+function kFartSound(dur,big){ const ac=kAudio(); if(!ac||(KST&&KST.muted)) return; const t0=ac.currentTime+.02;
+  // a buzzing low reed: sawtooth through a low-pass, wobbled by a fast flutter, plus a breath of noise
+  const o=ac.createOscillator(); o.type='sawtooth'; const f0=(big?62:78)+Math.random()*30; o.frequency.setValueAtTime(f0*1.25,t0); o.frequency.exponentialRampToValueAtTime(f0*.62,t0+dur);
+  const fl=ac.createOscillator(); fl.frequency.value=14+Math.random()*16; const fg=ac.createGain(); fg.gain.value=f0*.35; fl.connect(fg); fg.connect(o.frequency);
+  const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=big?520:700; lp.Q.value=6;
+  const g=ac.createGain(); g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(big?.5:.38,t0+.03); g.gain.setValueAtTime(big?.5:.38,t0+dur*.7); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  const am=ac.createOscillator(); am.frequency.value=22+Math.random()*20; const amg=ac.createGain(); amg.gain.value=.18; am.connect(amg); amg.connect(g.gain);
+  const n=ac.createBufferSource(), buf=ac.createBuffer(1,ac.sampleRate*dur,ac.sampleRate), d=buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*.35; n.buffer=buf;
+  const nf=ac.createBiquadFilter(); nf.type='bandpass'; nf.frequency.value=380; nf.Q.value=1.2; const ng=ac.createGain(); ng.gain.value=.25;
+  o.connect(lp); n.connect(nf); nf.connect(ng); ng.connect(lp); lp.connect(g); g.connect(ac.destination);
+  [o,fl,am,n].forEach(x=>{ x.start(t0); x.stop(t0+dur+.05); }); }
+function kGasPuff(n,big){ const gg=document.querySelector('#kchar .kgas'); if(!gg) return;
+  for(let i=0;i<n;i++){ const c=document.createElementNS('http://www.w3.org/2000/svg','g'); c.setAttribute('class','kpuff'); const r=(big?9:6)+Math.random()*7, y=74+Math.random()*16;
+    c.style.setProperty('--dx',(-30-Math.random()*(big?70:35))+'px'); c.style.setProperty('--dy',(-14-Math.random()*26)+'px'); c.style.animationDelay=(i*.12)+'s';
+    c.innerHTML=`<circle cx="10" cy="${y}" r="${r}" fill="#b5d65a" opacity=".85"/><circle cx="${4+r*.6}" cy="${y-r*.5}" r="${r*.7}" fill="#cde77c" opacity=".85"/>`;
+    gg.appendChild(c); setTimeout(()=>c.remove(),2600+i*120); } }
+function kToot(big){ const ch=document.getElementById('kchar'); if(!ch) return;
+  if(!big){ const d=.25+Math.random()*.45; kFartSound(d,false); kGasPuff(2,false); ch.classList.add('oops'); setTimeout(()=>ch.classList.remove('oops'),900); return; }
+  // the big one: a long rippling run of toots, a shaking Cappy and a green cloud
+  let t=0; const parts=5+Math.floor(Math.random()*5); ch.classList.add('mega','oops'); document.getElementById('kstage').classList.add('gassy');
+  for(let i=0;i<parts;i++){ const d=.18+Math.random()*.5; setTimeout(()=>{ kFartSound(d,true); kGasPuff(3,true); },t*1000); t+=d*.85+Math.random()*.12; }
+  setTimeout(()=>{ ch.classList.remove('mega','oops'); const st=document.getElementById('kstage'); if(st) st.classList.remove('gassy'); },t*1000+900); }
+function kstTacoPlan(){ // for each sentence: maybe a small toot, rarely the big one
+  if(!KST||!KST.taco) return; clearTimeout(KST.ttm); const r=Math.random();
+  const big=(r<.12)||(KST.sinceBig>=7&&r<.4), small=!big&&r<.5;
+  if(big) KST.sinceBig=0; else KST.sinceBig=(KST.sinceBig||0)+1;
+  if(big||small) KST.ttm=setTimeout(()=>{ if(KST&&KST.play&&KST.taco) kToot(big); },600+Math.random()*2200); }
+function kstTaco(){ if(!KST) return; KST.taco=!KST.taco; store('wfh-taco',KST.taco?1:0); kstTacoBtn(); if(KST.taco){ kAudio(); kToot(false); } else clearTimeout(KST.ttm); }
+function kstTacoBtn(){ const b=document.getElementById('ktaco'); if(b){ b.classList.toggle('on',!!KST.taco); b.querySelector('span').textContent=KST.taco?'Taco Mode ON':'Taco Mode'; } }
 let KST=null;
-function kstStop(){ if(!KST) return; kstWake(false); clearInterval(KST.idle); KST.alive=false; clearTimeout(KST.tm); clearInterval(KST.flap); try{speechSynthesis.cancel()}catch(e){} if(KST.audio){ KST.audio.pause(); } KST=null; }
+function kstStop(){ if(!KST) return; clearTimeout(KST.ttm); kstWake(false); clearInterval(KST.idle); KST.alive=false; clearTimeout(KST.tm); clearInterval(KST.flap); try{speechSynthesis.cancel()}catch(e){} if(KST.audio){ KST.audio.pause(); } KST=null; }
 function vKStory(){
   setTab('kids'); if(MAP){MAP.remove();MAP=null}
-  kstStop(); KST={i:0,s:0,play:false,muted:store('wfh-kst-mute')===1,alive:true};
+  kstStop(); KST={i:0,s:0,play:false,muted:store('wfh-kst-mute')===1,alive:true,taco:store('wfh-taco')===1,sinceBig:3};
   app.innerHTML=topBar("Cappy's Story",true)+`<div class="wrap kstwrap">
-   <div class="kstage" id="kstage"><div id="kscene"></div><div class="kchar" id="kchar"></div>
+   <div class="kstage" id="kstage"><div id="kscene"></div><div class="kchar" id="kchar"></div><button class="ktaco" id="ktaco" onclick="event.stopPropagation();kstTaco()" aria-label="Taco Mode">${kTacoIcon()}<span>Taco Mode</span></button>
     <div class="kstart" id="kstart" onclick="kstGo()"><div class="kplaybig">▶</div><div>Tap to hear Cappy's story</div></div></div>
    <div class="kcap" id="kcap"></div>
    <div class="kctl"><button onclick="kstJump(-1)" aria-label="Back">⏮</button><button id="kpp" onclick="kstToggle()" aria-label="Play or pause">▶</button><button onclick="kstJump(1)" aria-label="Next">⏭</button><button id="kmute" onclick="kstMute()" aria-label="Sound on or off"></button></div>
    <div class="kdots" id="kdots"></div>
    <div class="tiny muted" style="margin:10px 2px 16px;text-align:center">Every person in Cappy's story is in this app's records. Turn the sound off to read along at your own pace.</div></div>`;
-  kstScene(0,false);
+  kstScene(0,false); kstTacoBtn();
 }
 function kstMuteIcon(){ const b=document.getElementById('kmute'); if(b) b.textContent=KST.muted?'🔇':'🔊'; }
 function kstScene(i,auto){
   if(!KST) return; KST.i=Math.max(0,Math.min(KST_SCENES.length-1,i)); KST.s=0;
   const S=KST_SCENES[KST.i];
-  document.getElementById('kscene').innerHTML=S.bg(); const kc=document.getElementById('kchar'); kc.innerHTML=kCappy(S.hat); kc.classList.toggle('r',!!S.cr); kc.classList.toggle('swim',!!S.cr); kstSetMood(''); kc.classList.remove('enter'); void kc.offsetWidth; kc.classList.add('enter'); setTimeout(()=>kc.classList.remove('enter'),1500); if(!KST.idle) kstIdle();
+  document.getElementById('kscene').innerHTML=S.bg(); const kc=document.getElementById('kchar'); kc.innerHTML=kCappy(S.hat); const pos=S.pos||['l',40,0]; kc.classList.toggle('r',pos[0]==='r'); kc.classList.toggle('swim',!!S.cr); kc.style.width=pos[1]+'%'; kc.style.maxWidth='none'; kc.style.bottom=pos[2]+'%'; kstSetMood(''); kc.classList.remove('enter'); void kc.offsetWidth; kc.classList.add('enter'); setTimeout(()=>kc.classList.remove('enter'),1500); if(!KST.idle) kstIdle();
   document.getElementById('kdots').innerHTML=KST_SCENES.map((_,j)=>`<span class="${j===KST.i?'on':''}" onclick="kstJump(${j-KST.i})"></span>`).join('');
   kstMuteIcon(); kstShow(0);
   if(auto) kstSpeak();
@@ -2919,14 +2967,14 @@ function kstTalk(on){ const ch=document.getElementById('kchar'); if(ch) ch.class
 function kstVoice(){ try{ const v=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)); return v.find(x=>/samantha|karen|moira|tessa|google us english|zira|aria|jenny/i.test(x.name))||v.find(x=>/en-US/i.test(x.lang))||v[0]; }catch(e){ return null; } }
 function kstSpeak(){
   if(!KST||!KST.alive) return; KST.play=true; document.getElementById('kpp').textContent='❚❚'; document.getElementById('kstart').style.display='none';
-  const S=KST_SCENES[KST.i], s=KST.s, line=S.t[s]; kstShow(s); kstSetMood(kstMood(S,KST.i,s)); kstWake(true); clearTimeout(KST.tm);
+  const S=KST_SCENES[KST.i], s=KST.s, line=S.t[s]; kstShow(s); kstSetMood(kstMood(S,KST.i,s)); kstWake(true); kstTacoPlan(); clearTimeout(KST.tm);
   const next=()=>{ if(!KST||!KST.alive||!KST.play) return; kstTalk(false);
     if(KST.s<S.t.length-1){ KST.s++; KST.tm=setTimeout(kstSpeak,350); }
     else if(KST.i<KST_SCENES.length-1){ KST.tm=setTimeout(()=>{ if(KST&&KST.play) kstScene(KST.i+1,true); },900); }
     else { KST.play=false; kstWake(false); document.getElementById('kpp').textContent='↺'; KST.done=true; kstSetMood('hop'); } };
   if(S.au&&!KST.muted){ // recorded clip for the whole scene: start it once, time the captions to its length
     if(s===0){ if(KST.audio) KST.audio.pause(); const a=KST.audio=new Audio(S.au); const tot=S.t.join(' ').length;
-      a.onloadedmetadata=()=>{ let acc=0; S.t.forEach((x,j)=>{ const at=acc/tot*a.duration*1000; acc+=x.length+1; if(j) setTimeout(()=>{ if(KST&&KST.audio===a&&!a.paused){ KST.s=j; kstShow(j); kstSetMood(kstMood(S,KST.i,j)); } },at); }); };
+      a.onloadedmetadata=()=>{ let acc=0; S.t.forEach((x,j)=>{ const at=acc/tot*a.duration*1000; acc+=x.length+1; if(j) setTimeout(()=>{ if(KST&&KST.audio===a&&!a.paused){ KST.s=j; kstShow(j); kstSetMood(kstMood(S,KST.i,j)); kstTacoPlan(); } },at); }); };
       a.onplay=()=>kstTalk(true); a.onpause=()=>kstTalk(false);
       a.onended=()=>{ kstTalk(false); KST.s=S.t.length-1; next(); }; a.play().catch(()=>{}); }
     return; }
@@ -2939,8 +2987,8 @@ function kstSpeak(){
       return; }catch(e){} }
   kstTalk(true); KST.tm=setTimeout(()=>{ kstTalk(false); next(); },line.split(' ').length*330+900);
 }
-function kstGo(){ if(!KST) return; if(KST.done){ KST.done=false; kstScene(0,true); return; } kstSpeak(); }
-function kstPause(){ if(!KST) return; KST.play=false; kstWake(false); clearTimeout(KST.tm); try{speechSynthesis.cancel()}catch(e){} if(KST.audio) KST.audio.pause(); kstTalk(false); const b=document.getElementById('kpp'); if(b) b.textContent='▶'; }
+function kstGo(){ if(!KST) return; if(KST.taco) kAudio(); if(KST.done){ KST.done=false; kstScene(0,true); return; } kstSpeak(); }
+function kstPause(){ if(!KST) return; clearTimeout(KST.ttm); KST.play=false; kstWake(false); clearTimeout(KST.tm); try{speechSynthesis.cancel()}catch(e){} if(KST.audio) KST.audio.pause(); kstTalk(false); const b=document.getElementById('kpp'); if(b) b.textContent='▶'; }
 function kstToggle(){ if(!KST) return; if(KST.play) kstPause(); else kstGo(); }
 function kstJump(d){ if(!KST) return; const ks=document.getElementById('kstart'); if(ks) ks.style.display='none'; const was=KST.play; kstPause(); if(KST.audio){KST.audio=null} KST.done=false; kstScene(KST.i+d,was); }
 function kstMute(){ if(!KST) return; KST.muted=!KST.muted; store('wfh-kst-mute',KST.muted?1:0); kstMuteIcon(); if(KST.play){ kstPause(); kstGo(); } }

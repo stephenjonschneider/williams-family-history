@@ -2799,8 +2799,8 @@ function kMask(t){ return String(t||'').replace(/\b1[5-9]\d\d\b|\b20[0-2]\d\b/g,
 function kStars(n){ return n?'★'.repeat(Math.min(3,n)):''; }
 let KS=null; // the game in progress
 
-/* ---------- Kids: Cappy's Story — an animated, spoken family story ----------
-   Each scene has a background, the hat Cappy wears, and its sentences (t).
+/* ---------- Kids: Crappy's Story — an animated, spoken family story ----------
+   Each scene has a background, the hat Crappy wears, and its sentences (t).
    Anything in a scene's picture marked data-at="n" appears when sentence n starts.
    Recorded narration: give a scene au:'kstory/01.mp3' (one clip per scene) and it is played
    instead of the phone's voice; captions and pictures are timed to the clip's length. */
@@ -2828,7 +2828,7 @@ const KST_SCENES=[
    <path d="M0 330 Q100 280 200 320 T400 300 V500 H0Z" fill="#8cc46a"/><path d="M0 380 Q120 340 240 370 T400 360 V500 H0Z" fill="#6fb04f"/>
    <g data-at="1" class="kstpop"><rect x="230" y="250" width="120" height="64" rx="8" fill="#f8efd8" stroke="#8a5a30" stroke-width="3"/><text x="290" y="276" text-anchor="middle" class="kpl" fill="#8a5a30">OLD DEEDS</text><text x="290" y="298" text-anchor="middle" class="kpl" fill="#8a5a30">WILLS · MAPS</text><rect x="284" y="314" width="12" height="40" fill="#8a5a30"/></g>
    <text data-at="2" class="kstpop kstbig" x="200" y="190" text-anchor="middle">350 years ago…</text></svg>`,
-   pos:['l',62,-6], hat:'det', t:["Hi there! I'm Cappy the capybara, and I'm a family history detective.","I dig through old papers, like deeds, wills and maps, to find out who your family really were.","Come along! Our story starts more than three hundred and fifty years ago."] },
+   pos:['l',62,-6], hat:'det', t:["Hi there! I'm Crappy the capybara, and I'm a family history detective.","I dig through old papers, like deeds, wills and maps, to find out who your family really were.","Come along! Our story starts more than three hundred and fifty years ago."] },
  { bg:()=>`<svg class="kbg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><rect width="400" height="500" fill="#5b7fa8"/><rect y="300" width="400" height="200" fill="#2f5f8a"/>
    <g class="kship"><path d="M120 300 L280 300 L260 335 L140 335Z" fill="#7a4c28"/><rect x="196" y="180" width="6" height="122" fill="#5a3a1c"/><path d="M202 188 Q250 220 202 280Z" fill="#fff8e7"/><path d="M196 196 Q160 230 196 270Z" fill="#fff8e7"/><path d="M202 180 l22 6 l-22 6z" fill="#c0392b"/></g>
    <g class="kwave2" fill="none" stroke="#cfe6ff" stroke-width="3"><path d="M0 340 q25 -14 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/><path d="M-25 380 q25 -14 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/></g>
@@ -2876,7 +2876,7 @@ function kCappy(hat){
     tri:`<path d="M52 24 L80 6 L108 24 Q80 16 52 24Z" fill="#2c2c3a"/><path d="M60 22 L80 12 L100 22" stroke="#d4ac0d" stroke-width="2" fill="none"/>`,
     straw:`<ellipse cx="80" cy="24" rx="34" ry="7" fill="#e9c46a"/><path d="M64 23 Q80 2 96 23Z" fill="#f4d58d"/><rect x="65" y="18" width="30" height="5" fill="#c0392b"/>`}[hat]||'';
   const glass=hat==='det'?`<g class="kglass"><rect x="104" y="80" width="5" height="22" rx="2" fill="#5a3a1c" transform="rotate(-35 106 91)"/><circle cx="116" cy="74" r="10" fill="#d8f0ff" fill-opacity=".55" stroke="#8a6d1f" stroke-width="3.5"/><path d="M111 70 q4 -4 9 -1" stroke="#fff" stroke-width="2" fill="none"/></g>`:'';
-  return `<svg class="kcappy" viewBox="-6 -26 150 150" aria-label="Cappy the capybara">
+  return `<svg class="kcappy" viewBox="-6 -26 150 150" aria-label="Crappy the capybara">
    <ellipse class="kshadow" cx="62" cy="112" rx="44" ry="6" fill="#000" opacity=".15"/>
    <g class="kgas"></g><g class="kall"><g class="kbody">
    <rect class="kleg kl1" x="26" y="92" width="12" height="18" rx="5" fill="#7a4c28"/><rect class="kleg kl2" x="40" y="94" width="11" height="16" rx="5" fill="#6b4122"/>
@@ -2890,7 +2890,7 @@ function kCappy(hat){
    <path class="kbrow" d="M78 33 q6 -4 12 0" stroke="#5a3418" stroke-width="2" fill="none" stroke-linecap="round"/>
    <circle class="kblush" cx="96" cy="58" r="5" fill="#e8907a" opacity=".55"/>
    <ellipse class="kmouth" cx="108" cy="64" rx="6" ry="1.2" fill="#4a2410"/>${H}</g></g>
-   <g class="kboat"><path d="M-4 84 L130 84 Q124 116 62 116 Q4 116 -4 84Z" fill="#b5651d" stroke="#7a3f10" stroke-width="2.5"/><path d="M-3 84 L129 84" stroke="#e8c07a" stroke-width="5"/><path d="M8 96 Q62 100 120 96 M14 106 Q62 110 112 106" stroke="#8a4a16" stroke-width="1.6" fill="none"/><text x="62" y="104" text-anchor="middle" style="font:900 9px system-ui,sans-serif;fill:#fff3c4;letter-spacing:1px">CAPPY</text>
+   <g class="kboat"><path d="M-4 84 L130 84 Q124 116 62 116 Q4 116 -4 84Z" fill="#b5651d" stroke="#7a3f10" stroke-width="2.5"/><path d="M-3 84 L129 84" stroke="#e8c07a" stroke-width="5"/><path d="M8 96 Q62 100 120 96 M14 106 Q62 110 112 106" stroke="#8a4a16" stroke-width="1.6" fill="none"/><text x="62" y="104" text-anchor="middle" style="font:900 9px system-ui,sans-serif;fill:#fff3c4;letter-spacing:1px">CRAPPY</text>
    <g class="koar"><path d="M96 74 L132 112" stroke="#8a5a30" stroke-width="4" stroke-linecap="round"/><ellipse cx="133" cy="114" rx="5" ry="9" transform="rotate(-42 133 114)" fill="#a0703f"/></g></g>
    <g class="kwavepaw"><path d="M34 62 q-6 -18 -2 -34" stroke="#9a6838" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="32" cy="24" r="8" fill="#8f5e33"/><path d="M27 18 v-4 M32 16 v-5 M37 18 v-4" stroke="#6b4122" stroke-width="2" stroke-linecap="round"/></g>
    ${glass}</g>
@@ -2900,7 +2900,7 @@ function kCappy(hat){
    <g class="kspark"><path d="M120 6 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3z" fill="#ffcf2e"/><path d="M58 -4 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2z" fill="#ffcf2e"/></g>
    </svg>`;
 }
-/* Cappy's mood for a sentence: waves hello and goodbye, swoons at weddings, ponders questions, hops at exclamations, gasps at Safety */
+/* Crappy's mood for a sentence: waves hello and goodbye, swoons at weddings, ponders questions, hops at exclamations, gasps at Safety */
 function kstMood(S,i,s){ const line=S.t[s]||'';
   if((i===0&&s===0)||(i===KST_SCENES.length-1&&s===S.t.length-1)) return 'wave';
   if(/married|wedding|braided/i.test(line)) return 'love';
@@ -2919,7 +2919,7 @@ async function kstWake(on){ try{ if(on){ if(!KST||KST.wl||!('wakeLock' in naviga
   else if(KST&&KST.wl){ const w=KST.wl; KST.wl=null; await w.release(); } }catch(e){} }
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'&&KST&&KST.play) kstWake(true); });
 
-/* ---------- Taco Mode: Cappy toots now and then while she talks ---------- */
+/* ---------- Taco Mode: Crappy toots now and then while she talks ---------- */
 function kTacoIcon(){ return `<svg viewBox="0 0 48 34" aria-hidden="true"><path d="M3 30 Q3 4 24 4 Q45 4 45 30Z" fill="#f4c542" stroke="#c98a12" stroke-width="2"/><path d="M7 27 Q9 12 24 10 Q39 12 41 27" fill="none" stroke="#e0a526" stroke-width="1.5"/><path d="M6 27 q4 -7 8 -2 q4 -7 8 -2 q4 -7 8 -2 q4 -7 8 -2 q3 -5 5 0" fill="#4caf50" stroke="#2e7d32" stroke-width="1.2"/><circle cx="15" cy="21" r="2.4" fill="#e53935"/><circle cx="25" cy="19" r="2.4" fill="#e53935"/><circle cx="34" cy="21" r="2.4" fill="#e53935"/><path d="M12 25 l3 -3 M20 24 l2 -3 M29 24 l3 -3" stroke="#fff3c4" stroke-width="1.6"/></svg>`; }
 let KAC=null;
 function kAudio(){ try{ if(!KAC) KAC=new (window.AudioContext||window.webkitAudioContext)(); if(KAC.state==='suspended') KAC.resume(); }catch(e){ KAC=null; } return KAC; }
@@ -2985,13 +2985,13 @@ function kstStop(){ if(!KST) return; clearTimeout(KST.ttm); clearTimeout(KST.ttm
 function vKStory(){
   setTab('kids'); if(MAP){MAP.remove();MAP=null}
   kstStop(); KST={i:0,s:0,play:false,muted:store('wfh-kst-mute')===1,alive:true,taco:store('wfh-taco')!==0,sinceBig:3};
-  app.innerHTML=topBar("Cappy's Story",true)+`<div class="wrap kstwrap">
+  app.innerHTML=topBar("Crappy's Story",true)+`<div class="wrap kstwrap">
    <div class="kstage" id="kstage"><div id="kscene"></div><div class="kchar" id="kchar"></div><div class="ktip" id="ktip">🌮 Taco Mode is ON! Tap the taco in the corner to turn it off.</div><button class="ktaco" id="ktaco" onclick="event.stopPropagation();kstTaco()" aria-label="Taco Mode">${kTacoIcon()}<span>Taco Mode</span></button>
-    <div class="kstart" id="kstart" onclick="kstGo()"><div class="kplaybig">▶</div><div>Tap to hear Cappy's story</div></div></div>
+    <div class="kstart" id="kstart" onclick="kstGo()"><div class="kplaybig">▶</div><div>Tap to hear Crappy's story</div></div></div>
    <div class="kcap" id="kcap"></div>
    <div class="kctl"><button onclick="kstJump(-1)" aria-label="Back">⏮</button><button id="kpp" onclick="kstToggle()" aria-label="Play or pause">▶</button><button onclick="kstJump(1)" aria-label="Next">⏭</button><button id="kmute" onclick="kstMute()" aria-label="Sound on or off"></button></div>
    <div class="kdots" id="kdots"></div>
-   <div class="tiny muted" style="margin:10px 2px 16px;text-align:center">Every person in Cappy's story is in this app's records. Turn the sound off to read along at your own pace.</div></div>`;
+   <div class="tiny muted" style="margin:10px 2px 16px;text-align:center">Every person in Crappy's story is in this app's records. Turn the sound off to read along at your own pace.</div></div>`;
   kstScene(0,false); kstTacoBtn();
 }
 function kstMuteIcon(){ const b=document.getElementById('kmute'); if(b) b.textContent=KST.muted?'🔇':'🔊'; }
@@ -3053,7 +3053,7 @@ function vKids(){
   const card=(k,col,emoji,t,s,max)=>`<div class="kcard" style="--kc:${col}" onclick="kStart('${k}')"><div class="kemo">${emoji}</div><div><div class="kt">${t}</div><div class="ks">${s}</div>${b[k]!=null?`<div class="kbest">Your best: ${b[k]}${max?' / '+max:' points'}</div>`:''}</div><span class="chev">›</span></div>`;
   app.innerHTML=topBar('Kids',false)+`<div class="wrap">
     <div class="khero">${kidsMark('Kids',54)}<div class="khs">Play detective with real family records. Every clue in these games comes from an actual deed, will, survey or court paper in this history.</div></div>
-    <div class="kcard" style="--kc:#f2a400" onclick="go('kidstory')"><div class="kemo">${kCappy('det')}</div><div><div class="kt">Cappy's Story</div><div class="ks">Cappy the capybara tells how all your families crossed the ocean, settled Monmouth and became one big family. Turn your sound on!</div><div class="kbest">For all ages</div></div><span class="chev">›</span></div>
+    <div class="kcard" style="--kc:#f2a400" onclick="go('kidstory')"><div class="kemo">${kCappy('det')}</div><div><div class="kt">Crappy's Story</div><div class="ks">Crappy the capybara tells how all your families crossed the ocean, settled Monmouth and became one big family. Turn your sound on!</div><div class="kbest">For all ages</div></div><span class="chev">›</span></div>
     ${card('tomb','#4b4a8f','🪦','Name That Tombstone','Letters appear on an old stone, one every second. Tap “I know it!” to stop the clock and guess: every letter you see costs a point.',0)}
     ${card('orig','#8e44ad','🌍','Where in the World?','A family name from the tree. Which country did that family come from? England, the Netherlands, Belgium, Germany, Italy…',20)}
     ${card('det','#e63b2e','🔎','Detective Case Files','Is that really their parent? Read the evidence, then grade the case the way a genealogist would.',24)}

@@ -3055,10 +3055,10 @@ function vKids(){
     <div class="khero">${kidsMark('Kids',54)}<div class="khs">Play detective with real family records. Every clue in these games comes from an actual deed, will, survey or court paper in this history.</div></div>
     <div class="kcard" style="--kc:#f2a400" onclick="go('kidstory')"><div class="kemo">${kCappy('det')}</div><div><div class="kt">Cappy's Story</div><div class="ks">Cappy the capybara tells how all your families crossed the ocean, settled Monmouth and became one big family. Turn your sound on!</div><div class="kbest">For all ages</div></div><span class="chev">›</span></div>
     ${card('tomb','#4b4a8f','🪦','Name That Tombstone','Letters appear on an old stone, one every second. Tap “I know it!” to stop the clock and guess: every letter you see costs a point.',0)}
+    ${card('orig','#8e44ad','🌍','Where in the World?','A family name from the tree. Which country did that family come from? England, the Netherlands, Belgium, Germany, Italy…',20)}
     ${card('det','#e63b2e','🔎','Detective Case Files','Is that really their parent? Read the evidence, then grade the case the way a genealogist would.',24)}
     ${card('era','#1f6fd1','⏳','Time Traveler','Clues about a real ancestor, one at a time. Guess when they were born. Fewer clues, more points!',32)}
     ${card('map','#2e9e4f','🗺️','Map Time Machine','A pin drops on a family spot. What town was it part of back then? Watch the borders change over 300 years.',18)}
-    ${card('orig','#8e44ad','🌍','Where in the World?','A family name from the tree. Which country did that family come from? England, the Netherlands, Belgium, Germany, Italy…',20)}
     <div class="tiny muted" style="margin:10px 2px 16px">The games are for ages 12 and up. Scores stay on this device.</div></div>`;
 }
 function kStart(g){ KS={g,i:0,score:0,ans:null}; if(g==='det') KS.list=kShuffle(kCases()).slice(0,8);

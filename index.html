@@ -795,7 +795,63 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .kstwrap{padding-top:8px}
 .kstage{position:relative;width:100%;aspect-ratio:4/5;max-height:58vh;margin:0 auto;border-radius:18px;overflow:hidden;box-shadow:0 3px 12px #0003;background:#9ed8f5}
 .kstage .kbg{position:absolute;inset:0;width:100%;height:100%}
-.kchar{position:absolute;left:2%;bottom:1%;width:34%;max-width:170px;pointer-events:none}
+.kchar{position:absolute;left:1%;bottom:0;width:40%;max-width:200px;pointer-events:none}
+.kcappy .kpaw,.kcappy .kwavepaw,.kcappy .kheyes,.kcappy .kthink,.kcappy .khearts,.kcappy .kspark,.kcappy .kwater,.kcappy .kglass{opacity:0;transition:opacity .35s}
+.kcappy .kbrow{opacity:0;transition:opacity .3s,transform .3s}
+.kcappy .kall{transform-box:view-box;transform-origin:62px 112px}
+.kcappy .kear{transform-box:fill-box;transform-origin:50% 80%}
+.kcappy .kleg{transform-box:fill-box;transform-origin:50% 0}
+.kcappy .keye,.kcappy .knose{transform-box:fill-box;transform-origin:center}
+.kchar.i-ear .kear{animation:kear .5s ease 2}
+@keyframes kear{50%{transform:rotate(-22deg)}}
+.kchar.i-look .keye{animation:klook 1.1s ease}
+@keyframes klook{30%,70%{transform:translate(3px,-1px)}}
+.kchar.i-sniff .knose{animation:ksniff .25s ease 4}
+@keyframes ksniff{50%{transform:scale(1.35)}}
+.kchar.enter .kall{animation:kwalkin 1.4s ease-out}
+.kchar.enter .kleg.kl1{animation:kstep .35s ease-in-out 4}
+.kchar.enter .kleg.kl2{animation:kstep .35s ease-in-out 4 .17s}
+@keyframes kwalkin{from{transform:translateX(-140px)}to{transform:none}}
+@keyframes kstep{50%{transform:rotate(18deg)}}
+.kchar.swim .kwater{opacity:1}
+.kchar.swim .kall{animation:kswim 2.2s ease-in-out infinite}
+.kchar.swim .kshadow{opacity:0}
+.kchar.swim.enter .kall{animation:kswimin 1.4s ease-out}
+@keyframes kswim{0%,100%{transform:translateY(10px) rotate(-2deg)}50%{transform:translateY(5px) rotate(2deg)}}
+@keyframes kswimin{from{transform:translate(-120px,10px)}to{transform:translateY(10px)}}
+.kchar.swim .kwater path{animation:kwave 2s linear infinite}
+.kchar.m-wave .kwavepaw{opacity:1;transform-box:fill-box;transform-origin:50% 100%;animation:kwavep .45s ease-in-out infinite alternate}
+@keyframes kwavep{from{transform:rotate(-22deg)}to{transform:rotate(18deg)}}
+.kchar.m-love .kheyes{opacity:1;animation:kbeat .6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.kchar.m-love .keye{opacity:0}
+.kchar.m-love .khearts{opacity:1}
+.kchar.m-love .khearts path{animation:kfloat 2.2s ease-in infinite;transform-box:fill-box}
+.kchar.m-love .khearts .kh2{animation-delay:.7s}.kchar.m-love .khearts .kh3{animation-delay:1.4s}
+.kchar.m-love .kblush{opacity:.95}
+@keyframes kbeat{50%{transform:scale(1.25)}}
+@keyframes kfloat{0%{transform:translateY(8px);opacity:0}30%{opacity:1}100%{transform:translateY(-22px);opacity:0}}
+.kchar.m-think .kthink,.kchar.m-think .kbrow{opacity:1}
+.kchar.m-think .khead{animation:ktilt 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:30% 80%}
+.kchar.m-think .kpaw{opacity:1;transform:translate(10px,-16px)}
+.kchar.m-think .kthink{animation:kbobq 1.2s ease-in-out infinite}
+@keyframes ktilt{0%,100%{transform:rotate(0)}50%{transform:rotate(-9deg)}}
+@keyframes kbobq{50%{transform:translateY(-2px)}}
+.kqm{font:900 19px system-ui,sans-serif;fill:#e63b2e}
+.kchar.r .kqm{transform:scaleX(-1);transform-box:fill-box;transform-origin:center}
+.kchar.m-wow .keye{transform:scale(1.45)}
+.kchar.m-wow .kbrow{opacity:1;transform:translateY(-4px)}
+.kchar.m-wow .kspark{opacity:1;animation:ktwinkle .8s ease-in-out infinite alternate}
+.kchar.m-wow .kall{animation:kjolt .5s ease}
+@keyframes ktwinkle{from{opacity:.3}to{opacity:1}}
+@keyframes kjolt{30%{transform:translateY(-8px) scale(1.04)}}
+.kchar.m-hop .kall{animation:khop .7s cubic-bezier(.3,.7,.4,1) 3}
+.kchar.m-hop .kshadow{animation:kshad .7s ease 3;transform-box:fill-box;transform-origin:center}
+.kchar.m-hop .kspark{opacity:1}
+@keyframes khop{0%,100%{transform:none}40%{transform:translateY(-18px) rotate(-4deg)}70%{transform:translateY(0) scale(1.05,.95)}}
+@keyframes kshad{40%{transform:scale(.7);opacity:.08}}
+.kchar.m-peer .kglass{opacity:1;animation:kpeer 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:0 100%}
+@keyframes kpeer{0%,100%{transform:rotate(0)}50%{transform:rotate(-10deg) translateY(-4px)}}
+.kchar.swim.m-hop .kall{animation:khop .7s ease 3}
 .kchar.r{left:auto;right:1%}.kchar.r .kcappy{transform:scaleX(-1)}
 .kcappy{width:100%;height:auto;display:block;overflow:visible}
 .kcappy .keye{transform-origin:84px 42px;animation:kblink 4.2s infinite}
@@ -2788,18 +2844,49 @@ function kCappy(hat){
   const H={det:`<path d="M58 22 Q80 4 102 22 Z" fill="#4e6b3a"/><rect x="54" y="20" width="52" height="6" rx="3" fill="#3b5229"/>`,
     tri:`<path d="M52 24 L80 6 L108 24 Q80 16 52 24Z" fill="#2c2c3a"/><path d="M60 22 L80 12 L100 22" stroke="#d4ac0d" stroke-width="2" fill="none"/>`,
     straw:`<ellipse cx="80" cy="24" rx="34" ry="7" fill="#e9c46a"/><path d="M64 23 Q80 2 96 23Z" fill="#f4d58d"/><rect x="65" y="18" width="30" height="5" fill="#c0392b"/>`}[hat]||'';
-  return `<svg class="kcappy" viewBox="0 0 130 120" aria-label="Cappy the capybara">
-   <ellipse cx="62" cy="112" rx="44" ry="6" fill="#000" opacity=".15"/>
-   <g class="kbody"><rect x="30" y="92" width="12" height="18" rx="5" fill="#7a4c28"/><rect x="72" y="92" width="12" height="18" rx="5" fill="#7a4c28"/>
+  const glass=hat==='det'?`<g class="kglass"><rect x="104" y="80" width="5" height="22" rx="2" fill="#5a3a1c" transform="rotate(-35 106 91)"/><circle cx="116" cy="74" r="10" fill="#d8f0ff" fill-opacity=".55" stroke="#8a6d1f" stroke-width="3.5"/><path d="M111 70 q4 -4 9 -1" stroke="#fff" stroke-width="2" fill="none"/></g>`:'';
+  return `<svg class="kcappy" viewBox="-6 -26 150 150" aria-label="Cappy the capybara">
+   <ellipse class="kshadow" cx="62" cy="112" rx="44" ry="6" fill="#000" opacity=".15"/>
+   <g class="kall"><g class="kbody">
+   <rect class="kleg kl1" x="26" y="92" width="12" height="18" rx="5" fill="#7a4c28"/><rect class="kleg kl2" x="40" y="94" width="11" height="16" rx="5" fill="#6b4122"/>
+   <rect class="kleg kl2" x="68" y="92" width="12" height="18" rx="5" fill="#7a4c28"/><rect class="kleg kl1" x="80" y="94" width="11" height="16" rx="5" fill="#6b4122"/>
    <ellipse cx="56" cy="78" rx="44" ry="28" fill="#a8743f"/><ellipse cx="50" cy="84" rx="24" ry="14" fill="#c08a52" opacity=".6"/>
+   <ellipse class="kpaw" cx="92" cy="86" rx="7" ry="5.5" fill="#8f5e33"/>
    <g class="khead"><ellipse cx="82" cy="50" rx="30" ry="24" fill="#b07c48"/><rect x="88" y="42" width="34" height="28" rx="13" fill="#8f5e33"/>
-   <ellipse cx="66" cy="30" rx="7" ry="6" fill="#7a4c28"/><ellipse cx="113" cy="49" rx="3" ry="2.2" fill="#3a2410"/>
-   <g class="keye"><circle cx="84" cy="42" r="4.2" fill="#2a1a0c"/><circle cx="85.5" cy="40.5" r="1.4" fill="#fff"/></g>
-   <circle cx="96" cy="58" r="5" fill="#e8907a" opacity=".55"/>
-   <ellipse class="kmouth" cx="108" cy="64" rx="6" ry="1.2" fill="#4a2410"/>${H}</g></g></svg>`;
+   <ellipse class="kear" cx="66" cy="30" rx="7" ry="6" fill="#7a4c28"/><ellipse cx="66" cy="31" rx="3.5" ry="3" fill="#5a3418"/><ellipse class="knose" cx="113" cy="49" rx="3" ry="2.2" fill="#3a2410"/>
+   <g class="keye"><circle cx="84" cy="42" r="4.2" fill="#2a1a0c"/><circle class="kglint" cx="85.5" cy="40.5" r="1.4" fill="#fff"/></g>
+   <g transform="translate(76.5 35.5) scale(.75)"><path class="kheyes" d="M10 19 C-3 10 1 0 10 5 C19 0 23 10 10 19Z" fill="#e74c3c"/></g>
+   <path class="kbrow" d="M78 33 q6 -4 12 0" stroke="#5a3418" stroke-width="2" fill="none" stroke-linecap="round"/>
+   <circle class="kblush" cx="96" cy="58" r="5" fill="#e8907a" opacity=".55"/>
+   <ellipse class="kmouth" cx="108" cy="64" rx="6" ry="1.2" fill="#4a2410"/>${H}</g></g>
+   <g class="kwavepaw"><path d="M34 62 q-6 -18 -2 -34" stroke="#9a6838" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="32" cy="24" r="8" fill="#8f5e33"/><path d="M27 18 v-4 M32 16 v-5 M37 18 v-4" stroke="#6b4122" stroke-width="2" stroke-linecap="round"/></g>
+   ${glass}</g>
+   <g class="kwater"><path d="M-6 96 q12 -7 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 V124 H-6Z" fill="#7cc6ee"/><path d="M-6 96 q12 -7 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0" stroke="#fff" stroke-width="2.5" fill="none" opacity=".8"/></g>
+   <g class="kthink"><circle cx="62" cy="4" r="3" fill="#fff" stroke="#999"/><circle cx="54" cy="-5" r="5" fill="#fff" stroke="#999"/><ellipse cx="38" cy="-14" rx="17" ry="13" fill="#fff" stroke="#999"/><text class="kqm" x="38" y="-7" text-anchor="middle">?</text></g>
+   <g class="khearts"><g transform="translate(98 4) scale(.7)"><path class="kh1" d="M10 19 C-3 10 1 0 10 5 C19 0 23 10 10 19Z" fill="#e74c3c"/></g><g transform="translate(118 16) scale(.55)"><path class="kh2" d="M10 19 C-3 10 1 0 10 5 C19 0 23 10 10 19Z" fill="#ff6f91"/></g><g transform="translate(80 -8) scale(.5)"><path class="kh3" d="M10 19 C-3 10 1 0 10 5 C19 0 23 10 10 19Z" fill="#e74c3c"/></g></g>
+   <g class="kspark"><path d="M120 6 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3z" fill="#ffcf2e"/><path d="M58 -4 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2z" fill="#ffcf2e"/></g>
+   </svg>`;
 }
+/* Cappy's mood for a sentence: waves hello and goodbye, swoons at weddings, ponders questions, hops at exclamations, gasps at Safety */
+function kstMood(S,i,s){ const line=S.t[s]||'';
+  if((i===0&&s===0)||(i===KST_SCENES.length-1&&s===S.t.length-1)) return 'wave';
+  if(/married|wedding|braided/i.test(line)) return 'love';
+  if(/\?/.test(line)) return 'think';
+  if(/SAFETY|funny name|real first name/i.test(line)) return 'wow';
+  if(/!/.test(line)) return 'hop';
+  if(/detective|papers|record|clue/i.test(line)) return 'peer';
+  return ''; }
+const KST_MOODS=['wave','love','think','wow','hop','peer'];
+function kstSetMood(m){ const c=document.getElementById('kchar'); if(!c) return; KST_MOODS.forEach(x=>c.classList.toggle('m-'+x,x===m)); }
+function kstIdle(){ clearInterval(KST&&KST.idle); if(!KST) return;
+  KST.idle=setInterval(()=>{ const c=document.getElementById('kchar'); if(!c) return; const r=['look','ear','sniff'][Math.floor(Math.random()*3)];
+    c.classList.add('i-'+r); setTimeout(()=>c.classList.remove('i-'+r),1100); },2600); }
+/* keep the screen awake only while the story is playing */
+async function kstWake(on){ try{ if(on){ if(!KST||KST.wl||!('wakeLock' in navigator)) return; KST.wl=await navigator.wakeLock.request('screen'); KST.wl.addEventListener('release',()=>{ if(KST) KST.wl=null; }); }
+  else if(KST&&KST.wl){ const w=KST.wl; KST.wl=null; await w.release(); } }catch(e){} }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'&&KST&&KST.play) kstWake(true); });
 let KST=null;
-function kstStop(){ if(!KST) return; KST.alive=false; clearTimeout(KST.tm); clearInterval(KST.flap); try{speechSynthesis.cancel()}catch(e){} if(KST.audio){ KST.audio.pause(); } KST=null; }
+function kstStop(){ if(!KST) return; kstWake(false); clearInterval(KST.idle); KST.alive=false; clearTimeout(KST.tm); clearInterval(KST.flap); try{speechSynthesis.cancel()}catch(e){} if(KST.audio){ KST.audio.pause(); } KST=null; }
 function vKStory(){
   setTab('kids'); if(MAP){MAP.remove();MAP=null}
   kstStop(); KST={i:0,s:0,play:false,muted:store('wfh-kst-mute')===1,alive:true};
@@ -2816,7 +2903,7 @@ function kstMuteIcon(){ const b=document.getElementById('kmute'); if(b) b.textCo
 function kstScene(i,auto){
   if(!KST) return; KST.i=Math.max(0,Math.min(KST_SCENES.length-1,i)); KST.s=0;
   const S=KST_SCENES[KST.i];
-  document.getElementById('kscene').innerHTML=S.bg(); const kc=document.getElementById('kchar'); kc.innerHTML=kCappy(S.hat); kc.classList.toggle('r',!!S.cr);
+  document.getElementById('kscene').innerHTML=S.bg(); const kc=document.getElementById('kchar'); kc.innerHTML=kCappy(S.hat); kc.classList.toggle('r',!!S.cr); kc.classList.toggle('swim',!!S.cr); kstSetMood(''); kc.classList.remove('enter'); void kc.offsetWidth; kc.classList.add('enter'); setTimeout(()=>kc.classList.remove('enter'),1500); if(!KST.idle) kstIdle();
   document.getElementById('kdots').innerHTML=KST_SCENES.map((_,j)=>`<span class="${j===KST.i?'on':''}" onclick="kstJump(${j-KST.i})"></span>`).join('');
   kstMuteIcon(); kstShow(0);
   if(auto) kstSpeak();
@@ -2832,14 +2919,14 @@ function kstTalk(on){ const ch=document.getElementById('kchar'); if(ch) ch.class
 function kstVoice(){ try{ const v=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)); return v.find(x=>/samantha|karen|moira|tessa|google us english|zira|aria|jenny/i.test(x.name))||v.find(x=>/en-US/i.test(x.lang))||v[0]; }catch(e){ return null; } }
 function kstSpeak(){
   if(!KST||!KST.alive) return; KST.play=true; document.getElementById('kpp').textContent='❚❚'; document.getElementById('kstart').style.display='none';
-  const S=KST_SCENES[KST.i], s=KST.s, line=S.t[s]; kstShow(s); clearTimeout(KST.tm);
+  const S=KST_SCENES[KST.i], s=KST.s, line=S.t[s]; kstShow(s); kstSetMood(kstMood(S,KST.i,s)); kstWake(true); clearTimeout(KST.tm);
   const next=()=>{ if(!KST||!KST.alive||!KST.play) return; kstTalk(false);
     if(KST.s<S.t.length-1){ KST.s++; KST.tm=setTimeout(kstSpeak,350); }
     else if(KST.i<KST_SCENES.length-1){ KST.tm=setTimeout(()=>{ if(KST&&KST.play) kstScene(KST.i+1,true); },900); }
-    else { KST.play=false; document.getElementById('kpp').textContent='↺'; KST.done=true; } };
+    else { KST.play=false; kstWake(false); document.getElementById('kpp').textContent='↺'; KST.done=true; kstSetMood('hop'); } };
   if(S.au&&!KST.muted){ // recorded clip for the whole scene: start it once, time the captions to its length
     if(s===0){ if(KST.audio) KST.audio.pause(); const a=KST.audio=new Audio(S.au); const tot=S.t.join(' ').length;
-      a.onloadedmetadata=()=>{ let acc=0; S.t.forEach((x,j)=>{ const at=acc/tot*a.duration*1000; acc+=x.length+1; if(j) setTimeout(()=>{ if(KST&&KST.audio===a&&!a.paused){ KST.s=j; kstShow(j);} },at); }); };
+      a.onloadedmetadata=()=>{ let acc=0; S.t.forEach((x,j)=>{ const at=acc/tot*a.duration*1000; acc+=x.length+1; if(j) setTimeout(()=>{ if(KST&&KST.audio===a&&!a.paused){ KST.s=j; kstShow(j); kstSetMood(kstMood(S,KST.i,j)); } },at); }); };
       a.onplay=()=>kstTalk(true); a.onpause=()=>kstTalk(false);
       a.onended=()=>{ kstTalk(false); KST.s=S.t.length-1; next(); }; a.play().catch(()=>{}); }
     return; }
@@ -2853,7 +2940,7 @@ function kstSpeak(){
   kstTalk(true); KST.tm=setTimeout(()=>{ kstTalk(false); next(); },line.split(' ').length*330+900);
 }
 function kstGo(){ if(!KST) return; if(KST.done){ KST.done=false; kstScene(0,true); return; } kstSpeak(); }
-function kstPause(){ if(!KST) return; KST.play=false; clearTimeout(KST.tm); try{speechSynthesis.cancel()}catch(e){} if(KST.audio) KST.audio.pause(); kstTalk(false); const b=document.getElementById('kpp'); if(b) b.textContent='▶'; }
+function kstPause(){ if(!KST) return; KST.play=false; kstWake(false); clearTimeout(KST.tm); try{speechSynthesis.cancel()}catch(e){} if(KST.audio) KST.audio.pause(); kstTalk(false); const b=document.getElementById('kpp'); if(b) b.textContent='▶'; }
 function kstToggle(){ if(!KST) return; if(KST.play) kstPause(); else kstGo(); }
 function kstJump(d){ if(!KST) return; const ks=document.getElementById('kstart'); if(ks) ks.style.display='none'; const was=KST.play; kstPause(); if(KST.audio){KST.audio=null} KST.done=false; kstScene(KST.i+d,was); }
 function kstMute(){ if(!KST) return; KST.muted=!KST.muted; store('wfh-kst-mute',KST.muted?1:0); kstMuteIcon(); if(KST.play){ kstPause(); kstGo(); } }

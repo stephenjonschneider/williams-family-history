@@ -792,6 +792,61 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .kmark b{display:inline-block;text-shadow:0 2px 0 #fff,2px 3px 0 rgba(0,0,0,.18)}
 .khero{text-align:center;background:#fffaf0;border:2px dashed #f2c94c;border-radius:18px;padding:16px 14px 12px;margin:0 0 14px}
 .khs{font-size:14.5px;color:var(--ink);margin-top:8px}
+.kstwrap{padding-top:8px}
+.kstage{position:relative;width:100%;aspect-ratio:4/5;max-height:58vh;margin:0 auto;border-radius:18px;overflow:hidden;box-shadow:0 3px 12px #0003;background:#9ed8f5}
+.kstage .kbg{position:absolute;inset:0;width:100%;height:100%}
+.kchar{position:absolute;left:2%;bottom:1%;width:34%;max-width:170px;pointer-events:none}
+.kchar.r{left:auto;right:1%}.kchar.r .kcappy{transform:scaleX(-1)}
+.kcappy{width:100%;height:auto;display:block;overflow:visible}
+.kcappy .keye{transform-origin:84px 42px;animation:kblink 4.2s infinite}
+@keyframes kblink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.kchar .kbody{transform-origin:56px 110px;animation:kbreathe 3s ease-in-out infinite}
+.kchar.talk .kbody{animation:kbob .45s ease-in-out infinite}
+.kchar.talk .khead{transform-origin:80px 60px;animation:knod .9s ease-in-out infinite}
+@keyframes kbreathe{50%{transform:scale(1.015,.985)}}
+@keyframes kbob{50%{transform:translateY(-3px)}}
+@keyframes knod{50%{transform:rotate(-3deg)}}
+.kstage [data-at]{opacity:0;transition:opacity .6s,transform .6s}
+.kstage [data-at].on{opacity:1}
+.kstpop{transform:scale(.6);transform-box:fill-box;transform-origin:center}
+.kstpop.on{transform:scale(1)}
+.kpin{transform:translateY(-40px)}
+.kpin.on{transform:none;transition:transform .7s cubic-bezier(.3,1.6,.5,1),opacity .3s}
+.kdraw{stroke-dashoffset:1;transition:stroke-dashoffset 1.6s ease,opacity .2s}
+.kdraw[stroke-dasharray=".04 .03"]{stroke-dashoffset:0;opacity:0}
+.kdraw.on{stroke-dashoffset:0}
+.kml{font:700 11px system-ui,sans-serif;fill:#3d6b8a;letter-spacing:2px;opacity:.75}
+.kpl{font:700 13px system-ui,sans-serif}
+.kstbig{font:800 26px system-ui,sans-serif;fill:#c0392b;paint-order:stroke;stroke:#fff;stroke-width:5px}
+.ksafety{font:900 44px Georgia,serif;fill:#7d6608;letter-spacing:6px}
+.kfam{font:800 12px system-ui,sans-serif;fill:#fff}
+.kyr{font:800 10px system-ui,sans-serif;fill:#c0392b}
+.kyou{font:900 15px system-ui,sans-serif;fill:#7a3e00}
+.kstar.on{animation:kststar 2.4s ease-in-out infinite}
+@keyframes kststar{50%{transform:scale(1.12) rotate(6deg)}}
+.ksun{animation:ksun 6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes ksun{50%{transform:scale(1.08)}}
+.kcloud{animation:kdrift 18s linear infinite alternate}
+@keyframes kdrift{to{transform:translateX(120px)}}
+.kship{animation:krock 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes krock{0%,100%{transform:rotate(-3deg) translateX(-6px)}50%{transform:rotate(3deg) translateX(6px)}}
+.kwave2{animation:kwave 2.6s linear infinite}
+@keyframes kwave{to{transform:translateX(-50px)}}
+.kwave{animation:kbobw 3s ease-in-out infinite}
+@keyframes kbobw{50%{transform:translateY(4px)}}
+.kstart{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#0004;color:#fff;font:700 17px system-ui,sans-serif;cursor:pointer;text-shadow:0 1px 3px #0008}
+.kplaybig{width:84px;height:84px;border-radius:50%;background:#e63b2e;display:flex;align-items:center;justify-content:center;font-size:38px;padding-left:6px;box-shadow:0 3px 10px #0006}
+.kcap{background:#fff;border:2px solid #f2a400;border-radius:16px;margin:10px 0 8px;padding:10px 14px;font:500 17px/1.45 system-ui,sans-serif;color:#999;max-height:9.5em;overflow:auto;position:relative}
+.kcap .cur{color:#222;background:#fff3c4;border-radius:4px}
+.kcap .done{color:#666}
+.kcapn{font:700 11px system-ui,sans-serif;color:#f2a400;letter-spacing:1px;margin-bottom:2px}
+.kctl{display:flex;justify-content:center;gap:12px}
+.kctl button{width:56px;height:48px;border-radius:14px;border:2px solid #1f6fd1;background:#fff;font-size:20px;color:#1f6fd1;cursor:pointer}
+.kctl #kpp{background:#1f6fd1;color:#fff;width:72px}
+.kdots{display:flex;justify-content:center;gap:7px;margin-top:10px}
+.kdots span{width:11px;height:11px;border-radius:50%;background:#d5d5d5;cursor:pointer}
+.kdots span.on{background:#e63b2e;transform:scale(1.25)}
+.kemo svg{width:44px;height:40px}
 .kcard{display:flex;gap:12px;align-items:center;background:#fff;border:2px solid var(--kc);border-left-width:8px;border-radius:16px;padding:12px 12px;margin:0 0 12px;cursor:pointer;box-shadow:0 2px 0 var(--kc)}
 .kcard .kemo{font-size:36px}.kcard .kt{font-family:'Fredoka',var(--body);font-weight:700;font-size:19px;color:var(--kc)}.kcard .ks{font-size:13.5px;color:var(--muted)}
 .kbest{display:inline-block;margin-top:4px;font-size:12px;font-weight:700;background:#fff3c4;color:#8a6200;border-radius:999px;padding:2px 9px}
@@ -2657,18 +2712,165 @@ function kMask(t){ return String(t||'').replace(/\b1[5-9]\d\d\b|\b20[0-2]\d\b/g,
 function kStars(n){ return n?'★'.repeat(Math.min(3,n)):''; }
 let KS=null; // the game in progress
 
+/* ---------- Kids: Cappy's Story — an animated, spoken family story ----------
+   Each scene has a background, the hat Cappy wears, and its sentences (t).
+   Anything in a scene's picture marked data-at="n" appears when sentence n starts.
+   Recorded narration: give a scene au:'kstory/01.mp3' (one clip per scene) and it is played
+   instead of the phone's voice; captions and pictures are timed to the clip's length. */
+const KST_FAM={Williams:'#c0392b',Layton:'#2471a3',Newman:'#8e44ad',Cooper:'#d68910',Wolcott:'#239b56',Bowne:'#a04000',Grover:'#7d6608',Stout:'#5d6d7e',Borden:'#117864'};
+function kstXY(lat,lon){ return [((lon+74.45)/0.61*360+20).toFixed(1), ((40.64-lat)/0.61*440+30).toFixed(1)]; }
+function kstPath(pts,close){ return pts.map((p,i)=>(i?'L':'M')+kstXY(p[0],p[1]).join(',')).join(' ')+(close?' Z':''); }
+function kstMap(extra){
+  const water=[[40.575,-73.70],[40.575,-74.01],[40.59,-74.06],[40.54,-74.15],[40.51,-74.25],[40.52,-74.33],[40.50,-74.33],[40.48,-74.28],[40.44,-74.2],[40.445,-74.13],[40.43,-74.07],[40.405,-73.995],[40.35,-73.975],[40.30,-73.978],[40.25,-73.99],[40.20,-74.005],[40.15,-74.025],[40.10,-74.035],[40.05,-74.045],[39.97,-74.06],[39.97,-73.70]];
+  const riv=[[[40.352,-74.095],[40.37,-74.05],[40.392,-74.0]],[[40.33,-74.065],[40.345,-74.02],[40.372,-73.99]],[[40.192,-74.07],[40.19,-74.01]],[[40.17,-74.24],[40.135,-74.13],[40.108,-74.035]],[[40.125,-74.27],[40.105,-74.17],[40.07,-74.07]]];
+  return `<svg class="kbg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><rect width="400" height="500" fill="#bfe3a0"/>
+   <g opacity=".35" fill="#8cc46a">${[[60,120],[150,300],[90,380],[230,420],[260,250],[120,220],[300,160]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="26"/><circle cx="${x+22}" cy="${y+8}" r="18"/>`).join('')}</g>
+   <path d="${kstPath(water,1)}" fill="#7cc6ee"/>
+   <path d="${kstPath([[40.405,-73.995],[40.47,-74.008]])}" stroke="#f3e2a9" stroke-width="5" stroke-linecap="round" fill="none"/>
+   ${riv.map(r=>`<path d="${kstPath(r)}" stroke="#7cc6ee" stroke-width="4" fill="none" stroke-linecap="round"/>`).join('')}
+   <g class="kwave" fill="none" stroke="#fff" stroke-width="2" opacity=".7"><path d="M330 300 q8 -6 16 0 t16 0"/><path d="M320 380 q8 -6 16 0 t16 0"/><path d="M345 220 q8 -6 16 0 t16 0"/></g>
+   ${(()=>{ const [ox,oy]=kstXY(40.30,-73.915), [lx,ly]=kstXY(40.628,-74.0), [sx,sy]=kstXY(40.60,-74.24), [nx,ny]=kstXY(40.30,-74.42); return `<text x="${ox}" y="${oy}" class="kml" transform="rotate(90 ${ox} ${oy})">ATLANTIC OCEAN</text><text x="${lx}" y="${ly}" class="kml">LONG ISLAND</text><text x="${sx}" y="${sy}" class="kml">STATEN ISLAND</text><text x="${nx}" y="${ny}" class="kml">NEW JERSEY</text>`; })()}
+   ${extra||''}</svg>`;
+}
+function kstPin(k,lab,fam,at,dx,dy){ const pl=PL[k]; if(!pl) return ''; const [x,y]=kstXY(pl.lat,pl.lon), c=KST_FAM[fam]||'#c0392b';
+  return `<g class="kpin" data-at="${at}" style="--x:${x}px;--y:${y}px"><g transform="translate(${x} ${y})"><path d="M0 0 C-9 -12 -9 -24 0 -24 C9 -24 9 -12 0 0Z" fill="${c}" stroke="#fff" stroke-width="2"/><circle cy="-16" r="3.5" fill="#fff"/>
+   <g transform="translate(${dx||8} ${dy||-20})"><rect x="0" y="-11" rx="7" width="${lab.length*7.2+14}" height="20" fill="#fff" stroke="${c}" stroke-width="2"/><text x="7" y="4" class="kpl" fill="${c}">${esc(lab)}</text></g></g></g>`; }
+const KST_SCENES=[
+ { bg:()=>`<svg class="kbg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><rect width="400" height="500" fill="#9ed8f5"/><circle cx="330" cy="80" r="38" fill="#ffd84d" class="ksun"/>
+   <g class="kcloud"><ellipse cx="90" cy="90" rx="40" ry="16" fill="#fff"/><ellipse cx="115" cy="80" rx="26" ry="16" fill="#fff"/></g>
+   <path d="M0 330 Q100 280 200 320 T400 300 V500 H0Z" fill="#8cc46a"/><path d="M0 380 Q120 340 240 370 T400 360 V500 H0Z" fill="#6fb04f"/>
+   <g data-at="1" class="kstpop"><rect x="230" y="250" width="120" height="64" rx="8" fill="#f8efd8" stroke="#8a5a30" stroke-width="3"/><text x="290" y="276" text-anchor="middle" class="kpl" fill="#8a5a30">OLD DEEDS</text><text x="290" y="298" text-anchor="middle" class="kpl" fill="#8a5a30">WILLS · MAPS</text><rect x="284" y="314" width="12" height="40" fill="#8a5a30"/></g>
+   <text data-at="2" class="kstpop kstbig" x="200" y="190" text-anchor="middle">350 years ago…</text></svg>`,
+   hat:'det', t:["Hi there! I'm Cappy the capybara, and I'm a family history detective.","I dig through old papers, like deeds, wills and maps, to find out who your family really were.","Come along! Our story starts more than three hundred and fifty years ago."] },
+ { bg:()=>`<svg class="kbg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><rect width="400" height="500" fill="#5b7fa8"/><rect y="300" width="400" height="200" fill="#2f5f8a"/>
+   <g class="kship"><path d="M120 300 L280 300 L260 335 L140 335Z" fill="#7a4c28"/><rect x="196" y="180" width="6" height="122" fill="#5a3a1c"/><path d="M202 188 Q250 220 202 280Z" fill="#fff8e7"/><path d="M196 196 Q160 230 196 270Z" fill="#fff8e7"/><path d="M202 180 l22 6 l-22 6z" fill="#c0392b"/></g>
+   <g class="kwave2" fill="none" stroke="#cfe6ff" stroke-width="3"><path d="M0 340 q25 -14 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/><path d="M-25 380 q25 -14 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/></g>
+   ${[['Bowne','Yorkshire, England',1,60],['Grover','Chesham, England',1,95],['Borden','Kent, England',1,130],['Stout','Penelope from Holland',2,165]].map(([f,w,at,y])=>`<g data-at="${at}" class="kstpop"><rect x="14" y="${y-18}" rx="10" width="${w.length*7+90}" height="28" fill="#fff" opacity=".92"/><text x="24" y="${y+1}" class="kpl" fill="${KST_FAM[f]}">${f}</text><text x="${24+f.length*9+8}" y="${y+1}" class="kpl" fill="#444">${esc(w)}</text></g>`).join('')}
+   <g data-at="3" class="kstpop"><text x="390" y="240" text-anchor="end" class="kstbig" fill="#fff" style="font-size:22px">→ Gravesend,</text><text x="390" y="268" text-anchor="end" class="kstbig" fill="#fff" style="font-size:22px">Long Island</text></g></svg>`,
+   hat:'tri', t:["In the 1600s, brave families crossed the stormy Atlantic Ocean in little wooden sailing ships.","The Bownes came from Yorkshire, in England. The Grovers came from Chesham, and the Bordens came from Kent.","Penelope Stout came from Holland. An old family legend says her ship ran aground near Sandy Hook, and she hid in a hollow tree until a kind Lenape man helped her. Nobody has found a record of that shipwreck yet!","Many of these families first lived at Gravesend, on Long Island, close to where New York City is today."] },
+ { bg:()=>kstMap(kstPin('gravesend','Gravesend','Grover',0,-96,-20)+`<path data-at="1" class="kdraw" d="${kstPath([[40.59,-73.98],[40.52,-74.02],[40.44,-74.09],[40.40,-74.11]])}" pathLength="1" stroke="#c0392b" stroke-width="4" stroke-dasharray=".04 .03" fill="none"/>`+kstPin('middletown','Middletown','Bowne',1,-96,-26)+kstPin('shrewsbury','Shrewsbury','Borden',2,8,-6)+`<g data-at="2" class="kstpop"><text x="120" y="300" class="kstbig" fill="#2e6b1e">Monmouth!</text></g>`),
+   cr:1, hat:'tri', t:["Around 1665, these families sailed across the bay to a wild, green land in New Jersey called Monmouth.","The Lenape people had lived here for thousands of years. The newcomers bought land from them and cleared it for farms.","They started two towns, Middletown and Shrewsbury, and you can still visit both of them today."] },
+ { bg:()=>kstMap(kstPin('middletown','Captain Safety Grover','Grover',0,-150,-30)+`<g data-at="1" class="kstpop"><rect x="60" y="250" width="240" height="70" rx="14" fill="#fff" stroke="#7d6608" stroke-width="3"/><text x="180" y="296" text-anchor="middle" class="ksafety">SAFETY</text></g>`+`<g data-at="2" class="kstpop">${['Safety Layton','Safety Bowne','Safety Borden','Safety Taylor'].map((n,i)=>`<text x="${50+(i%2)*130}" y="${360+Math.floor(i/2)*28}" class="kpl" fill="#7d6608">${n}</text>`).join('')}</g>`),
+   cr:1, hat:'tri', t:["Here's a funny name. Captain Safety Grover was born around 1658.","Safety was his real first name! His family liked it so much that they kept giving it to new babies for three hundred years.","That name is a clue. When a detective like me finds a Safety, it points back to the Grover family."] },
+ { bg:()=>kstMap(kstPin('middletown','Bownes','Bowne',0,-70,-30)+kstPin('mtvillage','Laytons','Layton',0,8,-2)+`<g data-at="1" class="kstpop"><path transform="translate(170 245) scale(1.6)" d="M12 21 C-4 10 2 0 12 6 C22 0 28 10 12 21Z" fill="#e74c3c"/><rect x="100" y="285" width="180" height="50" rx="12" fill="#fff"/><text x="190" y="307" text-anchor="middle" class="kpl" fill="#a04000">Catherine Bowne</text><text x="190" y="326" text-anchor="middle" class="kpl" fill="#2471a3">+ John Layton · 1735</text></g><g data-at="2" class="kstpop"><text x="190" y="375" text-anchor="middle" class="kstbig" fill="#7d6608">baby Safety!</text></g>`),
+   cr:1, hat:'tri', t:["The Grovers, the Bownes and the Laytons lived right next to each other in Middletown.","Around 1735, Catherine Bowne married John Layton.","And guess what they named their first son? Safety! Just like great-grandpa."] },
+ { bg:()=>kstMap(kstPin('sharkriver','Newmans','Newman',0,8,-14)+kstPin('eatontown','Wolcotts','Wolcott',0,8,-20)+kstPin('howell','Coopers','Cooper',0,-84,-22)+kstPin('southard','Laytons','Layton',1,8,-4)+kstPin('metedeconk','Williamses','Williams',2,-60,24)+`<g data-at="3" class="kstpop"><text x="120" y="190" text-anchor="middle" class="kstbig" fill="#c0392b">? mystery ?</text></g>`),
+   cr:1, hat:'tri', t:["As the years went by, more families made Monmouth their home. The Newmans lived near Shark River, the Wolcotts at Eatontown, and the Coopers in Howell.","Some of the Laytons moved south, to a place called Southard.","The Williams family farmed by the Metedeconk River, and that land stayed in the family for more than two hundred years.","But the oldest Williams papers are still a mystery. Who was the very first Williams in this line? Detectives are still searching!"] },
+ { bg:()=>{ const X={Williams:50,Layton:125,Newman:200,Cooper:275,Wolcott:350}, top=70;
+   const L=(d,at,c)=>`<path data-at="${at}" class="kdraw" d="${d}" pathLength="1" stroke="${c}" stroke-width="7" stroke-linecap="round" fill="none"/>`;
+   const H=(x,y,yr,at)=>`<g data-at="${at}" class="kstpop"><circle cx="${x}" cy="${y}" r="17" fill="#fff" stroke="#e74c3c" stroke-width="3"/><text x="${x}" y="${y+5}" text-anchor="middle" class="kyr">${yr}</text></g>`;
+   return `<svg class="kbg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><rect width="400" height="500" fill="#fdf6e3"/>
+   ${Object.entries(X).map(([f,x])=>`<g><rect x="${x-36}" y="${top-22}" width="72" height="28" rx="14" fill="${KST_FAM[f]}"/><text x="${x}" y="${top-3}" text-anchor="middle" class="kfam">${f}</text></g>`).join('')}
+   ${L(`M50 ${top+8} V150 Q50 170 87 175`,1,KST_FAM.Williams)}${L(`M125 ${top+8} V150 Q125 170 88 175`,1,KST_FAM.Layton)}${H(87,178,1826,1)}
+   ${L(`M200 ${top+8} V170 Q200 200 237 205`,2,KST_FAM.Newman)}${L(`M275 ${top+8} V170 Q275 200 238 205`,2,KST_FAM.Cooper)}${H(237,208,1831,2)}
+   ${L(`M87 196 V270 Q87 300 160 305`,3,KST_FAM.Layton)}${L(`M237 226 V270 Q237 300 162 305`,3,KST_FAM.Newman)}${H(161,308,1862,3)}
+   ${L(`M161 326 V370 Q161 395 250 400`,4,KST_FAM.Williams)}${L(`M350 ${top+8} V370 Q350 395 252 400`,4,KST_FAM.Wolcott)}${H(251,403,1882,4)}
+   <g data-at="5" class="kstpop"><text x="262" y="470" text-anchor="middle" class="kstbig" fill="#2e6b1e">one big family!</text></g></svg>`; },
+   hat:'straw', t:["Then, one wedding at a time, the families joined together.","In 1826, Daniel Williams married Elizabeth Layton.","In 1831, Silas Newman married Mary Elizabeth Cooper.","In 1862, their children met: Daniel David Williams married Catherine Newman.","And in 1882, Thomas Edward Williams married Mary Wolcott.","Williams, Layton, Newman, Cooper and Wolcott, all braided together into one big family!"] },
+ { bg:()=>`<svg class="kbg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><rect width="400" height="500" fill="#a9dcf7"/><circle cx="70" cy="80" r="32" fill="#ffd84d" class="ksun"/>
+   <rect y="250" width="400" height="110" fill="#4aa3df"/><g class="kwave2" fill="none" stroke="#fff" stroke-width="3"><path d="M-25 280 q25 -12 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/><path d="M0 320 q25 -12 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/></g>
+   <path d="M0 350 Q200 335 400 350 V500 H0Z" fill="#f3dca0"/>
+   <g data-at="0" class="kstpop"><rect x="230" y="120" width="140" height="54" rx="10" fill="#fff"/><text x="300" y="142" text-anchor="middle" class="kpl" fill="#c0392b">Harry Franklin Williams</text><text x="300" y="162" text-anchor="middle" class="kpl" fill="#555">born 1900, Southard</text></g>
+   <g data-at="1" class="kstpop"><rect x="200" y="186" width="170" height="54" rx="10" fill="#fff"/><text x="285" y="208" text-anchor="middle" class="kpl" fill="#1a5276">Ruth Lomell</text><text x="285" y="228" text-anchor="middle" class="kpl" fill="#555">family from Sweden &amp; Norway</text></g>
+   <g data-at="2" class="kstpop"><rect x="150" y="380" width="200" height="54" rx="10" fill="#fff"/><text x="250" y="402" text-anchor="middle" class="kpl" fill="#c0392b">Mavis Williams</text><text x="250" y="422" text-anchor="middle" class="kpl" fill="#555">born 1924, Point Pleasant</text></g>
+   <g data-at="3" class="kstpop"><path transform="translate(330 360) scale(1.3)" d="M12 21 C-4 10 2 0 12 6 C22 0 28 10 12 21Z" fill="#e74c3c"/></g></svg>`,
+   hat:'straw', t:["In 1900, Harry Franklin Williams was born at Southard, in Howell.","He married Ruth Lomell, whose parents came all the way from Sweden and Norway.","Their daughter Mavis was born in 1924, in Point Pleasant, right by the ocean.","Mavis married Michael DiCorcia, and the family kept on growing."] },
+ { bg:()=>{ const leaves=['Williams','Layton','Bowne','Grover','Stout','Borden','Newman','Cooper','Wolcott','Lomell','DiCorcia','Clevenger'];
+   return `<svg class="kbg" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice"><rect width="400" height="500" fill="#e8f6ff"/><path d="M0 440 Q200 420 400 440 V500 H0Z" fill="#8cc46a"/>
+   <path d="M185 445 C185 380 175 330 160 290 M215 445 C215 380 225 330 240 290 M200 445 V250" stroke="#8a5a30" stroke-width="22" stroke-linecap="round" fill="none"/>
+   <path d="M200 300 Q120 260 80 210 M200 300 Q280 260 320 210 M200 260 Q160 200 140 150 M200 260 Q240 200 260 150 M200 250 V120" stroke="#8a5a30" stroke-width="9" stroke-linecap="round" fill="none"/>
+   ${leaves.map((n,i)=>{ const a=[[80,205],[320,205],[140,148],[260,148],[60,270],[340,270],[110,100],[290,100],[200,240],[150,320],[250,320],[200,170]][i]; const c=Object.values(KST_FAM)[i%9];
+     return `<g data-at="${i<6?0:1}" class="kstpop" style="transition-delay:${(i%6)*.25}s"><ellipse cx="${a[0]}" cy="${a[1]}" rx="${n.length*4.6+12}" ry="16" fill="#7ac35b"/><text x="${a[0]}" y="${a[1]+5}" text-anchor="middle" class="kpl" fill="#fff" style="font-size:13px">${n}</text></g>`; }).join('')}
+   <g data-at="2" class="kstpop kstar"><path transform="translate(200 62)" d="M0 -30 L9 -9 L31 -9 L13 5 L20 27 L0 13 L-20 27 L-13 5 L-31 -9 L-9 -9Z" fill="#ffcf2e" stroke="#e08e0b" stroke-width="3"/><text x="200" y="70" text-anchor="middle" class="kyou">YOU</text></g></svg>`; },
+   hat:'det', t:["Hundreds of people, from England, Holland, Sweden, Norway and more, are part of your family's story.","Every name I told you about comes from a real record that somebody saved for hundreds of years.","And right at the top of this great big tree… is you!","Want to be a detective like me? Try the games on the Kids page. See you there!"] }
+];
+function kCappy(hat){
+  const H={det:`<path d="M58 22 Q80 4 102 22 Z" fill="#4e6b3a"/><rect x="54" y="20" width="52" height="6" rx="3" fill="#3b5229"/>`,
+    tri:`<path d="M52 24 L80 6 L108 24 Q80 16 52 24Z" fill="#2c2c3a"/><path d="M60 22 L80 12 L100 22" stroke="#d4ac0d" stroke-width="2" fill="none"/>`,
+    straw:`<ellipse cx="80" cy="24" rx="34" ry="7" fill="#e9c46a"/><path d="M64 23 Q80 2 96 23Z" fill="#f4d58d"/><rect x="65" y="18" width="30" height="5" fill="#c0392b"/>`}[hat]||'';
+  return `<svg class="kcappy" viewBox="0 0 130 120" aria-label="Cappy the capybara">
+   <ellipse cx="62" cy="112" rx="44" ry="6" fill="#000" opacity=".15"/>
+   <g class="kbody"><rect x="30" y="92" width="12" height="18" rx="5" fill="#7a4c28"/><rect x="72" y="92" width="12" height="18" rx="5" fill="#7a4c28"/>
+   <ellipse cx="56" cy="78" rx="44" ry="28" fill="#a8743f"/><ellipse cx="50" cy="84" rx="24" ry="14" fill="#c08a52" opacity=".6"/>
+   <g class="khead"><ellipse cx="82" cy="50" rx="30" ry="24" fill="#b07c48"/><rect x="88" y="42" width="34" height="28" rx="13" fill="#8f5e33"/>
+   <ellipse cx="66" cy="30" rx="7" ry="6" fill="#7a4c28"/><ellipse cx="113" cy="49" rx="3" ry="2.2" fill="#3a2410"/>
+   <g class="keye"><circle cx="84" cy="42" r="4.2" fill="#2a1a0c"/><circle cx="85.5" cy="40.5" r="1.4" fill="#fff"/></g>
+   <circle cx="96" cy="58" r="5" fill="#e8907a" opacity=".55"/>
+   <ellipse class="kmouth" cx="108" cy="64" rx="6" ry="1.2" fill="#4a2410"/>${H}</g></g></svg>`;
+}
+let KST=null;
+function kstStop(){ if(!KST) return; KST.alive=false; clearTimeout(KST.tm); clearInterval(KST.flap); try{speechSynthesis.cancel()}catch(e){} if(KST.audio){ KST.audio.pause(); } KST=null; }
+function vKStory(){
+  setTab('kids'); if(MAP){MAP.remove();MAP=null}
+  kstStop(); KST={i:0,s:0,play:false,muted:store('wfh-kst-mute')===1,alive:true};
+  app.innerHTML=topBar("Cappy's Story",true)+`<div class="wrap kstwrap">
+   <div class="kstage" id="kstage"><div id="kscene"></div><div class="kchar" id="kchar"></div>
+    <div class="kstart" id="kstart" onclick="kstGo()"><div class="kplaybig">▶</div><div>Tap to hear Cappy's story</div></div></div>
+   <div class="kcap" id="kcap"></div>
+   <div class="kctl"><button onclick="kstJump(-1)" aria-label="Back">⏮</button><button id="kpp" onclick="kstToggle()" aria-label="Play or pause">▶</button><button onclick="kstJump(1)" aria-label="Next">⏭</button><button id="kmute" onclick="kstMute()" aria-label="Sound on or off"></button></div>
+   <div class="kdots" id="kdots"></div>
+   <div class="tiny muted" style="margin:10px 2px 16px;text-align:center">Every person in Cappy's story is in this app's records. Turn the sound off to read along at your own pace.</div></div>`;
+  kstScene(0,false);
+}
+function kstMuteIcon(){ const b=document.getElementById('kmute'); if(b) b.textContent=KST.muted?'🔇':'🔊'; }
+function kstScene(i,auto){
+  if(!KST) return; KST.i=Math.max(0,Math.min(KST_SCENES.length-1,i)); KST.s=0;
+  const S=KST_SCENES[KST.i];
+  document.getElementById('kscene').innerHTML=S.bg(); const kc=document.getElementById('kchar'); kc.innerHTML=kCappy(S.hat); kc.classList.toggle('r',!!S.cr);
+  document.getElementById('kdots').innerHTML=KST_SCENES.map((_,j)=>`<span class="${j===KST.i?'on':''}" onclick="kstJump(${j-KST.i})"></span>`).join('');
+  kstMuteIcon(); kstShow(0);
+  if(auto) kstSpeak();
+}
+function kstShow(s){ const S=KST_SCENES[KST.i];
+  document.querySelectorAll('#kscene [data-at]').forEach(e=>e.classList.toggle('on',+e.dataset.at<=s));
+  document.getElementById('kcap').innerHTML=`<div class="kcapn">${KST.i+1} / ${KST_SCENES.length}</div>`+S.t.map((x,j)=>`<span class="${j===s?'cur':j<s?'done':''}">${esc(x)} </span>`).join('');
+  const c=document.querySelector('#kcap .cur'); if(c&&c.offsetTop>40) document.getElementById('kcap').scrollTop=c.offsetTop-40;
+}
+function kstTalk(on){ const ch=document.getElementById('kchar'); if(ch) ch.classList.toggle('talk',on); clearInterval(KST&&KST.flap);
+  if(on&&KST) KST.flap=setInterval(()=>{ const m=document.querySelector('.kmouth'); if(m) m.setAttribute('ry',(1.2+Math.random()*5).toFixed(1)); },110);
+  else { const m=document.querySelector('.kmouth'); if(m) m.setAttribute('ry','1.2'); } }
+function kstVoice(){ try{ const v=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang)); return v.find(x=>/samantha|karen|moira|tessa|google us english|zira|aria|jenny/i.test(x.name))||v.find(x=>/en-US/i.test(x.lang))||v[0]; }catch(e){ return null; } }
+function kstSpeak(){
+  if(!KST||!KST.alive) return; KST.play=true; document.getElementById('kpp').textContent='❚❚'; document.getElementById('kstart').style.display='none';
+  const S=KST_SCENES[KST.i], s=KST.s, line=S.t[s]; kstShow(s); clearTimeout(KST.tm);
+  const next=()=>{ if(!KST||!KST.alive||!KST.play) return; kstTalk(false);
+    if(KST.s<S.t.length-1){ KST.s++; KST.tm=setTimeout(kstSpeak,350); }
+    else if(KST.i<KST_SCENES.length-1){ KST.tm=setTimeout(()=>{ if(KST&&KST.play) kstScene(KST.i+1,true); },900); }
+    else { KST.play=false; document.getElementById('kpp').textContent='↺'; KST.done=true; } };
+  if(S.au&&!KST.muted){ // recorded clip for the whole scene: start it once, time the captions to its length
+    if(s===0){ if(KST.audio) KST.audio.pause(); const a=KST.audio=new Audio(S.au); const tot=S.t.join(' ').length;
+      a.onloadedmetadata=()=>{ let acc=0; S.t.forEach((x,j)=>{ const at=acc/tot*a.duration*1000; acc+=x.length+1; if(j) setTimeout(()=>{ if(KST&&KST.audio===a&&!a.paused){ KST.s=j; kstShow(j);} },at); }); };
+      a.onplay=()=>kstTalk(true); a.onpause=()=>kstTalk(false);
+      a.onended=()=>{ kstTalk(false); KST.s=S.t.length-1; next(); }; a.play().catch(()=>{}); }
+    return; }
+  if(!KST.muted&&window.speechSynthesis){
+    try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(line.replace(/…/g,'...')); const v=kstVoice(); if(v) u.voice=v; u.rate=.95; u.pitch=1.35;
+      u.onstart=()=>kstTalk(true); u.onend=next; u.onerror=()=>{ kstTalk(false); };
+      KST.utt=u; speechSynthesis.speak(u); kstTalk(true);
+      // some phones never fire onend: move on after a generous wait
+      KST.tm=setTimeout(()=>{ if(KST&&KST.utt===u&&!speechSynthesis.speaking) next(); },line.split(' ').length*520+4000);
+      return; }catch(e){} }
+  kstTalk(true); KST.tm=setTimeout(()=>{ kstTalk(false); next(); },line.split(' ').length*330+900);
+}
+function kstGo(){ if(!KST) return; if(KST.done){ KST.done=false; kstScene(0,true); return; } kstSpeak(); }
+function kstPause(){ if(!KST) return; KST.play=false; clearTimeout(KST.tm); try{speechSynthesis.cancel()}catch(e){} if(KST.audio) KST.audio.pause(); kstTalk(false); const b=document.getElementById('kpp'); if(b) b.textContent='▶'; }
+function kstToggle(){ if(!KST) return; if(KST.play) kstPause(); else kstGo(); }
+function kstJump(d){ if(!KST) return; const ks=document.getElementById('kstart'); if(ks) ks.style.display='none'; const was=KST.play; kstPause(); if(KST.audio){KST.audio=null} KST.done=false; kstScene(KST.i+d,was); }
+function kstMute(){ if(!KST) return; KST.muted=!KST.muted; store('wfh-kst-mute',KST.muted?1:0); kstMuteIcon(); if(KST.play){ kstPause(); kstGo(); } }
+
 function vKids(){
   setTab('kids'); if(MAP){MAP.remove();MAP=null}
   const b=kBest();
   const card=(k,col,emoji,t,s,max)=>`<div class="kcard" style="--kc:${col}" onclick="kStart('${k}')"><div class="kemo">${emoji}</div><div><div class="kt">${t}</div><div class="ks">${s}</div>${b[k]!=null?`<div class="kbest">Your best: ${b[k]}${max?' / '+max:' points'}</div>`:''}</div><span class="chev">›</span></div>`;
   app.innerHTML=topBar('Kids',false)+`<div class="wrap">
     <div class="khero">${kidsMark('Kids',54)}<div class="khs">Play detective with real family records. Every clue in these games comes from an actual deed, will, survey or court paper in this history.</div></div>
+    <div class="kcard" style="--kc:#f2a400" onclick="go('kidstory')"><div class="kemo">${kCappy('det')}</div><div><div class="kt">Cappy's Story</div><div class="ks">Cappy the capybara tells how all your families crossed the ocean, settled Monmouth and became one big family. Turn your sound on!</div><div class="kbest">For all ages</div></div><span class="chev">›</span></div>
     ${card('det','#e63b2e','🔎','Detective Case Files','Is that really their parent? Read the evidence, then grade the case the way a genealogist would.',24)}
     ${card('era','#1f6fd1','⏳','Time Traveler','Clues about a real ancestor, one at a time. Guess when they were born. Fewer clues, more points!',32)}
     ${card('map','#2e9e4f','🗺️','Map Time Machine','A pin drops on a family spot. What town was it part of back then? Watch the borders change over 300 years.',18)}
     ${card('orig','#8e44ad','🌍','Where in the World?','A family name from the tree. Which country did that family come from? England, the Netherlands, Belgium, Germany, Italy…',20)}
     ${card('tomb','#4b4a8f','🪦','Name That Tombstone','Letters appear on an old stone, one every second. Tap “I know it!” to stop the clock and guess: every letter you see costs a point.',0)}
-    <div class="tiny muted" style="margin:10px 2px 16px">For ages 12 and up. Scores stay on this device.</div></div>`;
+    <div class="tiny muted" style="margin:10px 2px 16px">The three games are for ages 12 and up. Scores stay on this device.</div></div>`;
 }
 function kStart(g){ KS={g,i:0,score:0,ans:null}; if(g==='det') KS.list=kShuffle(kCases()).slice(0,8);
   if(g==='era'){ KS.list=kShuffle(kEraPeople()).slice(0,8); KS.clue=1; }
@@ -2695,13 +2897,15 @@ const KLESSON={solid:'Gold standard! A will, death certificate, obituary, court 
   good:'The clues line up — land passing in the family, names repeating, people standing surety together — but no single paper says “this is my child.” A good detective keeps looking.',
   myst:'Right now only family trees (or a hunch) link them. A tree copied from another tree isn’t proof. This case is still waiting for its big clue — maybe you’ll find it someday!'};
 const KEV=[['will','📜 a will'],['death certificate','🪦 a death certificate'],['obituar','📰 an obituary'],['census','📋 a census'],['deed','🏠 a deed'],['marriage','💍 a marriage record'],['court','⚖️ a court paper'],['administrat','⚖️ estate papers'],['heir','⚖️ estate papers'],['tree','🌳 family trees'],['naming','🔤 naming patterns'],['earmark','🐄 an earmark record']];
-function kCases(){ return D.people.filter(p=>p.G0&&!p.living&&p.ps&&p.ps.note&&p.ps.note.length>25&&(p.par||[]).some(y=>P[y])&&!/not abstracted/i.test(p.ps.note)&&KBUCK[lvOf(p)]&&(KBUCK[lvOf(p)]==='myst'||!/^\w+ workbook:/i.test(p.ps.note))).map(p=>p.id); }
+/* the case notes: the old Proof note, or (Person Page Standard) the "how we know" part of Parent (basis) */
+function kNote(p){ if(p.ps&&p.ps.note) return p.ps.note; const pb=String(p.top&&p.top.pb||''); const i=pb.indexOf(':'); return i>0?pb.slice(i+1).replace(/\((?:[A-Z]{1,3}-\d{3,4}[^)]*)\)/g,'').replace(/\s*\(G\d+\??(?:,[^)]*)?\)|\s*\(P\d+\)/g,'').replace(/\s+([.,;])/g,'$1').trim().replace(/^./,c=>c.toUpperCase()):''; }
+function kCases(){ return D.people.filter(p=>{ const n=kNote(p); return p.G0&&!p.living&&p.ps&&n.length>25&&(p.par||[]).some(y=>P[y])&&!/not abstracted/i.test(n)&&KBUCK[lvOf(p)]&&(KBUCK[lvOf(p)]==='myst'||!/^\w+ workbook:/i.test(n)); }).map(p=>p.id); }
 function kMaskGrade(t){ return esc(kSafe(t)).replace(/\b(fully documented|documented|proved|near-proved|strong|probable|hypothesis|open question|open|compiled|unproven|uncertain|plausible|strengthened|leading)\b/gi,'<span class="kblot">▒▒▒</span>'); }
 function kSafe(t){ return String(t||'').replace(/^\w+ workbook(?: Lineage \w+)?:\s*\w+\s*[—-]\s*/i,'The family trees name: ').replace(/\s*\((?:[A-Z]{1,3}-\d{3,4}[^)]*)\)/g,'').replace(/\[[^\]]*\]/g,''); }
 function kDet(){
   if(KS.i>=KS.list.length){ app.innerHTML=kTop('Detective Case Files','#c0392b')+`<div class="wrap">${kEnd(KS.list.length*3,[[.85,'Master Genealogist','🏆'],[.6,'Senior Detective','🕵️'],[.3,'Junior Detective','🔎'],[0,'Detective in Training','📒']])}</div>`; return; }
   const p=P[KS.list[KS.i]]; const pars=(p.par||[]).filter(y=>P[y]).map(y=>P[y]); const truth=KBUCK[lvOf(p)];
-  const note=p.ps.note; const ev=[...new Set(KEV.filter(([k])=>new RegExp('\\b'+k,'i').test(note)).map(x=>x[1]))];
+  const note=kNote(p); const ev=[...new Set(KEV.filter(([k])=>new RegExp('\\b'+k,'i').test(note)).map(x=>x[1]))];
   const pn=pars.map(x=>`<b>${esc(x.living?'Living':x.n)}</b>`).join(' and ');
   let h=`<div class="wrap">${kProg()}<div class="card kcase"><div class="kstamp">CASE #${String(KS.i+1).padStart(2,'0')}</div>
     <div class="kq">Is <b>${esc(p.n)}</b>${gtag(p)} really the child of ${pn}?</div>
@@ -3375,6 +3579,7 @@ function gcCount(){ if(!GC_CODE||gcOff()) return; const g=window.goatcounter; if
   g.count({path:path,title:title}); }
 function gcToggle(){ gcSet(!gcOff()); route(); }
 function route(){
+  if(typeof kstStop==='function') kstStop();
   if(decodeURIComponent(location.hash.slice(1))!=='people'&&listOf(pState.q)){ pState.q=''; pState.f='dl'; }
   LAYERS.length=0; ROUTING=true; app.onclick=null; if(MAP){MAP.remove();MAP=null} ROUTING=false;
   setTimeout(layerTidy,900);
@@ -3382,7 +3587,7 @@ function route(){
   const back=RETURNING; RETURNING=false; CURKEY='';
   if((h==='map'||h.startsWith('map-'))&&!back) MHIDE.clear();
   if(h==='home') vHome(); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
-  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='names') vNames(); else if(h==='lives') vLives(); else if(h.startsWith('life-')) vLife(h.slice(5)); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='maptour') vRoad(true,true); else if(h==='mapmove') vRoad(true); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
+  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='kidstory') vKStory(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='names') vNames(); else if(h==='lives') vLives(); else if(h.startsWith('life-')) vLife(h.slice(5)); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='maptour') vRoad(true,true); else if(h==='mapmove') vRoad(true); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));
   else if(h.startsWith('r-')) vRecord(h.slice(2)); else if(h.startsWith('map-')) vMap(h.slice(4)); else if(h.startsWith('pmap-')) vPMap(h.slice(5)); else if(h.startsWith('pic-')) vPic(h.slice(4)); else if(h==='pics') vPics(); else if(h==='sources') vSources(); else vHome();
   const key=NAVN+'|'+h, y=back?(SCROLLMEM[key]||0):0;

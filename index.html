@@ -2945,8 +2945,11 @@ function kGasPuff(n,big){ const gg=document.querySelector('#kchar .kgas'); if(!g
     gg.appendChild(c); setTimeout(()=>c.remove(),2600+i*120); } }
 function kToot(big){ const ch=document.getElementById('kchar'); if(!ch) return;
   const tip=document.getElementById('ktip'); if(KST&&!KST.tipDone){ KST.tipDone=true; if(tip&&tip.classList.contains('show')){ tip.classList.remove('show'); setTimeout(()=>kToot(big),350); return; } }
+  if(typeof big==='string'){ const k=+big.slice(1); let t=0; ch.classList.add('oops');   // t1/t2/t3: really short toots
+    for(let i=0;i<k;i++){ const d=.05+Math.random()*.08; setTimeout(()=>{ kFartSound(d,false); kGasPuff(1,false); },t*1000); t+=d+.06+Math.random()*.07; }
+    setTimeout(()=>ch.classList.remove('oops'),t*1000+500); return; }
   if(!big){ const k=typeof big==='number'?big:1; let t=0; ch.classList.add('oops');
-    for(let i=0;i<k;i++){ const st=(k===1&&Math.random()<.4)?2+Math.floor(Math.random()*2):1; const d=st>1?.45+Math.random()*.35:(k>1?.14:.25)+Math.random()*(k>1?.2:.45); setTimeout(()=>{ kFartSound(d,false,st); kGasPuff(k>1?1:2,false); },t*1000); t+=d+.07+Math.random()*.12; }
+    for(let i=0;i<k;i++){ const st=(k===1&&Math.random()<.15)?2+Math.floor(Math.random()*2):1; const d=st>1?.4+Math.random()*.3:(k>1?.08:.12)+Math.random()*(k>1?.12:.22); setTimeout(()=>{ kFartSound(d,false,st); kGasPuff(k>1?1:2,false); },t*1000); t+=d+.07+Math.random()*.12; }
     setTimeout(()=>ch.classList.remove('oops'),t*1000+700); return; }
   // the big one: a long rippling run of toots, a shaking Cappy and a green cloud
   let t=0; const parts=5+Math.floor(Math.random()*5); ch.classList.add('mega','oops'); document.getElementById('kstage').classList.add('gassy');
@@ -2954,12 +2957,18 @@ function kToot(big){ const ch=document.getElementById('kchar'); if(!ch) return;
     const d=last?.9+Math.random()*.6:(st>1?.45+Math.random()*.3:.14+Math.random()*.35);
     setTimeout(()=>{ kFartSound(d,true,st); kGasPuff(last?5:3,true); },t*1000); t+=d+(Math.random()<.3?.25:.06)+Math.random()*.1; }
   setTimeout(()=>{ ch.classList.remove('mega','oops'); const st=document.getElementById('kstage'); if(st) st.classList.remove('gassy'); },t*1000+900); }
+function kTinyN(){ const q=Math.random(); return q<.45?'t1':q<.8?'t2':'t3'; }
+function kstPieces(line){ // Taco Mode: about half the sentences get one or two toot breaks between words
+  if(!KST||!KST.taco||Math.random()>=.5) return [line]; const w=line.split(' '); if(w.length<7) return [line];
+  const n=Math.random()<.35?2:1, cuts=new Set(); let guard=0;
+  while(cuts.size<n&&guard++<20){ const c=2+Math.floor(Math.random()*(w.length-4)); if(![...cuts].some(x=>Math.abs(x-c)<3)) cuts.add(c); }
+  const out=[]; let a=0; [...cuts].sort((x,y)=>x-y).forEach(c=>{ out.push(w.slice(a,c).join(' ')); a=c; }); out.push(w.slice(a).join(' ')); return out; }
 function kstTacoPlan(){ // for each sentence: maybe a small toot, rarely the big one
   if(!KST||!KST.taco) return; clearTimeout(KST.ttm); const r=Math.random();
-  const big=(r<.12)||(KST.sinceBig>=7&&r<.4), small=!big&&r<.8;
+  const big=(r<.1)||(KST.sinceBig>=8&&r<.4), small=!big&&r<.6;
   if(big) KST.sinceBig=0; else KST.sinceBig=(KST.sinceBig||0)+1;
   const n=()=>{ const q=Math.random(); return q<.5?1:q<.8?2:3; };   // a toot, a double toot or a triple toot
-  if(big||small) KST.ttm=setTimeout(()=>{ if(KST&&KST.play&&KST.taco) kToot(big?true:n()); },600+Math.random()*2200);
+  if(big||small) KST.ttm=setTimeout(()=>{ if(KST&&KST.play&&KST.taco) kToot(big?true:(Math.random()<.6?kTinyN():n())); },600+Math.random()*2200);
   if(!big&&Math.random()<.4) KST.ttm2=setTimeout(()=>{ if(KST&&KST.play&&KST.taco) kToot(1); },2600+Math.random()*1800); }
 function kstTaco(){ if(!KST) return; KST.taco=!KST.taco; store('wfh-taco',KST.taco?1:0); kstTacoBtn(); if(KST.taco){ kAudio(); kToot(1); } else { clearTimeout(KST.ttm); clearTimeout(KST.ttm2); } }
 function kstTacoBtn(){ const b=document.getElementById('ktaco'); if(b){ b.classList.toggle('on',!!KST.taco); b.querySelector('span').textContent=KST.taco?'Taco Mode ON':'Taco Mode'; }
@@ -3000,8 +3009,9 @@ function kstSpeak(){
   if(!KST||!KST.alive) return; KST.play=true; document.getElementById('kpp').textContent='❚❚'; document.getElementById('kstart').style.display='none';
   const S=KST_SCENES[KST.i], s=KST.s, line=S.t[s]; kstShow(s); kstSetMood(kstMood(S,KST.i,s)); kstWake(true); kstTacoPlan(); clearTimeout(KST.tm);
   const next=()=>{ if(!KST||!KST.alive||!KST.play) return; kstTalk(false);
-    if(KST.s<S.t.length-1){ KST.s++; KST.tm=setTimeout(kstSpeak,350); }
-    else if(KST.i<KST_SCENES.length-1){ KST.tm=setTimeout(()=>{ if(KST&&KST.play) kstScene(KST.i+1,true); },900); }
+    let extra=0; if(KST.taco&&Math.random()<.45){ setTimeout(()=>{ if(KST&&KST.play) kToot(kTinyN()); },200); extra=750; }
+    if(KST.s<S.t.length-1){ KST.s++; KST.tm=setTimeout(kstSpeak,350+extra); }
+    else if(KST.i<KST_SCENES.length-1){ KST.tm=setTimeout(()=>{ if(KST&&KST.play) kstScene(KST.i+1,true); },900+extra); }
     else { KST.play=false; kstWake(false); document.getElementById('kpp').textContent='↺'; KST.done=true; kstSetMood('hop'); } };
   if(S.au&&!KST.muted){ // recorded clip for the whole scene: start it once, time the captions to its length
     if(s===0){ if(KST.audio) KST.audio.pause(); const a=KST.audio=new Audio(S.au); const tot=S.t.join(' ').length;
@@ -3009,14 +3019,19 @@ function kstSpeak(){
       a.onplay=()=>kstTalk(true); a.onpause=()=>kstTalk(false);
       a.onended=()=>{ kstTalk(false); KST.s=S.t.length-1; next(); }; a.play().catch(()=>{}); }
     return; }
-  if(!KST.muted&&window.speechSynthesis){
-    try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(line.replace(/…/g,'...')); const v=kstVoice(); if(v) u.voice=v; u.rate=.95; u.pitch=1.35;
-      u.onstart=()=>kstTalk(true); u.onend=next; u.onerror=()=>{ kstTalk(false); };
-      KST.utt=u; speechSynthesis.speak(u); kstTalk(true);
-      // some phones never fire onend: move on after a generous wait
-      KST.tm=setTimeout(()=>{ if(KST&&KST.utt===u&&!speechSynthesis.speaking) next(); },line.split(' ').length*520+4000);
-      return; }catch(e){} }
-  kstTalk(true); KST.tm=setTimeout(()=>{ kstTalk(false); next(); },line.split(' ').length*330+900);
+  const parts=kstPieces(line), tts=!KST.muted&&!!window.speechSynthesis;
+  const say=k=>{ if(!KST||!KST.alive||!KST.play||KST.s!==s||KST_SCENES[KST.i]!==S) return; const piece=parts[k], last=k===parts.length-1;
+    const after=()=>{ if(!KST||!KST.play||KST.s!==s||KST_SCENES[KST.i]!==S) return; kstTalk(false); if(last){ next(); return; }
+      kToot(kTinyN()); KST.tm=setTimeout(()=>say(k+1),520+Math.random()*260); };   // the toot lands in the gap, then she carries on
+    if(tts){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(piece.replace(/…/g,'...')); const v=kstVoice(); if(v) u.voice=v; u.rate=.95; u.pitch=1.35;
+        let done=false; const fin=()=>{ if(done) return; done=true; after(); };
+        u.onstart=()=>kstTalk(true); u.onend=fin; u.onerror=()=>{ kstTalk(false); };
+        KST.utt=u; speechSynthesis.speak(u); kstTalk(true);
+        // some phones never fire onend: move on after a generous wait
+        KST.tm=setTimeout(()=>{ if(KST&&KST.utt===u&&!speechSynthesis.speaking) fin(); },piece.split(' ').length*520+4000);
+        return; }catch(e){} }
+    kstTalk(true); KST.tm=setTimeout(after,piece.split(' ').length*330+(last?900:250)); };
+  say(0);
 }
 function kstGo(){ if(!KST) return; if(KST.taco) kAudio(); if(KST.done){ KST.done=false; kstScene(0,true); return; } kstSpeak(); }
 function kstPause(){ if(!KST) return; clearTimeout(KST.ttm); clearTimeout(KST.ttm2); KST.play=false; kstWake(false); clearTimeout(KST.tm); try{speechSynthesis.cancel()}catch(e){} if(KST.audio) KST.audio.pause(); kstTalk(false); const b=document.getElementById('kpp'); if(b) b.textContent='▶'; }

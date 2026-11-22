@@ -1484,6 +1484,10 @@ function peopleBy(f){ pState={q:'',f,lim:200}; go('people'); }
 function userOnly(p){ if(!p) return false; if(p.virt) return true; const hasRec=(p.rs&&p.rs.length)>0;
   if(p.living) return !hasRec; return !hasRec && !(p.src||[]).some(x=>!/^(compiler|entered on this device)$/i.test(x)); }
 function lvOf(p){ return userOnly(p)?'user':((p.ps&&p.ps.lv)||'tree'); }
+/* named lists typed into the People search: "Safeties – All of Them" lists every Safety, including any added later */
+const LISTQ={safety:{q:'Safeties – All of Them',re:/^(Capt\.? )?Saf(e)?ty\b/i}};
+function listOf(q){ const n=String(q||'').toLowerCase().replace(/[^a-z]+/g,' ').trim(); return /^safet(y|ies) all of them( list)?$/.test(n)?LISTQ.safety:null; }
+function listGo(k){ pState={q:LISTQ[k].q,f:'list',lim:200}; go('people'); }
 function pFilterLabel(f){ if(f.startsWith('band:')){const b=BANDS.find(x=>x[0]===+f.slice(5)); return b?'Support: '+b[1]:''}
   if(f==='flagdl') return 'Needs proof to child (compiler’s flag) — direct line';
   if(f.startsWith('lv:')){const v=f.slice(3); return 'Parent link: '+LVL[v]+' — each person listed is the child of that link'} return ''; }
@@ -1687,7 +1691,7 @@ function vLife(k){ setTab('home'); const L=LIVES.find(x=>x.k===k); if(!L){ go('h
   const i=LIVES.indexOf(L), nx=LIVES[(i+1)%LIVES.length];
   app.innerHTML=topBar(L.t,true)+`<div class="wrap"><div class="card lifepage"><div class="skick">${esc(L.kick)}</div><h2>${esc(L.t)}${P[L.pid]?gtag(P[L.pid]):''}</h2><div class="lsub">${esc(L.sub)}</div>
     ${L.body().map((p,i)=>`<p>${fn(p)}</p>`+(L.fig&&i===(L.figAt||0)?`<div class="lfig" onclick="figOpen()">${L.fig}<div class="tiny muted" style="text-align:center;margin-top:4px">${esc(L.figCap||'Tap to enlarge')}</div></div>`:'')).join('')}
-    <div class="lbtns">${L.list?`<button class="chip on" onclick="pState={q:'',f:'${L.list}',lim:200};go('people')">${esc(L.listLabel||L.t)} ›</button>`:P[L.pid]?`<button class="chip on" onclick="go('p-${L.pid}')">${esc(L.t.replace(/^Captain /,''))}'s page ›</button>`:''}</div>
+    <div class="lbtns">${L.list?`<button class="chip on" onclick="listGo('${L.list}')">${esc(L.listLabel||L.t)} ›</button>`:P[L.pid]?`<button class="chip on" onclick="go('p-${L.pid}')">${esc(L.t.replace(/^Captain /,''))}'s page ›</button>`:''}</div>
     <h3 class="lsrc">Sources</h3><ol class="lsrcs">${L.src.map((s,j)=>`<li id="fn${j+1}">${s.r?`<a onclick="go('r-${s.r}')">${esc(s.t)}</a> <span class="muted">(record ${s.r})</span>`:`<a href="${s.u}" target="_blank" rel="noopener">${esc(s.t)}</a>`}</li>`).join('')}</ol>
     <div class="tiny muted" style="margin-top:8px">Records marked with an ID are in this app's abstracts; the others are outside sources. Where the sources disagree or rest on tradition, the story says so.</div></div>
     <button class="more" onclick="go('life-${nx.k}')">Next: ${esc(nx.t)} ›</button></div>`; }
@@ -2102,12 +2106,13 @@ function goStoryMap(){ go('story'); const f=()=>{ const m=document.getElementByI
 function goMarks(){ go('marks'); }
 function vPeople(){
   setTab('people');
-  app.innerHTML=topBar('People',false,`<button class="tbtn" onclick="picState='people';picQ='';go('pics')">Photos ›</button>`)+`<div class="wrap"><div class="srow"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><button class="keybtn" onclick="keyOpen()" aria-label="How to read the marks" title="How to read the marks"><i class="kb1"></i><i class="kb2"></i><span>Key</span></button></div><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof to child'],['safety','Every Safety']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
+  app.innerHTML=topBar('People',false,`<button class="tbtn" onclick="picState='people';picQ='';go('pics')">Photos ›</button>`)+`<div class="wrap"><div class="srow"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><button class="keybtn" onclick="keyOpen()" aria-label="How to read the marks" title="How to read the marks"><i class="kb1"></i><i class="kb2"></i><span>Key</span></button></div><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof to child']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
   const draw=()=>{
-    const q=pState.q.trim().toLowerCase(); let L=Object.values(P).filter(p=>!p.virt);
+    const SL=listOf(pState.q); if(SL) pState.f='list';
+    const q=SL?'':pState.q.trim().toLowerCase(); let L=Object.values(P).filter(p=>!p.virt);
+    if(SL) L=L.filter(p=>SL.re.test(p.n));
     if(pState.f==='dl'||pState.f==='weak'||pState.f==='strong') L=L.filter(p=>p.G&&!p.living); if(pState.f==='flag') L=L.filter(p=>p.flag);
     if(pState.f==='flagdl') L=L.filter(p=>p.flag&&p.G&&!p.living);
-    if(pState.f==='safety') L=L.filter(p=>/^(Capt\.? )?Saf(e)?ty\b/i.test(p.n));
     /* a surname with all its spellings, optionally narrowed to one spelling */
     let SV=null; if(pState.sn){ const S=pState.sn; L=L.filter(p=>surnC(surn(p))===S); SV={}; L.forEach(p=>{ const r=surn(p); SV[r]=(SV[r]||0)+1; }); if(pState.sv&&SV[pState.sv]) L=L.filter(p=>surn(p)===pState.sv); }
     if(pState.f.startsWith('band:')){const m=+pState.f.slice(5); L=L.filter(p=>p.G&&!p.living&&p.sc!=null&&band(p.sc).min===m);}
@@ -2123,7 +2128,7 @@ function vPeople(){
     const m=document.getElementById('pm'); if(m) m.onclick=()=>{pState.lim+=150;draw()};
   };
   document.getElementById('pq').oninput=e=>{pState.q=e.target.value;pState.lim=80;draw()};
-  document.getElementById('pf').onclick=e=>{const b=e.target.closest('[data-f]');if(b){ pState.f=b.dataset.f;pState.lim=80;vPeople()}};
+  document.getElementById('pf').onclick=e=>{const b=e.target.closest('[data-f]');if(b){ if(listOf(pState.q)) pState.q=''; pState.f=b.dataset.f;pState.lim=80;vPeople()}};
   draw();
 }
 
@@ -3367,6 +3372,7 @@ function gcCount(){ if(!GC_CODE||gcOff()) return; const g=window.goatcounter; if
   g.count({path:path,title:title}); }
 function gcToggle(){ gcSet(!gcOff()); route(); }
 function route(){
+  if(decodeURIComponent(location.hash.slice(1))!=='people'&&listOf(pState.q)){ pState.q=''; pState.f='dl'; }
   LAYERS.length=0; ROUTING=true; app.onclick=null; if(MAP){MAP.remove();MAP=null} ROUTING=false;
   setTimeout(layerTidy,900);
   const h=decodeURIComponent(location.hash.slice(1)||'home');

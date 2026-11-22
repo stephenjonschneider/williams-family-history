@@ -2924,6 +2924,7 @@ function kGasPuff(n,big){ const gg=document.querySelector('#kchar .kgas'); if(!g
     c.innerHTML=`<circle cx="10" cy="${y}" r="${r}" fill="#b5d65a" opacity=".85"/><circle cx="${4+r*.6}" cy="${y-r*.5}" r="${r*.7}" fill="#cde77c" opacity=".85"/>`;
     gg.appendChild(c); setTimeout(()=>c.remove(),2600+i*120); } }
 function kToot(big){ const ch=document.getElementById('kchar'); if(!ch) return;
+  const tip=document.getElementById('ktip'); if(KST&&!KST.tipDone){ KST.tipDone=true; if(tip&&tip.classList.contains('show')){ tip.classList.remove('show'); setTimeout(()=>kToot(big),350); return; } }
   if(!big){ const k=typeof big==='number'?big:1; let t=0; ch.classList.add('oops');
     for(let i=0;i<k;i++){ const d=(k>1?.14:.25)+Math.random()*(k>1?.2:.45); setTimeout(()=>{ kFartSound(d,false); kGasPuff(k>1?1:2,false); },t*1000); t+=d+.07+Math.random()*.12; }
     setTimeout(()=>ch.classList.remove('oops'),t*1000+700); return; }
@@ -2940,7 +2941,7 @@ function kstTacoPlan(){ // for each sentence: maybe a small toot, rarely the big
   if(!big&&Math.random()<.25) KST.ttm2=setTimeout(()=>{ if(KST&&KST.play&&KST.taco) kToot(1); },2600+Math.random()*1800); }
 function kstTaco(){ if(!KST) return; KST.taco=!KST.taco; store('wfh-taco',KST.taco?1:0); kstTacoBtn(); if(KST.taco){ kAudio(); kToot(1); } else { clearTimeout(KST.ttm); clearTimeout(KST.ttm2); } }
 function kstTacoBtn(){ const b=document.getElementById('ktaco'); if(b){ b.classList.toggle('on',!!KST.taco); b.querySelector('span').textContent=KST.taco?'Taco Mode ON':'Taco Mode'; }
-  const t=document.getElementById('ktip'); if(t) t.classList.toggle('show',!!KST.taco&&KST.i<2); }
+  const t=document.getElementById('ktip'); if(t) t.classList.toggle('show',!!KST.taco&&KST.i<2&&!KST.tipDone); }
 let KST=null;
 function kstStop(){ if(!KST) return; clearTimeout(KST.ttm); clearTimeout(KST.ttm2); kstWake(false); clearInterval(KST.idle); KST.alive=false; clearTimeout(KST.tm); clearInterval(KST.flap); try{speechSynthesis.cancel()}catch(e){} if(KST.audio){ KST.audio.pause(); } KST=null; }
 function vKStory(){

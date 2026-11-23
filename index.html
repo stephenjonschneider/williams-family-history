@@ -1207,9 +1207,10 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .sstripg{position:relative;height:14px;font-size:11px;color:var(--muted);margin:0 1px}.sstripg span{position:absolute;top:0}
 .sladder{padding:10px 12px}
 .mseg{display:inline-flex;background:rgba(246,240,226,.16);border-radius:999px;padding:2px;gap:1px}.mseg button{border:0;background:none;color:#f6f0e2;font:inherit;font-size:13px;line-height:1;padding:7px 10px;border-radius:999px;cursor:pointer}.mseg button.on{background:#d9a441;color:#2a2112;font-weight:600}
-.mcount{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;line-height:1.05;color:#f6f0e2;flex:0 0 auto}
+.mcount{margin-left:auto;display:flex;gap:11px;line-height:1.05;color:#f6f0e2;flex:0 0 auto}.mcount>div{display:flex;flex-direction:column;align-items:flex-end}
 .mcount b{font:700 15px system-ui,sans-serif;letter-spacing:.2px}
 .mcount span{font:500 9.5px system-ui,sans-serif;opacity:.75;letter-spacing:.3px}
+@media (max-width:380px){.mcount{gap:6px}.mcount span{font-size:8.5px;letter-spacing:0}.mcount b{font-size:14px}}
 .mtog{display:inline-flex;align-items:center;gap:7px;padding:4px 11px 4px 5px}.mtog .sw{position:relative;width:32px;height:18px;border-radius:999px;background:rgba(246,240,226,.3);transition:background .2s}
 .mtog .sw i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#f6f0e2;transition:left .2s}.mtog.on .sw{background:#d9a441}.mtog.on .sw i{left:16px}
 .scon .snote{font-size:12px;color:var(--muted);font-style:italic;margin-left:8px;line-height:1.3}
@@ -2041,14 +2042,17 @@ function rOwnerP(id){ if(id in ROWN) return ROWN[id]; const own=P[id]&&rCoreOf(P
 let RFAM=new Set(store('wfh-roadfam2')||RCORE);
 /* documents in a rolling ten-year window around the current year (motion map and tour), for the families switched on */
 let RDOCS=null, RDLAST='';
+/* direct-line ancestors named in a record (as a party or as a resident) */
+function recAnc(r){ return [...(r.ppl||[]),...(r.home||[])].filter(id=>{ const p=P[id]; return p&&p.G&&!p.living&&!p.virt; }); }
+function cntHTML(n,lab,m){ return `<div><b>${n.toLocaleString()}</b><span>${lab}</span></div><div><b>${m.toLocaleString()}</b><span>ancestor${m===1?'':'s'}</span></div>`; }
 function roadDocCount(Y){ const el=document.getElementById('rdcount'); if(!el) return;
   if(!RDOCS){ RDOCS=[]; D.records.forEach(r=>{ if(!r.pl||!PL[r.pl]) return; const y=parseInt(String(r.sd||'').slice(0,4)); if(!(y>1500)) return;
-      const f=new Set(r.fams||[]); if(/^S-/.test(r.id)){ f.add('Layton'); f.add('Bowne'); } RDOCS.push({y,f}); }); }
+      const f=new Set(r.fams||[]); if(/^S-/.test(r.id)){ f.add('Layton'); f.add('Bowne'); } RDOCS.push({y,f,a:recAnc(r)}); }); }
   const y0=Math.floor(Y)-5, y1=y0+9, all=RFAM.size===RCORE.length, key=y0+'|'+[...RFAM].sort().join(',');
   if(key===RDLAST) return; RDLAST=key;
   const want=new Set([...RFAM].map(k=>/^(Bowne|Grover|Stout)$/.test(k)?'Bowne':k));
-  let n=0; RDOCS.forEach(d=>{ if(d.y<y0||d.y>y1) return; if(all||[...d.f].some(x=>want.has(x))) n++; });
-  el.innerHTML=`<b>${n.toLocaleString()}</b><span>docs ${y0}–${Math.floor(y0/100)===Math.floor(y1/100)?String(y1).slice(-2):y1}</span>`; }
+  let n=0; const an=new Set(); RDOCS.forEach(d=>{ if(d.y<y0||d.y>y1) return; if(all||[...d.f].some(x=>want.has(x))){ n++; d.a.forEach(id=>an.add(id)); } });
+  el.innerHTML=cntHTML(n,`docs ${y0}–${Math.floor(y0/100)===Math.floor(y1/100)?String(y1).slice(-2):y1}`,an.size); }
 function roadData(){ if(ROADD) return ROADD;
   const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={}, Z=[];
   const add=(id,q)=>{ (byP[id]=byP[id]||[]).push(q); };
@@ -2106,7 +2110,7 @@ function mapTog(m){ const cur=m==='tour'?'tour':m?'move':'std';
 function roadW(y,Y){ if(Y<y-4) return 0; if(Y<y) return (Y-(y-4))/4; if(Y<=y+15) return 1; if(Y<=y+40) return 1-(Y-y-15)/25; return 0; }
 function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(asMap&&!tour) store('wfh-mapmode','move'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
   if(tour){ ROADY=1643; RFAMT=RFAM; RFAM=new Set(RCORE); } else if(RFAMT){ RFAM=RFAMT; RFAMT=null; }
-  const RDC='<div class="mcount" id="rdcount" title="Documents dated within this ten-year window"></div>'; RDLAST='';
+  const RDC='<div class="mcount" id="rdcount" title="Documents dated within this ten-year window, and the direct-line ancestors they name"></div>'; RDLAST='';
   app.innerHTML=(asMap?topBar('Map',false,mapTog(tour?'tour':true)+RDC):topBar('The road in motion',true,RDC))+`<div class="wrap roadwrap${tour?' tourmode':''}">
    <div class="chips rfam" id="rfam"><button class="chip ${RFAM.size===RCORE.length?'on':''}" data-k="*">All</button>${RCORE.map(k=>`<button class="chip ${RFAM.size<RCORE.length&&RFAM.has(k)?'on':''}" data-k="${k}"><i style="background:${roadCol(k)}"></i>${k}</button>`).join('')}</div>
    <div class="roadstage"><div id="map" class="roadmap"></div><div class="tnames" id="tnames"></div><div class="mribbon" id="mribbon"></div><div class="roadedge" id="roadedge"></div><div class="tlead" id="tlead" hidden><i></i><b></b></div><div class="tbub" id="tbub" hidden></div>
@@ -2268,7 +2272,7 @@ function sceneNames(s){ if(s._names) return s._names; const RD=roadData(), at=s.
   const seen=new Set(), add=f=>{ if(f&&f!=='Other') cnt[f]=(cnt[f]||0)+1; };
   D.records.forEach(r=>{ const pl=PL[r.pl], y=parseInt(String(r.sd||'').slice(0,4)); if(!pl||!(y>=a-wb&&y<=b+wa)) return;
     if(Math.hypot((pl.lat-at[0])*111,(pl.lon-at[1])*84.5)>=rad) return;
-    [...(r.ppl||[]),...(r.home||[])].forEach(id=>{ const p=P[id]; if(!p||!p.G||p.living||seen.has(id+r.id)) return; seen.add(id+r.id); add(rFam({p,fk:roadKey(p)})); }); });
+    [...(r.ppl||[]),...(r.home||[])].forEach(id=>{ const p=P[id]; if(!p||!(p.G||p.G0)||p.living||p.virt||seen.has(id+r.id)) return; seen.add(id+r.id); add(rFam({p,fk:roadKey(p)})); }); });
   Object.keys(cnt).forEach(f=>{ if(f.endsWith('*')&&cnt[f.slice(0,-1)]){ cnt[f.slice(0,-1)]+=cnt[f]; delete cnt[f]; } });
   const FT=s.f||[]; s._names=Object.keys(cnt).sort((x,y)=>((FT.includes(y)?99:0)+cnt[y])-((FT.includes(x)?99:0)+cnt[x])||x.localeCompare(y)); return s._names; }
 /* the bubble stands well clear of the place, wherever it covers the fewest dots, joined to it by a long leader ending in a dot */
@@ -2623,7 +2627,7 @@ function recTie(r){ if(r._tie) return r._tie; const ps=(r.ppl||[]).filter(x=>P[x
 const TIERTXT={exact:'exact location',site:'identified site',place:'approximate — named place',township:'approximate — township only',court:'county court house (where the record was made)'};
 function vMap(focus){
   setTab('map');
-  store('wfh-mapmode','std'); app.innerHTML=topBar('Map',!!focus||!!mState.ids,mapTog(false)+'<div class="mcount" id="mcount" title="Documents shown on the map"></div>')+`<div class="wrap">${mState.ids?`<div class="card small" style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:8px"><div style="flex:1"><b>${esc(mState.label)}</b> · ${mState.ids.size} mapped record${mState.ids.size===1?'':'s'}</div><button class="chip" id="mclr">Show all</button></div>`:''}<div class="chips" id="mf">${['',...MFAMS].map(f=>`<button class="chip ${mState.f===f?'on':''}" data-f="${f}">${f||'All'}</button>`).join('')}</div><div id="map"></div>
+  store('wfh-mapmode','std'); app.innerHTML=topBar('Map',!!focus||!!mState.ids,mapTog(false)+'<div class="mcount" id="mcount" title="Documents shown on the map, and the direct-line ancestors they name"></div>')+`<div class="wrap">${mState.ids?`<div class="card small" style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:8px"><div style="flex:1"><b>${esc(mState.label)}</b> · ${mState.ids.size} mapped record${mState.ids.size===1?'':'s'}</div><button class="chip" id="mclr">Show all</button></div>`:''}<div class="chips" id="mf">${['',...MFAMS].map(f=>`<button class="chip ${mState.f===f?'on':''}" data-f="${f}">${f||'All'}</button>`).join('')}</div><div id="map"></div>
   ${mLegend()}
   <div class="card tiny muted">Pins are placed from the Locality column of each abstract. Most are approximate: a named brook, village or township, not a surveyed parcel. Exact parcels can be added as they are plotted. Base map: modern roads, streams and water from U.S. Census TIGER/Line 2024. Zoom in for local roads and stream names.</div></div>`;
   const mc=document.getElementById('mclr'); if(mc) mc.onclick=()=>{mState.ids=null;vMap(focus)};
@@ -2634,7 +2638,7 @@ function vMap(focus){
   const pinR=mkMap();
   const recs=D.records.filter(r=>r.pl&&(!mState.f||inMF(r,mState.f))&&(!mState.ids||mState.ids.has(r.id))&&!MHIDE.has(recTie(r)==='home'?'lived':'named')&&!(PL[r.pl]&&MHIDE.has(PL[r.pl].tier)));
   const by={}; recs.forEach(r=>(by[r.pl]=by[r.pl]||[]).push(r));
-  { const mc=document.getElementById('mcount'); if(mc) mc.innerHTML=`<b>${recs.length.toLocaleString()}</b><span>document${recs.length===1?'':'s'}</span>`; }
+  { const mc=document.getElementById('mcount'); if(mc){ const an=new Set(); recs.forEach(r=>recAnc(r).forEach(id=>an.add(id))); mc.innerHTML=cntHTML(recs.length,`document${recs.length===1?'':'s'}`,an.size); } }
   const col={exact:'#e0201b',site:'#9c3b2e',place:'#3f6b3a',township:'#a08c6c',court:'#6b6f73'};
   let focusMarker=null; const MK={};
   const TO={township:0,court:1,place:2,site:3,exact:4};

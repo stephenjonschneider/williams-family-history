@@ -2055,11 +2055,11 @@ function recAnc(r){ return [...(r.ppl||[]),...(r.home||[])].filter(id=>{ const p
 function cntHTML(n,lab,m){ return `<div><b>${n.toLocaleString()}</b><span>${lab}</span></div><div><b>${m.toLocaleString()}</b><span>ancestor${m===1?'':'s'}</span></div>`; }
 function roadDocCount(Y){ const el=document.getElementById('rdcount'); if(!el) return;
   if(!RDOCS){ RDOCS=[]; D.records.forEach(r=>{ if(!r.pl||!PL[r.pl]) return; const y=parseInt(String(r.sd||'').slice(0,4)); if(!(y>1500)) return;
-      const f=new Set(r.fams||[]); if(/^S-/.test(r.id)){ f.add('Layton'); f.add('Bowne'); } RDOCS.push({y,f,a:recAnc(r)}); }); }
+      const f=new Set(r.fams||[]); if(/^S-/.test(r.id)){ f.add('Layton'); f.add('Bowne'); } if(f.has('Bowne')){ f.delete('Bowne'); (r.bgs||['Bowne']).forEach(x=>f.add(x)); } RDOCS.push({y,f,a:recAnc(r)}); }); }
   const y0=Math.floor(Y)-5, y1=y0+9, all=RFAM.size===RCORE.length, key=y0+'|'+[...RFAM].sort().join(',');
   if(key===RDLAST) return; RDLAST=key;
-  const want=new Set([...RFAM].map(k=>/^(Bowne|Grover|Stout)$/.test(k)?'Bowne':k));
-  let n=0; const an=new Set(); RDOCS.forEach(d=>{ if(d.y<y0||d.y>y1) return; if(all||[...d.f].some(x=>want.has(x))){ n++; d.a.forEach(id=>an.add(id)); } });
+  const want=new Set(RFAM);
+  let n=0; const an=new Set(); RDOCS.forEach(d=>{ if(d.y<y0||d.y>y1) return; if(all||[...d.f].some(x=>want.has(x))){ n++; d.a.forEach(id=>{ if(all||want.has(roadKey(P[id]))) an.add(id); }); } });
   el.innerHTML=cntHTML(n,`docs ${y0}–${Math.floor(y0/100)===Math.floor(y1/100)?String(y1).slice(-2):y1}`,an.size); }
 function roadData(){ if(ROADD) return ROADD;
   const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={}, Z=[];
@@ -2652,7 +2652,7 @@ function vMap(focus){
   const pinR=mkMap();
   const recs=D.records.filter(r=>r.pl&&(!mState.f||inMF(r,mState.f))&&(!mState.ids||mState.ids.has(r.id))&&!MHIDE.has(recTie(r)==='home'?'lived':'named')&&!(PL[r.pl]&&MHIDE.has(PL[r.pl].tier)));
   const by={}; recs.forEach(r=>(by[r.pl]=by[r.pl]||[]).push(r));
-  { const mc=document.getElementById('mcount'); if(mc){ const an=new Set(); recs.forEach(r=>recAnc(r).forEach(id=>an.add(id))); mc.innerHTML=cntHTML(recs.length,`document${recs.length===1?'':'s'}`,an.size); } }
+  { const mc=document.getElementById('mcount'); if(mc){ const an=new Set(); recs.forEach(r=>recAnc(r).forEach(id=>{ if(!mState.f||roadKey(P[id])===mState.f) an.add(id); })); mc.innerHTML=cntHTML(recs.length,`document${recs.length===1?'':'s'}`,an.size); } }
   const col={exact:'#e0201b',site:'#9c3b2e',place:'#3f6b3a',township:'#a08c6c',court:'#6b6f73'};
   let focusMarker=null; const MK={};
   const TO={township:0,court:1,place:2,site:3,exact:4};

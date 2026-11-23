@@ -2140,12 +2140,13 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
       if(TS&&TS.cur&&TSP){ let s=0; PTS.forEach(([c,p])=>{ const d=Math.hypot(p.x-TSP.x,p.y-TSP.y); if(d<R*2.4) s+=Math.min(1.6,c.w)*(1-d/(R*2.4)); }); if(s>.12) return; }
       if(best&&bw>=1.2) labels.push([f,best.x/best.w,best.y/best.w,bw]); });
     /* at a tour stop, every family present right there is named in a neat column beside the spot, away from the bubble */
-    /* the column names only the direct-line ancestors whose dots are at the spot this year (their surnames), most first */
+    /* the column names the direct-line surnames of the stop's period: ancestors at the spot, and those the documents name nearby (most first) */
     if(TSP&&TS.cur) sceneNames(TS.cur).forEach(f=>near.push([f,1]));
-    if(near.length&&TSP){ const L2=near.slice(0,8), lh=17, up=!!(TS&&TS.bAbove===false);
-      cx.font="600 14px 'Fredoka','Trebuchet MS',sans-serif"; cx.textAlign='center'; cx.lineJoin='round';
-      let y0=up?TSP.y-30-lh*(L2.length-1):TSP.y+36; y0=Math.max(14,Math.min(h-lh*L2.length-4,y0));
-      L2.forEach(([f],i)=>{ const y=y0+i*lh; cx.lineWidth=4.5; cx.strokeStyle='rgba(255,252,242,.95)'; cx.strokeText(f,TSP.x,y); cx.fillStyle=colOf(f); cx.fillText(f,TSP.x,y); }); }
+    if(near.length&&TSP){ const L2=near.slice(0,16), two=L2.length>8, rows=two?Math.ceil(L2.length/2):L2.length, lh=two?16:17, up=!!(TS&&TS.bAbove===false);
+      cx.font=`600 ${two?13:14}px 'Fredoka','Trebuchet MS',sans-serif`; cx.textAlign='center'; cx.lineJoin='round';
+      let y0=up?TSP.y-30-lh*(rows-1):TSP.y+36; y0=Math.max(14,Math.min(h-lh*rows-4,y0));
+      const xs=two?[Math.max(52,TSP.x-50),Math.min(w-52,TSP.x+50)]:[TSP.x];
+      L2.forEach(([f],i)=>{ const c=two?Math.floor(i/rows):0, y=y0+(i%rows)*lh; cx.lineWidth=4.5; cx.strokeStyle='rgba(255,252,242,.95)'; cx.strokeText(f,xs[c],y); cx.fillStyle=colOf(f); cx.fillText(f,xs[c],y); }); }
     cx.font="600 13px 'Fredoka','Trebuchet MS',sans-serif"; cx.textAlign='center'; cx.lineJoin='round';
     const placed=[]; labels.sort((a,b)=>b[3]-a[3]).forEach(([f,x,y])=>{ const t=f==='Other'?'':f; y-=R*.25; const tw=cx.measureText(t).width; let tries=0; while(tries++<8&&placed.some(q=>Math.abs(q[0]-x)<(q[2]+tw)/2+4&&Math.abs(q[1]-y)<16)) y+=16; placed.push([x,y,tw]); y+=R*.25; cx.lineWidth=4; cx.strokeStyle='rgba(255,252,242,.9)'; cx.strokeText(t,x,y-R*.25); cx.fillStyle=colOf(f); cx.fillText(t,x,y-R*.25); }); };
   MAP.on('move zoom resize',()=>{ if(MAP) drawZones(); }); MAP.on('resize',size);
@@ -2227,10 +2228,18 @@ function tourBub(s){ const b=document.getElementById('tbub'), ld=document.getEle
 /* the names for a tour stop: every direct-line ancestor whose dot is within about 8 km of the spot at any time during the stop
    (from its year to its closing year), by surname; wives known only by first name go under the husband's surname, with * if he is not there */
 function rFam(o){ let f=o.fk==='Other'?surnC(surn(o.p)):o.fk; if(!f||f===o.p.n){ const h=(o.p.sp||[]).map(s=>P[Array.isArray(s)?s[0]:s]).find(Boolean); f=h?(roadKey(h)==='Other'?surnC(surn(h)):roadKey(h))+'*':''; } return f; }
-function sceneNames(s){ if(s._names) return s._names; const RD=roadData(), at=s.at||s.c, a=s.y, b=s.y2||s.y+3, cnt={};
-  RD.L.forEach(o=>{ if(!RFAM.has(o.own)) return; for(let y=a;y<=b+.001;y+=.5){ const ps=roadPos(o,y); if(!ps) continue; const dk=Math.hypot((ps[0]-at[0])*111,(ps[1]-at[1])*84.5); if(dk<(s.z<=10?14:9)){ const f=rFam(o); if(f&&f!=='Other') cnt[f]=(cnt[f]||0)+1; break; } } });
+function sceneNames(s){ if(s._names) return s._names; const RD=roadData(), at=s.at||s.c, a=s.y, b=s.y2||s.y+3, cnt={}, rad=s.z<=10?14:9;
+  /* 1) direct-line ancestors whose dots are near the spot during the stop */
+  RD.L.forEach(o=>{ if(!RFAM.has(o.own)) return; for(let y=a;y<=b+.001;y+=.5){ const ps=roadPos(o,y); if(!ps) continue; const dk=Math.hypot((ps[0]-at[0])*111,(ps[1]-at[1])*84.5); if(dk<rad){ const f=rFam(o); if(f&&f!=='Other') cnt[f]=(cnt[f]||0)+1; break; } } });
+  /* 2) the documents of the stop's whole period (five years either side of it, like the document count) at places near the spot:
+        every direct-line ancestor they name adds his or her surname */
+  const seen=new Set();
+  D.records.forEach(r=>{ const pl=PL[r.pl], y=parseInt(String(r.sd||'').slice(0,4)); if(!pl||!(y>=a-5&&y<=b+5)) return;
+    if(Math.hypot((pl.lat-at[0])*111,(pl.lon-at[1])*84.5)>=rad) return;
+    [...(r.ppl||[]),...(r.home||[])].forEach(id=>{ const p=P[id]; if(!p||!p.G||p.living||seen.has(id+r.id)) return; seen.add(id+r.id);
+      const f=rFam({p,fk:roadKey(p)}); if(f&&f!=='Other') cnt[f]=(cnt[f]||0)+1; }); });
   Object.keys(cnt).forEach(f=>{ if(f.endsWith('*')&&cnt[f.slice(0,-1)]){ cnt[f.slice(0,-1)]+=cnt[f]; delete cnt[f]; } });
-  const FT=s.f||[]; FT.forEach(f=>{ if(!cnt[f]) cnt[f]=.5; }); s._names=Object.keys(cnt).sort((x,y)=>((FT.includes(y)?99:0)+cnt[y])-((FT.includes(x)?99:0)+cnt[x])||x.localeCompare(y)).slice(0,8); return s._names; }
+  const FT=s.f||[]; FT.forEach(f=>{ if(!cnt[f]) cnt[f]=.5; }); s._names=Object.keys(cnt).sort((x,y)=>((FT.includes(y)?99:0)+cnt[y])-((FT.includes(x)?99:0)+cnt[x])||x.localeCompare(y)); return s._names; }
 /* the bubble stands well clear of the place, wherever it covers the fewest dots, joined to it by a long leader ending in a dot */
 function tourPos(){ const b=document.getElementById('tbub'), ld=document.getElementById('tlead'); if(!b||b.hidden||!TS||!TS.cur||!MAP) return; const box=document.getElementById('map'), w=box.clientWidth, h=box.clientHeight;
   const ph=(document.getElementById('roadplayer')||{}).offsetHeight||0, bot=h-ph-24;

@@ -1128,6 +1128,9 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .leaflet-tooltip.mtip{background:#b23a48;color:#fff;border:0;font-size:11.5px;padding:2px 7px;border-radius:999px}
 .mtip2{font:700 13px/1.25 system-ui,sans-serif!important;padding:5px 11px!important;box-shadow:0 3px 10px rgba(0,0,0,.28);border:2px solid #fff!important;animation:mtipin .6s cubic-bezier(.3,1.6,.5,1)}
 @keyframes mtipin{from{transform:translateY(8px) scale(.7);opacity:0}}
+.tnames{position:absolute;left:0;top:0;width:0;height:0;z-index:760;pointer-events:none}
+.tnames span{position:absolute;transform:translateX(-50%);white-space:nowrap;font-family:'Fredoka','Trebuchet MS',sans-serif;font-weight:600;line-height:1.15;
+  text-shadow:0 0 2px #fffcf2,0 0 2px #fffcf2,1px 1px 1px #fffcf2,-1px -1px 1px #fffcf2,1px -1px 1px #fffcf2,-1px 1px 1px #fffcf2,0 0 5px #fffcf2}
 .mribbon{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:790;display:flex;flex-direction:column;align-items:center;gap:5px;pointer-events:none;width:calc(100% - 70px)}
 .mban{background:#b23a48;color:#fff;font:600 12px/1.2 system-ui,sans-serif;padding:4px 11px;border-radius:999px;border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.28);text-align:center;max-width:100%;animation:mtipin .6s cubic-bezier(.3,1.6,.5,1)}
 .mban b{display:inline-block;animation:mbeat .9s ease-in-out infinite}.mban span{font-weight:400;opacity:.9;white-space:nowrap}
@@ -2102,7 +2105,7 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
   const RDC='<div class="mcount" id="rdcount" title="Documents dated within this ten-year window"></div>'; RDLAST='';
   app.innerHTML=(asMap?topBar('Map',false,mapTog(tour?'tour':true)+RDC):topBar('The road in motion',true,RDC))+`<div class="wrap roadwrap${tour?' tourmode':''}">
    <div class="chips rfam" id="rfam"><button class="chip ${RFAM.size===RCORE.length?'on':''}" data-k="*">All</button>${RCORE.map(k=>`<button class="chip ${RFAM.size<RCORE.length&&RFAM.has(k)?'on':''}" data-k="${k}"><i style="background:${roadCol(k)}"></i>${k}</button>`).join('')}</div>
-   <div class="roadstage"><div id="map" class="roadmap"></div><div class="mribbon" id="mribbon"></div><div class="roadedge" id="roadedge"></div><div class="tlead" id="tlead" hidden><i></i><b></b></div><div class="tbub" id="tbub" hidden></div>
+   <div class="roadstage"><div id="map" class="roadmap"></div><div class="tnames" id="tnames"></div><div class="mribbon" id="mribbon"></div><div class="roadedge" id="roadedge"></div><div class="tlead" id="tlead" hidden><i></i><b></b></div><div class="tbub" id="tbub" hidden></div>
    <div class="roadplayer" id="roadplayer">${tour?`
     <div class="roadtop"><button class="tbn" onclick="tourStep(-1)" aria-label="Previous stop">⏮</button><button class="roadplay" id="roadplay" onclick="tourPause()" aria-label="Pause">❚❚</button><button class="tbn" onclick="tourStep(1)" aria-label="Next stop">⏭</button>
       <div style="flex:1;min-width:0"><div class="roadyr" id="roadyr">${Math.floor(ROADY)}</div><div class="tiny muted" id="roadera"></div></div><button class="chip sm" onclick="tourEnd()">Exit</button></div>
@@ -2126,13 +2129,13 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
   const box=document.getElementById('map'), cv=document.createElement('canvas'); cv.className='roadzone';
   /* the zones live in their own map pane, above the base map and below the dots and pop-ups */
   if(!MAP.getPane('zones')){ MAP.createPane('zones').style.zIndex=450; MAP.getPane('zones').style.pointerEvents='none'; } MAP.getPane('zones').appendChild(cv);
-  /* the names at a tour stop sit on their own layer, above the ancestors' dots and dotted trails */
-  const nv=document.createElement('canvas'); nv.className='roadzone'; if(!MAP.getPane('tnames')){ MAP.createPane('tnames').style.zIndex=680; MAP.getPane('tnames').style.pointerEvents='none'; } MAP.getPane('tnames').appendChild(nv); const nx=nv.getContext('2d');
+  /* the names at a tour stop are plain text in their own layer over the map (above the ancestors' dots and dotted trails) */
+  const nmEl=document.getElementById('tnames'); let nmLast='';
   const off=document.createElement('canvas'), ox=off.getContext('2d'), cx=cv.getContext('2d');
-  const size=()=>{ const r=devicePixelRatio||1, w=box.clientWidth, h=box.clientHeight; [cv,off,nv].forEach(c=>{ c.width=w*r; c.height=h*r; }); [cv,nv].forEach(c=>{ c.style.width=w+'px'; c.style.height=h+'px'; }); cx.setTransform(r,0,0,r,0,0); ox.setTransform(r,0,0,r,0,0); nx.setTransform(r,0,0,r,0,0); };
+  const size=()=>{ const r=devicePixelRatio||1, w=box.clientWidth, h=box.clientHeight; [cv,off].forEach(c=>{ c.width=w*r; c.height=h*r; }); cv.style.width=w+'px'; cv.style.height=h+'px'; cx.setTransform(r,0,0,r,0,0); ox.setTransform(r,0,0,r,0,0); };
   size();
   const colOf=f=>roadCol(f); let spr=null, sprR=0;
-  const drawZones=()=>{ const Y=ROADY, w=box.clientWidth, h=box.clientHeight; L.DomUtil.setPosition(cv,MAP.containerPointToLayerPoint([0,0])); cx.clearRect(0,0,w,h); L.DomUtil.setPosition(nv,MAP.containerPointToLayerPoint([0,0])); nx.clearRect(0,0,w,h);
+  const drawZones=()=>{ const Y=ROADY, w=box.clientWidth, h=box.clientHeight; L.DomUtil.setPosition(cv,MAP.containerPointToLayerPoint([0,0])); cx.clearRect(0,0,w,h);
     const c0=MAP.getCenter(), pa=MAP.latLngToContainerPoint(c0), pb=MAP.latLngToContainerPoint([c0.lat+.045,c0.lng]), R=Math.max(14,Math.abs(pa.y-pb.y));   // ~5 km
     if(!spr||sprR!==Math.round(R)){ sprR=Math.round(R); spr=document.createElement('canvas'); const s=sprR*2, r0=devicePixelRatio||1; spr.width=s*r0; spr.height=s*r0; const sx=spr.getContext('2d'); sx.scale(r0,r0);
       const g=sx.createRadialGradient(sprR,sprR,0,sprR,sprR,sprR); g.addColorStop(0,'rgba(0,0,0,.6)'); g.addColorStop(.55,'rgba(0,0,0,.32)'); g.addColorStop(1,'rgba(0,0,0,0)'); sx.fillStyle=g; sx.fillRect(0,0,s,s); }
@@ -2155,11 +2158,12 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
     /* at a tour stop, every family present right there is named in a neat column beside the spot, away from the bubble */
     /* the column names the direct-line surnames of the stop's period: ancestors at the spot, and those the documents name nearby (most first) */
     if(TSP&&TS.cur) sceneNames(TS.cur).forEach(f=>near.push([f,1]));
+    let nmH='';
     if(near.length&&TSP){ const L2=near.slice(0,20), two=L2.length>8, rows=two?Math.ceil(L2.length/2):L2.length, lh=two?16:17, up=!!(TS&&TS.bAbove===false);
-      nx.font=`600 ${two?13:14}px 'Fredoka','Trebuchet MS',sans-serif`; nx.textAlign='center'; nx.lineJoin='round';
       let y0=up?TSP.y-30-lh*(rows-1):TSP.y+36; y0=Math.max(14,Math.min(h-lh*rows-4,y0));
       const xs=two?[Math.max(52,TSP.x-50),Math.min(w-52,TSP.x+50)]:[TSP.x];
-      L2.forEach(([f],i)=>{ const c=two?Math.floor(i/rows):0, y=y0+(i%rows)*lh; nx.lineWidth=5; nx.strokeStyle='rgba(255,252,242,.97)'; nx.strokeText(f,xs[c],y); nx.fillStyle=colOf(f); nx.fillText(f,xs[c],y); }); }
+      nmH=L2.map(([f],i)=>{ const c=two?Math.floor(i/rows):0, y=y0+(i%rows)*lh; return `<span style="left:${xs[c].toFixed(0)}px;top:${(y-lh*.75).toFixed(0)}px;color:${colOf(f)};font-size:${two?13:14}px">${esc(f)}</span>`; }).join(''); }
+    if(nmEl&&nmH!==nmLast){ nmLast=nmH; nmEl.innerHTML=nmH; }
     cx.font="600 13px 'Fredoka','Trebuchet MS',sans-serif"; cx.textAlign='center'; cx.lineJoin='round';
     const placed=[]; labels.sort((a,b)=>b[3]-a[3]).forEach(([f,x,y])=>{ const t=f==='Other'?'':f; y-=R*.25; const tw=cx.measureText(t).width; let tries=0; while(tries++<8&&placed.some(q=>Math.abs(q[0]-x)<(q[2]+tw)/2+4&&Math.abs(q[1]-y)<16)) y+=16; placed.push([x,y,tw]); y+=R*.25; cx.lineWidth=4; cx.strokeStyle='rgba(255,252,242,.9)'; cx.strokeText(t,x,y-R*.25); cx.fillStyle=colOf(f); cx.fillText(t,x,y-R*.25); }); };
   MAP.on('move zoom resize',()=>{ if(MAP) drawZones(); }); MAP.on('resize',size);
@@ -2243,7 +2247,7 @@ function tourClock(tok,target,ms){ return new Promise(res=>{ const y0=ROADY; let
   const f=ts=>{ if(!tourOK(tok)) return res(); if(TS.paused){ t0=null; requestAnimationFrame(f); return; } if(t0==null) t0=ts-el; el=ts-t0;
     const k=Math.min(1,el/ms), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; ROADY=y0+(target-y0)*e; roadDraw(); if(k<1) requestAnimationFrame(f); else res(); };
   requestAnimationFrame(f); }); }
-function tourBub(s){ const b=document.getElementById('tbub'), ld=document.getElementById('tlead'); if(!b) return; if(TS){ TS.cur=s||null; TS.bIdx=null; TS.bPend=null; } if(!s){ b.hidden=true; if(ld) ld.hidden=true; return; }
+function tourBub(s){ const b=document.getElementById('tbub'), ld=document.getElementById('tlead'); if(!b) return; if(s) delete s._names; if(TS){ TS.cur=s||null; TS.bIdx=null; TS.bPend=null; } if(!s){ b.hidden=true; if(ld) ld.hidden=true; return; }
   const recs=(s.r||[]).filter(r=>R[r]).map(r=>`<a href="#r-${r}">${r}</a>`).join(' ');
   b.innerHTML=`<div class="tbt">${esc(s.t)}</div><div class="tbx">${esc(s.x)}</div><div class="tbl">${recs}${s.ch?` <a onclick="tourEnd(1);go('story');setTimeout(()=>{const c=document.querySelectorAll('.schap')[${s.ch-1}];if(c)c.scrollIntoView({block:'start'})},350)">Read the chapter ›</a>`:''}</div>`;
   b.hidden=false; tourPos(); }

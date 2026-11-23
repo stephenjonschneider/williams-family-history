@@ -2021,6 +2021,16 @@ function rOwnerP(id){ if(id in ROWN) return ROWN[id]; const own=P[id]&&rCoreOf(P
     const hit=next.map(y=>rCoreOf(P[y])).find(Boolean); if(hit) return ROWN[id]=hit; ring=next; }
   return ROWN[id]=null; }
 let RFAM=new Set(store('wfh-roadfam2')||RCORE);
+/* documents in a rolling ten-year window around the current year (motion map and tour), for the families switched on */
+let RDOCS=null, RDLAST='';
+function roadDocCount(Y){ const el=document.getElementById('rdcount'); if(!el) return;
+  if(!RDOCS){ RDOCS=[]; D.records.forEach(r=>{ if(!r.pl||!PL[r.pl]) return; const y=parseInt(String(r.sd||'').slice(0,4)); if(!(y>1500)) return;
+      const f=new Set(r.fams||[]); if(/^S-/.test(r.id)){ f.add('Layton'); f.add('Bowne'); } RDOCS.push({y,f}); }); }
+  const y0=Math.floor(Y)-5, y1=y0+9, all=RFAM.size===RCORE.length, key=y0+'|'+[...RFAM].sort().join(',');
+  if(key===RDLAST) return; RDLAST=key;
+  const want=new Set([...RFAM].map(k=>/^(Bowne|Grover|Stout)$/.test(k)?'Bowne':k));
+  let n=0; RDOCS.forEach(d=>{ if(d.y<y0||d.y>y1) return; if(all||[...d.f].some(x=>want.has(x))) n++; });
+  el.innerHTML=`<b>${n.toLocaleString()}</b><span>docs ${y0}–${Math.floor(y0/100)===Math.floor(y1/100)?String(y1).slice(-2):y1}</span>`; }
 function roadData(){ if(ROADD) return ROADD;
   const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={}, Z=[];
   const add=(id,q)=>{ (byP[id]=byP[id]||[]).push(q); };
@@ -2078,7 +2088,8 @@ function mapTog(m){ const cur=m==='tour'?'tour':m?'move':'std';
 function roadW(y,Y){ if(Y<y-4) return 0; if(Y<y) return (Y-(y-4))/4; if(Y<=y+15) return 1; if(Y<=y+40) return 1-(Y-y-15)/25; return 0; }
 function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(asMap&&!tour) store('wfh-mapmode','move'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
   if(tour){ ROADY=1643; RFAMT=RFAM; RFAM=new Set(RCORE); } else if(RFAMT){ RFAM=RFAMT; RFAMT=null; }
-  app.innerHTML=(asMap?topBar('Map',false,mapTog(tour?'tour':true)):topBar('The road in motion',true))+`<div class="wrap roadwrap${tour?' tourmode':''}">
+  const RDC='<div class="mcount" id="rdcount" title="Documents dated within this ten-year window"></div>'; RDLAST='';
+  app.innerHTML=(asMap?topBar('Map',false,mapTog(tour?'tour':true)+RDC):topBar('The road in motion',true,RDC))+`<div class="wrap roadwrap${tour?' tourmode':''}">
    <div class="chips rfam" id="rfam"><button class="chip ${RFAM.size===RCORE.length?'on':''}" data-k="*">All</button>${RCORE.map(k=>`<button class="chip ${RFAM.size<RCORE.length&&RFAM.has(k)?'on':''}" data-k="${k}"><i style="background:${roadCol(k)}"></i>${k}</button>`).join('')}</div>
    <div class="roadstage"><div id="map" class="roadmap"></div><div class="roadedge" id="roadedge"></div><div class="tlead" id="tlead" hidden><i></i><b></b></div><div class="tbub" id="tbub" hidden></div>
    <div class="roadplayer" id="roadplayer">${tour?`
@@ -2172,7 +2183,7 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
     if(TS){ window._rdots=vis.map(o=>{ const q=MAP.latLngToContainerPoint(M[o.id].getLatLng()); let f=o.fk==='Other'?surnC(surn(o.p)):o.fk; if(!f||f===o.p.n){ const h=(o.p.sp||[]).map(s=>P[Array.isArray(s)?s[0]:s]).find(Boolean); f=h?(roadKey(h)==='Other'?surnC(surn(h)):roadKey(h))+'*':''; } return [q.x,q.y,1,f]; }); if(TS.cur) tourPos(); }
     /* while playing, the zones only need redrawing every fifth of a year; the dots still move every frame */
     if(!ROADPLAY||Math.abs(Y-(window._rzY||-1e9))>=.2){ window._rzY=Y; drawZones(); roadLegend(Y); }
-    yrEl.textContent=Math.floor(Y); ct.textContent=n?`${n} ancestor${n>1?'s':''} living`:'No direct-line ancestor on record this year'; if(!ROADPLAY) sl.value=Math.floor(Y);
+    roadDocCount(Y); yrEl.textContent=Math.floor(Y); ct.textContent=n?`${n} ancestor${n>1?'s':''} living`:'No direct-line ancestor on record this year'; if(!ROADPLAY) sl.value=Math.floor(Y);
     const ot=Object.entries(away).map(([k,a])=>`${k}${a.c>1?' ('+a.c+')':''}`).join(' · '); if(ot!==lastOff){ lastOff=ot; offEl.textContent=ot?'Off this map: '+ot:''; }
     const yi=Math.floor(Y), ch=SMAP.filter(s=>{ const m=String(s[4]).match(/(\d{4})s?\D*(\d{4})?/); if(!m) return false; const a=+m[1], z=/→/.test(s[4])?2100:(m[2]?+m[2]+(/s$/.test(s[4])?9:0):a); return yi>=a&&yi<=z; }).map(s=>s[1]).join(' · ');
     if(ch!==lastNow){ lastNow=ch; now.innerHTML=ch?`<b>On the road:</b> ${esc(ch)}`:'&nbsp;'; } };

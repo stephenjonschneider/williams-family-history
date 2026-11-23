@@ -1125,7 +1125,18 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .tbn{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff8ec;color:var(--green);font-size:13px;cursor:pointer}
 .tdots{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:4px 0 6px}.tdots button{width:9px;height:9px;padding:0;border-radius:50%;border:0;background:#d8ccb6;cursor:pointer}.tdots button.done{background:#b9a27c}.tdots button.on{background:var(--clay);transform:scale(1.35)}
 .leaflet-tooltip.gtip{background:rgba(255,252,242,.92);border:0;box-shadow:none;padding:0 4px;font-size:10.5px;font-weight:700;color:#5a4a33;border-radius:6px}.leaflet-tooltip.gtip:before{display:none}
-.leaflet-tooltip.mtip{background:#b23a48;color:#fff;border:0;font-size:11.5px;padding:2px 7px;border-radius:999px}.leaflet-tooltip.mtip:before{border-top-color:#b23a48}
+.leaflet-tooltip.mtip{background:#b23a48;color:#fff;border:0;font-size:11.5px;padding:2px 7px;border-radius:999px}
+.mtip2{font:700 13px/1.25 system-ui,sans-serif!important;padding:5px 11px!important;box-shadow:0 3px 10px rgba(0,0,0,.28);border:2px solid #fff!important;animation:mtipin .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes mtipin{from{transform:translateY(8px) scale(.7);opacity:0}}
+.mribbon{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:700;display:flex;flex-direction:column;align-items:center;gap:5px;pointer-events:none;width:calc(100% - 70px)}
+.mban{background:#b23a48;color:#fff;font:600 12px/1.2 system-ui,sans-serif;padding:4px 11px;border-radius:999px;border:2px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.28);text-align:center;max-width:100%;animation:mtipin .6s cubic-bezier(.3,1.6,.5,1)}
+.mban b{display:inline-block;animation:mbeat .9s ease-in-out infinite}.mban span{font-weight:400;opacity:.9;white-space:nowrap}
+.mpulse{position:relative;width:0;height:0}
+.mpulse i{position:absolute;left:-15px;top:-15px;width:30px;height:30px;border:3px solid #b23a48;border-radius:50%;animation:mring 1.8s ease-out infinite;opacity:0}
+.mpulse i:nth-child(2){animation-delay:.6s}.mpulse i:nth-child(3){animation-delay:1.2s}
+.mpulse b{position:absolute;left:-11px;top:-13px;width:22px;text-align:center;font-size:20px;line-height:24px;color:#d62839;text-shadow:0 0 3px #fff,0 0 6px #fff;animation:mbeat .9s ease-in-out infinite}
+@keyframes mring{0%{transform:scale(.35);opacity:.95}100%{transform:scale(3.4);opacity:0}}
+@keyframes mbeat{0%,100%{transform:scale(1)}15%{transform:scale(1.35)}30%{transform:scale(1)}45%{transform:scale(1.2)}}.leaflet-tooltip.mtip:before{border-top-color:#b23a48}
 #roadera{color:#8a6a3a;font-style:italic}
 .roadstage [hidden]{display:none!important}
 .roadstage .roadtop{flex-wrap:wrap;row-gap:4px}.roadstage .roadsp{order:3;width:100%;justify-content:flex-start;gap:5px}.roadstage #roadct,.roadstage .roadtop #roadera{display:inline;font-size:11.5px}.roadstage #roadct:not(:empty)+#roadera:not(:empty):before{content:' · ';font-style:normal}.leaflet-tooltip.mtip{font-size:10.5px}
@@ -2091,7 +2102,7 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
   const RDC='<div class="mcount" id="rdcount" title="Documents dated within this ten-year window"></div>'; RDLAST='';
   app.innerHTML=(asMap?topBar('Map',false,mapTog(tour?'tour':true)+RDC):topBar('The road in motion',true,RDC))+`<div class="wrap roadwrap${tour?' tourmode':''}">
    <div class="chips rfam" id="rfam"><button class="chip ${RFAM.size===RCORE.length?'on':''}" data-k="*">All</button>${RCORE.map(k=>`<button class="chip ${RFAM.size<RCORE.length&&RFAM.has(k)?'on':''}" data-k="${k}"><i style="background:${roadCol(k)}"></i>${k}</button>`).join('')}</div>
-   <div class="roadstage"><div id="map" class="roadmap"></div><div class="roadedge" id="roadedge"></div><div class="tlead" id="tlead" hidden><i></i><b></b></div><div class="tbub" id="tbub" hidden></div>
+   <div class="roadstage"><div id="map" class="roadmap"></div><div class="mribbon" id="mribbon"></div><div class="roadedge" id="roadedge"></div><div class="tlead" id="tlead" hidden><i></i><b></b></div><div class="tbub" id="tbub" hidden></div>
    <div class="roadplayer" id="roadplayer">${tour?`
     <div class="roadtop"><button class="tbn" onclick="tourStep(-1)" aria-label="Previous stop">⏮</button><button class="roadplay" id="roadplay" onclick="tourPause()" aria-label="Pause">❚❚</button><button class="tbn" onclick="tourStep(1)" aria-label="Next stop">⏭</button>
       <div style="flex:1;min-width:0"><div class="roadyr" id="roadyr">${Math.floor(ROADY)}</div><div class="tiny muted" id="roadera"></div></div><button class="chip sm" onclick="tourEnd()">Exit</button></div>
@@ -2172,12 +2183,21 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
     const showG=nv<=14; RD.L.forEach(o=>{ const m=M[o.id]; const want=showG&&vis.includes(o)&&o.p.G;
       if(want&&!m._gt){ m.bindTooltip('G'+o.p.G,{permanent:true,direction:'right',className:'gtip',offset:[7,0]}); m._gt=1; }
       else if(!want&&m._gt){ m.unbindTooltip(); m._gt=0; } });
-    RD.MAR.forEach((mr,i)=>{ const dy=Y-mr.y, oa=RD.byId[mr.a], ob=RD.byId[mr.b]; let mk=MR[i];
-      const on=dy>=0&&dy<3&&RFAM.has(oa.own)&&RFAM.has(ob.own); const ps=on?(roadPos(oa,Y)||roadPos(ob,Y)):null;
-      if(!ps){ if(mk&&lay.hasLayer(mk)) lay.removeLayer(mk); return; }
-      if(!mk) mk=MR[i]=L.circleMarker([0,0],{radius:8,color:'#b23a48',weight:2.5,fill:false,interactive:false,renderer:ren,pane:'pins'}).bindTooltip('♥ '+mr.lab+', m. '+mr.y,{permanent:true,direction:'top',className:'mtip',offset:[0,-10]});
-      mk.setLatLng([ps[0],ps[1]]); mk.setRadius(8+dy*9); mk.setStyle({opacity:Math.max(0,1-dy/3)}); if(!lay.hasLayer(mk)) lay.addLayer(mk);
-      const tt=mk.getTooltip(); if(tt&&tt.getElement()) tt.getElement().style.opacity=Math.max(0,1-dy/2.2); });
+    /* marriages: when the year reaches a wedding, a heart pulses at the spot and its banner stays up for about five and a half seconds of real time,
+       however fast the years are running; it fades over the last second. Going back before the year re-arms it. */
+    const tnow=performance.now(), MLIFE=5.5;
+    RD.MAR.forEach((mr,i)=>{ const oa=RD.byId[mr.a], ob=RD.byId[mr.b], st=MR[i]||(MR[i]={}); const famOn=RFAM.has(oa.own)&&RFAM.has(ob.own);
+      const drop=()=>{ if(st.mk&&lay.hasLayer(st.mk)) lay.removeLayer(st.mk); if(st.bn){ st.bn.remove(); st.bn=null; } };
+      if(Y<mr.y-.01) st.done=false;
+      if(famOn&&!st.t0&&!st.done&&Y>=mr.y&&Y<mr.y+4){ const ps=roadPos(oa,mr.y)||roadPos(ob,mr.y)||roadPos(oa,Y)||roadPos(ob,Y); if(ps){ st.t0=tnow; st.done=true; st.ll=[ps[0],ps[1]]; setTimeout(()=>{ if(window.roadDraw&&document.getElementById('roadyr')) roadDraw(); },MLIFE*1000+80); } }
+      if(!st.t0){ drop(); return; }
+      const age=(tnow-st.t0)/1000; if(age>MLIFE||!famOn){ st.t0=0; drop(); return; }
+      if(!st.mk) st.mk=L.marker(st.ll,{pane:'pins',interactive:false,keyboard:false,icon:L.divIcon({className:'',iconSize:[0,0],html:'<div class="mpulse"><i></i><i></i><i></i><b>♥</b></div>'})});
+      st.mk.setLatLng(st.ll); if(!lay.hasLayer(st.mk)){ lay.addLayer(st.mk); }
+      /* the banner itself is held out of the way, in a ribbon along the top of the map, so it never runs off the edge or covers the heart */
+      const rib=document.getElementById('mribbon'); if(rib&&(!st.bn||!st.bn.isConnected)){ st.bn=document.createElement('div'); st.bn.className='mban'; st.bn.innerHTML=`<b>♥</b> ${esc(mr.lab)} <span>married ${mr.y}</span>`; rib.appendChild(st.bn); }
+      const op=age>MLIFE-1?Math.max(0,MLIFE-age):1, el=st.mk.getElement(); if(el) el.style.opacity=op; if(st.bn) st.bn.style.opacity=op; });
+    { const rib=document.getElementById('mribbon'); if(rib) [...rib.children].forEach(c=>{ if(!Object.values(MR).some(st=>st.bn===c&&st.t0)) c.remove(); }); }
     if(eraEl) eraEl.textContent=roadEra(Y);
     if(edge){ const w=box.clientWidth, h=box.clientHeight, cxp=w/2, cyp=h/2; const ph=(document.getElementById('roadplayer')||{}).offsetHeight||0;
       const html=Object.entries(away).slice(0,5).map(([k,a])=>{ const p=MAP.latLngToContainerPoint([a.lat,a.lon]); const ang=Math.atan2(p.y-cyp,p.x-cxp);

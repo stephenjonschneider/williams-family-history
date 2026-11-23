@@ -1385,13 +1385,21 @@ function store(k,v){try{ if(v===undefined) return JSON.parse(localStorage.getIte
 
 /* ---------- "me" (local only) ---------- */
 let ME=store('wfh-me'); // {anchor:id, gens:[{name,living}]}
+function meCoParent(a){ const pa=P[a]; if(!pa) return null; const other=new Set();
+  (pa.ch||[]).forEach(c=>{ const q=P[c]; if(q&&!q.virt) (q.par||[]).forEach(x=>{ if(x!==a&&P[x]) other.add(x); }); });
+  if(other.size===1) return [...other][0];
+  if(!other.size){ const sp=(pa.sp||[]).map(s=>Array.isArray(s)?s[0]:s).filter(x=>P[x]); if(sp.length===1) return sp[0]; }
+  return null; }
 function applyMe(){
-  Object.keys(P).filter(k=>k.startsWith('me')).forEach(k=>{const a=P[k].par[0]; if(P[a]) P[a].ch=P[a].ch.filter(x=>x!==k); delete P[k];});
+  Object.keys(P).filter(k=>k.startsWith('me')).forEach(k=>{ (P[k].par||[]).forEach(a=>{ if(P[a]) P[a].ch=(P[a].ch||[]).filter(x=>x!==k); }); delete P[k];});
   if(!ME||!ME.anchor||!P[ME.anchor]) return;
   let parent=ME.anchor;
   Object.values(P).forEach(p=>{ if(p.you) delete p.you; });
   (ME.gens||[]).forEach((g,i)=>{ if(g.id&&P[g.id]&&(P[g.id].par||[]).includes(parent)){ parent=g.id; return; }
-    const id='me'+i; P[id]={id,n:g.living?'Living':(g.name||'Unnamed'),par:[parent],sp:[],ch:[],living:g.living?1:0,virt:1,src:['entered on this device']}; P[parent].ch.push(id); parent=id;});
+    /* the first step below the anchor gets both parents: the anchor and the one partner the anchor's recorded children share
+       (below Mavis Williams that is Michael P. DiCorcia), so the partner's whole side counts as direct line too */
+    const id='me'+i, par=[parent]; if(!P[parent].virt){ const co=meCoParent(parent); if(co) par.push(co); }
+    P[id]={id,n:g.living?'Living':(g.name||'Unnamed'),par,sp:[],ch:[],living:g.living?1:0,virt:1,src:['entered on this device']}; par.forEach(x=>{ P[x].ch=P[x].ch||[]; P[x].ch.push(id); }); parent=id;});
   P[parent].you=1; ME.you=parent;
 }
 /* generation tags follow whoever set "You're in the tree": you are G1, your parents G2 ... ; text tags from the workbooks shift by the same offset */
@@ -2846,8 +2854,8 @@ function vMe(){
     if(l!=null) gens[l].living=e.target.checked?1:0;
     if(s!=null){ const v=e.target.value; gens[s]=v?{id:v}:{name:'',living:1}; for(let j=+s+1;j<gens.length;j++) if(gens[j].id) gens[j]={name:'',living:1}; drawG(); }};
   document.getElementById('clrA').onclick=()=>{ME={anchor:'',gens:[],you:ME&&ME.you};vMe()};
-  document.getElementById('saveme').onclick=()=>{ME={anchor:st.anchor,gens}; store('wfh-me',ME); applyMe(); applyGen(); go('p-'+ME.you)};
-  const c=document.getElementById('clrme'); if(c) c.onclick=()=>{ME=null; try{localStorage.removeItem('wfh-me')}catch(e){} applyMe(); applyGen(); go('home')};
+  document.getElementById('saveme').onclick=()=>{ME={anchor:st.anchor,gens}; store('wfh-me',ME); applyMe(); applyGen(); ROADD=null; RX=null; RDOCS=null; go('p-'+ME.you)};
+  const c=document.getElementById('clrme'); if(c) c.onclick=()=>{ME=null; try{localStorage.removeItem('wfh-me')}catch(e){} applyMe(); applyGen(); ROADD=null; RX=null; RDOCS=null; go('home')};
 }
 
 /* router */

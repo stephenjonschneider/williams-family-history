@@ -2052,6 +2052,20 @@ let RFAM=new Set(store('wfh-roadfam2')||RCORE);
 let RDOCS=null, RDLAST='';
 /* direct-line ancestors named in a record (as a party or as a resident) */
 function recAnc(r){ return [...(r.ppl||[]),...(r.home||[])].filter(id=>{ const p=P[id]; return p&&p.G&&!p.living&&!p.virt; }); }
+/* which family button an ancestor is tallied under. A surname with its own button keeps it; anyone else (a maiden name, or a
+   line such as Lomell or DiCorcia) goes under the married surname shown: a wife under her direct-line husband's family,
+   and failing that, down the line to the child's family (George Lomell -> Ruth Lomell -> her husband Harry F. Williams -> Williams) */
+const TALLYF={};
+function tallyFam(id,seen){ if(TALLYF[id]!==undefined) return TALLYF[id]; const p=P[id]; if(!p) return ''; seen=seen||new Set(); if(seen.has(id)) return ''; seen.add(id);
+  let f=famKey(p);
+  if(!RCORE.includes(f)){ f='';
+    const sps=(p.sp||[]).map(x=>Array.isArray(x)?x[0]:x).filter(x=>P[x]&&P[x].G);
+    for(const x of sps){ const k=famKey(P[x]); if(RCORE.includes(k)){ f=k; break; } }
+    if(!f){ const kids=(p.ch||[]).filter(x=>P[x]&&P[x].G&&p.G&&P[x].G===p.G-1);
+      for(const x of kids){ const k=tallyFam(x,seen); if(k){ f=k; break; } } }
+    if(!f) for(const x of sps){ const k=tallyFam(x,seen); if(k){ f=k; break; } }
+    if(!f&&p.G&&p.G<=3) f='Williams'; /* the compiler's own parents' generation (e.g. a Schneider): the line the app follows */ }
+  TALLYF[id]=f; return f; }
 function cntHTML(n,lab,m){ return `<div><b>${n.toLocaleString()}</b><span>${lab}</span></div><div><b>${m.toLocaleString()}</b><span>ancestor${m===1?'':'s'}</span></div>`; }
 function roadDocCount(Y){ const el=document.getElementById('rdcount'); if(!el) return;
   if(!RDOCS){ RDOCS=[]; D.records.forEach(r=>{ if(!r.pl||!PL[r.pl]) return; const y=parseInt(String(r.sd||'').slice(0,4)); if(!(y>1500)) return;
@@ -2059,7 +2073,7 @@ function roadDocCount(Y){ const el=document.getElementById('rdcount'); if(!el) r
   const y0=Math.floor(Y)-5, y1=y0+9, all=RFAM.size===RCORE.length, key=y0+'|'+[...RFAM].sort().join(',');
   if(key===RDLAST) return; RDLAST=key;
   const want=new Set(RFAM);
-  let n=0; const an=new Set(); RDOCS.forEach(d=>{ if(d.y<y0||d.y>y1) return; if(all||[...d.f].some(x=>want.has(x))){ n++; d.a.forEach(id=>{ if(all||want.has(roadKey(P[id]))) an.add(id); }); } });
+  let n=0; const an=new Set(); RDOCS.forEach(d=>{ if(d.y<y0||d.y>y1) return; if(all||[...d.f].some(x=>want.has(x))){ n++; d.a.forEach(id=>{ if(all||want.has(tallyFam(id))) an.add(id); }); } });
   el.innerHTML=cntHTML(n,`docs ${y0}–${Math.floor(y0/100)===Math.floor(y1/100)?String(y1).slice(-2):y1}`,an.size); }
 function roadData(){ if(ROADD) return ROADD;
   const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={}, Z=[];
@@ -2652,7 +2666,7 @@ function vMap(focus){
   const pinR=mkMap();
   const recs=D.records.filter(r=>r.pl&&(!mState.f||inMF(r,mState.f))&&(!mState.ids||mState.ids.has(r.id))&&!MHIDE.has(recTie(r)==='home'?'lived':'named')&&!(PL[r.pl]&&MHIDE.has(PL[r.pl].tier)));
   const by={}; recs.forEach(r=>(by[r.pl]=by[r.pl]||[]).push(r));
-  { const mc=document.getElementById('mcount'); if(mc){ const an=new Set(); recs.forEach(r=>recAnc(r).forEach(id=>{ if(!mState.f||roadKey(P[id])===mState.f) an.add(id); })); mc.innerHTML=cntHTML(recs.length,`document${recs.length===1?'':'s'}`,an.size); } }
+  { const mc=document.getElementById('mcount'); if(mc){ const an=new Set(); recs.forEach(r=>recAnc(r).forEach(id=>{ if(!mState.f||tallyFam(id)===mState.f) an.add(id); })); mc.innerHTML=cntHTML(recs.length,`document${recs.length===1?'':'s'}`,an.size); } }
   const col={exact:'#e0201b',site:'#9c3b2e',place:'#3f6b3a',township:'#a08c6c',court:'#6b6f73'};
   let focusMarker=null; const MK={};
   const TO={township:0,court:1,place:2,site:3,exact:4};
@@ -2860,8 +2874,8 @@ function vMe(){
     if(l!=null) gens[l].living=e.target.checked?1:0;
     if(s!=null){ const v=e.target.value; gens[s]=v?{id:v}:{name:'',living:1}; for(let j=+s+1;j<gens.length;j++) if(gens[j].id) gens[j]={name:'',living:1}; drawG(); }};
   document.getElementById('clrA').onclick=()=>{ME={anchor:'',gens:[],you:ME&&ME.you};vMe()};
-  document.getElementById('saveme').onclick=()=>{ME={anchor:st.anchor,gens}; store('wfh-me',ME); applyMe(); applyGen(); ROADD=null; RX=null; RDOCS=null; go('p-'+ME.you)};
-  const c=document.getElementById('clrme'); if(c) c.onclick=()=>{ME=null; try{localStorage.removeItem('wfh-me')}catch(e){} applyMe(); applyGen(); ROADD=null; RX=null; RDOCS=null; go('home')};
+  document.getElementById('saveme').onclick=()=>{ME={anchor:st.anchor,gens}; store('wfh-me',ME); applyMe(); applyGen(); ROADD=null; RX=null; RDOCS=null; for(const k in TALLYF) delete TALLYF[k]; go('p-'+ME.you)};
+  const c=document.getElementById('clrme'); if(c) c.onclick=()=>{ME=null; try{localStorage.removeItem('wfh-me')}catch(e){} applyMe(); applyGen(); ROADD=null; RX=null; RDOCS=null; for(const k in TALLYF) delete TALLYF[k]; go('home')};
 }
 
 /* router */

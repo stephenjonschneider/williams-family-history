@@ -2115,11 +2115,13 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
   const box=document.getElementById('map'), cv=document.createElement('canvas'); cv.className='roadzone';
   /* the zones live in their own map pane, above the base map and below the dots and pop-ups */
   if(!MAP.getPane('zones')){ MAP.createPane('zones').style.zIndex=450; MAP.getPane('zones').style.pointerEvents='none'; } MAP.getPane('zones').appendChild(cv);
+  /* the names at a tour stop sit on their own layer, above the ancestors' dots and dotted trails */
+  const nv=document.createElement('canvas'); nv.className='roadzone'; if(!MAP.getPane('tnames')){ MAP.createPane('tnames').style.zIndex=680; MAP.getPane('tnames').style.pointerEvents='none'; } MAP.getPane('tnames').appendChild(nv); const nx=nv.getContext('2d');
   const off=document.createElement('canvas'), ox=off.getContext('2d'), cx=cv.getContext('2d');
-  const size=()=>{ const r=devicePixelRatio||1, w=box.clientWidth, h=box.clientHeight; [cv,off].forEach(c=>{ c.width=w*r; c.height=h*r; }); cv.style.width=w+'px'; cv.style.height=h+'px'; cx.setTransform(r,0,0,r,0,0); ox.setTransform(r,0,0,r,0,0); };
+  const size=()=>{ const r=devicePixelRatio||1, w=box.clientWidth, h=box.clientHeight; [cv,off,nv].forEach(c=>{ c.width=w*r; c.height=h*r; }); [cv,nv].forEach(c=>{ c.style.width=w+'px'; c.style.height=h+'px'; }); cx.setTransform(r,0,0,r,0,0); ox.setTransform(r,0,0,r,0,0); nx.setTransform(r,0,0,r,0,0); };
   size();
   const colOf=f=>roadCol(f); let spr=null, sprR=0;
-  const drawZones=()=>{ const Y=ROADY, w=box.clientWidth, h=box.clientHeight; L.DomUtil.setPosition(cv,MAP.containerPointToLayerPoint([0,0])); cx.clearRect(0,0,w,h);
+  const drawZones=()=>{ const Y=ROADY, w=box.clientWidth, h=box.clientHeight; L.DomUtil.setPosition(cv,MAP.containerPointToLayerPoint([0,0])); cx.clearRect(0,0,w,h); L.DomUtil.setPosition(nv,MAP.containerPointToLayerPoint([0,0])); nx.clearRect(0,0,w,h);
     const c0=MAP.getCenter(), pa=MAP.latLngToContainerPoint(c0), pb=MAP.latLngToContainerPoint([c0.lat+.045,c0.lng]), R=Math.max(14,Math.abs(pa.y-pb.y));   // ~5 km
     if(!spr||sprR!==Math.round(R)){ sprR=Math.round(R); spr=document.createElement('canvas'); const s=sprR*2, r0=devicePixelRatio||1; spr.width=s*r0; spr.height=s*r0; const sx=spr.getContext('2d'); sx.scale(r0,r0);
       const g=sx.createRadialGradient(sprR,sprR,0,sprR,sprR,sprR); g.addColorStop(0,'rgba(0,0,0,.6)'); g.addColorStop(.55,'rgba(0,0,0,.32)'); g.addColorStop(1,'rgba(0,0,0,0)'); sx.fillStyle=g; sx.fillRect(0,0,s,s); }
@@ -2142,11 +2144,11 @@ function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(as
     /* at a tour stop, every family present right there is named in a neat column beside the spot, away from the bubble */
     /* the column names the direct-line surnames of the stop's period: ancestors at the spot, and those the documents name nearby (most first) */
     if(TSP&&TS.cur) sceneNames(TS.cur).forEach(f=>near.push([f,1]));
-    if(near.length&&TSP){ const L2=near.slice(0,16), two=L2.length>8, rows=two?Math.ceil(L2.length/2):L2.length, lh=two?16:17, up=!!(TS&&TS.bAbove===false);
-      cx.font=`600 ${two?13:14}px 'Fredoka','Trebuchet MS',sans-serif`; cx.textAlign='center'; cx.lineJoin='round';
+    if(near.length&&TSP){ const L2=near.slice(0,20), two=L2.length>8, rows=two?Math.ceil(L2.length/2):L2.length, lh=two?16:17, up=!!(TS&&TS.bAbove===false);
+      nx.font=`600 ${two?13:14}px 'Fredoka','Trebuchet MS',sans-serif`; nx.textAlign='center'; nx.lineJoin='round';
       let y0=up?TSP.y-30-lh*(rows-1):TSP.y+36; y0=Math.max(14,Math.min(h-lh*rows-4,y0));
       const xs=two?[Math.max(52,TSP.x-50),Math.min(w-52,TSP.x+50)]:[TSP.x];
-      L2.forEach(([f],i)=>{ const c=two?Math.floor(i/rows):0, y=y0+(i%rows)*lh; cx.lineWidth=4.5; cx.strokeStyle='rgba(255,252,242,.95)'; cx.strokeText(f,xs[c],y); cx.fillStyle=colOf(f); cx.fillText(f,xs[c],y); }); }
+      L2.forEach(([f],i)=>{ const c=two?Math.floor(i/rows):0, y=y0+(i%rows)*lh; nx.lineWidth=5; nx.strokeStyle='rgba(255,252,242,.97)'; nx.strokeText(f,xs[c],y); nx.fillStyle=colOf(f); nx.fillText(f,xs[c],y); }); }
     cx.font="600 13px 'Fredoka','Trebuchet MS',sans-serif"; cx.textAlign='center'; cx.lineJoin='round';
     const placed=[]; labels.sort((a,b)=>b[3]-a[3]).forEach(([f,x,y])=>{ const t=f==='Other'?'':f; y-=R*.25; const tw=cx.measureText(t).width; let tries=0; while(tries++<8&&placed.some(q=>Math.abs(q[0]-x)<(q[2]+tw)/2+4&&Math.abs(q[1]-y)<16)) y+=16; placed.push([x,y,tw]); y+=R*.25; cx.lineWidth=4; cx.strokeStyle='rgba(255,252,242,.9)'; cx.strokeText(t,x,y-R*.25); cx.fillStyle=colOf(f); cx.fillText(t,x,y-R*.25); }); };
   MAP.on('move zoom resize',()=>{ if(MAP) drawZones(); }); MAP.on('resize',size);
@@ -2221,23 +2223,33 @@ function tourClock(tok,target,ms){ return new Promise(res=>{ const y0=ROADY; let
   const f=ts=>{ if(!tourOK(tok)) return res(); if(TS.paused){ t0=null; requestAnimationFrame(f); return; } if(t0==null) t0=ts-el; el=ts-t0;
     const k=Math.min(1,el/ms), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; ROADY=y0+(target-y0)*e; roadDraw(); if(k<1) requestAnimationFrame(f); else res(); };
   requestAnimationFrame(f); }); }
-function tourBub(s){ const b=document.getElementById('tbub'), ld=document.getElementById('tlead'); if(!b) return; if(TS) TS.cur=s||null; if(!s){ b.hidden=true; if(ld) ld.hidden=true; return; }
+function tourBub(s){ const b=document.getElementById('tbub'), ld=document.getElementById('tlead'); if(!b) return; if(TS){ TS.cur=s||null; TS.bIdx=null; TS.bPend=null; } if(!s){ b.hidden=true; if(ld) ld.hidden=true; return; }
   const recs=(s.r||[]).filter(r=>R[r]).map(r=>`<a href="#r-${r}">${r}</a>`).join(' ');
   b.innerHTML=`<div class="tbt">${esc(s.t)}</div><div class="tbx">${esc(s.x)}</div><div class="tbl">${recs}${s.ch?` <a onclick="tourEnd(1);go('story');setTimeout(()=>{const c=document.querySelectorAll('.schap')[${s.ch-1}];if(c)c.scrollIntoView({block:'start'})},350)">Read the chapter ›</a>`:''}</div>`;
   b.hidden=false; tourPos(); }
 /* the names for a tour stop: every direct-line ancestor whose dot is within about 8 km of the spot at any time during the stop
    (from its year to its closing year), by surname; wives known only by first name go under the husband's surname, with * if he is not there */
 function rFam(o){ let f=o.fk==='Other'?surnC(surn(o.p)):o.fk; if(!f||f===o.p.n){ const h=(o.p.sp||[]).map(s=>P[Array.isArray(s)?s[0]:s]).find(Boolean); f=h?(roadKey(h)==='Other'?surnC(surn(h)):roadKey(h))+'*':''; } return f; }
-function sceneNames(s){ if(s._names) return s._names; const RD=roadData(), at=s.at||s.c, a=s.y, b=s.y2||s.y+3, cnt={}, rad=s.z<=10?14:9;
+/* the surnames carried by direct-line ancestors: these are the lineage names a tour stop can list */
+let LINS=null;
+/* (a relative who is not in the direct line counts only under a family name the line carries more than once, or one of the core families,
+   so that a passing Smith or Miller in a deed does not add a name) */
+let LINF=null;
+function lineageSurnames(){ if(LINS) return LINS; LINS=new Set(); const c={}; Object.values(P).forEach(p=>{ if(!p.G||p.virt) return; const f=rFam({p,fk:roadKey(p)}); if(f&&f!=='Other'&&!f.endsWith('*')){ LINS.add(f); c[f]=(c[f]||0)+1; } });
+  LINF=new Set([...LINS].filter(f=>c[f]>=2||RCORE.includes(f)||f==='Brewer')); return LINS; }
+/* how far either side of a stop its documents are gathered: early records are few and far between, so the early stops look wider */
+function sceneWin(s){ if(s.w) return s.w; return s.y<1700?[8,12]:s.y<1800?[7,7]:[5,5]; }
+function sceneNames(s){ if(s._names) return s._names; const RD=roadData(), at=s.at||s.c, a=s.y, b=s.y2||s.y+3, cnt={}, rad=s.z<=10?14:9, LS=lineageSurnames(), [wb,wa]=sceneWin(s);
   /* 1) direct-line ancestors whose dots are near the spot during the stop */
   RD.L.forEach(o=>{ if(!RFAM.has(o.own)) return; for(let y=a;y<=b+.001;y+=.5){ const ps=roadPos(o,y); if(!ps) continue; const dk=Math.hypot((ps[0]-at[0])*111,(ps[1]-at[1])*84.5); if(dk<rad){ const f=rFam(o); if(f&&f!=='Other') cnt[f]=(cnt[f]||0)+1; break; } } });
-  /* 2) the documents of the stop's whole period (five years either side of it, like the document count) at places near the spot:
-        every direct-line ancestor they name adds his or her surname */
-  const seen=new Set();
-  D.records.forEach(r=>{ const pl=PL[r.pl], y=parseInt(String(r.sd||'').slice(0,4)); if(!pl||!(y>=a-5&&y<=b+5)) return;
+  /* 2) the documents of the stop's period at places near the spot: anyone they name who carries a lineage surname */
+  const seen=new Set(), add=(f,g)=>{ if(f&&(g?LS.has(f):LINF.has(f))) cnt[f]=(cnt[f]||0)+1; };
+  D.records.forEach(r=>{ const pl=PL[r.pl], y=parseInt(String(r.sd||'').slice(0,4)); if(!pl||!(y>=a-wb&&y<=b+wa)) return;
     if(Math.hypot((pl.lat-at[0])*111,(pl.lon-at[1])*84.5)>=rad) return;
-    [...(r.ppl||[]),...(r.home||[])].forEach(id=>{ const p=P[id]; if(!p||!p.G||p.living||seen.has(id+r.id)) return; seen.add(id+r.id);
-      const f=rFam({p,fk:roadKey(p)}); if(f&&f!=='Other') cnt[f]=(cnt[f]||0)+1; }); });
+    [...(r.ppl||[]),...(r.home||[])].forEach(id=>{ const p=P[id]; if(!p||p.living||seen.has(id+r.id)) return; seen.add(id+r.id); add(rFam({p,fk:roadKey(p)}),!!p.G); });
+    (r.hz||[]).forEach(n=>{ const k=roadKey({n}); add(k!=='Other'?k:surnC(surn({n}))); }); });
+  /* 3) every lineage surname the stop's own story names */
+  const txt=(s.t||'')+' '+(s.x||''); LINF.forEach(f=>{ if(new RegExp('\\b'+f+'s?\\b').test(txt)&&!cnt[f]) cnt[f]=.75; });
   Object.keys(cnt).forEach(f=>{ if(f.endsWith('*')&&cnt[f.slice(0,-1)]){ cnt[f.slice(0,-1)]+=cnt[f]; delete cnt[f]; } });
   const FT=s.f||[]; FT.forEach(f=>{ if(!cnt[f]) cnt[f]=.5; }); s._names=Object.keys(cnt).sort((x,y)=>((FT.includes(y)?99:0)+cnt[y])-((FT.includes(x)?99:0)+cnt[x])||x.localeCompare(y)); return s._names; }
 /* the bubble stands well clear of the place, wherever it covers the fewest dots, joined to it by a long leader ending in a dot */
@@ -2247,9 +2259,14 @@ function tourPos(){ const b=document.getElementById('tbub'), ld=document.getElem
   const fit=(l,t)=>[Math.max(6,Math.min(w-bw-6,l)),Math.max(8,Math.min(bot-bh,t))];
   const C=[fit(p.x-bw/2,p.y-G-bh),fit(p.x-bw/2,p.y+G),fit(p.x-G-bw,p.y-bh/2),fit(p.x+G,p.y-bh/2),fit(p.x-G*.7-bw,p.y-G*.7-bh),fit(p.x+G*.7,p.y-G*.7-bh),fit(p.x-G*.7-bw,p.y+G*.7),fit(p.x+G*.7,p.y+G*.7)];
   const D=(window._rdots||[]).concat([[p.x,p.y,6]]);
-  let best=null, bs=1e9; C.forEach(([l,t],i)=>{ let sc=i*.01; D.forEach(([x,y,wt])=>{ if(x>l-12&&x<l+bw+12&&y>t-12&&y<t+bh+12) sc+=(wt||1); });
-    const cx=l+bw/2, cy=t+bh/2, dd=Math.hypot(cx-p.x,cy-p.y); if(dd<G*.8) sc+=3; if(sc<bs){ bs=sc; best=[l,t]; } });
-  const [left,top]=best; b.style.left=left+'px'; b.style.top=top+'px'; TS.bAbove=top+bh/2<p.y;
+  const SC=C.map(([l,t],i)=>{ let sc=i*.01; D.forEach(([x,y,wt])=>{ if(x>l-12&&x<l+bw+12&&y>t-12&&y<t+bh+12) sc+=(wt||1); });
+    const cx=l+bw/2, cy=t+bh/2, dd=Math.hypot(cx-p.x,cy-p.y); if(dd<G*.8) sc+=3; return sc; });
+  let bi=0; SC.forEach((v,i)=>{ if(v<SC[bi]) bi=i; });
+  /* hold the bubble where it is: a dot passing under it for a moment is ignored; it moves only if another spot stays clearly better for about a second and a half */
+  const now=performance.now(), cur=TS.bIdx;
+  if(cur!=null&&cur!==bi){ if(SC[cur]-SC[bi]<1.5) bi=cur; else if(!TS.bPend||TS.bPend.i!==bi){ TS.bPend={i:bi,t:now}; bi=cur; } else if(now-TS.bPend.t<1500) bi=cur; }
+  if(bi===cur||cur==null) TS.bPend=null; TS.bIdx=bi;
+  const [left,top]=C[bi]; b.style.left=left+'px'; b.style.top=top+'px'; TS.bAbove=top+bh/2<p.y;
   if(!ld) return; const ex=Math.max(left+14,Math.min(left+bw-14,p.x)), ey=Math.max(top+10,Math.min(top+bh-10,p.y));
   /* start the leader on the bubble's edge nearest the place */
   let sx=ex, sy=ey; if(p.y>top+bh) sy=top+bh; else if(p.y<top) sy=top; else sx=p.x<left?left:left+bw;

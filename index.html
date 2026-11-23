@@ -2017,7 +2017,11 @@ function roadKeys(){ if(RX) return RX; const dot={}, rec={};
   const names=new Set([...Object.keys(dot),...Object.keys(rec)]); const score=s=>(dot[s]||0)*6+(rec[s]||0);
   const keep=[...names].filter(s=>(dot[s]&&(dot[s]+(rec[s]||0))>=2)||(rec[s]||0)>=6).sort((a,b)=>score(b)-score(a)).slice(0,RXPAL.length);
   const col={}; FCOLS.forEach(([k,c])=>col[k]=c); keep.forEach((s,i)=>col[s]=RXPAL[i]);
-  RX={keep:new Set(keep),col}; return RX; }
+  /* the years a surname-only family is actually in the line: from 30 years before its first direct-line member's birth to 30 after its last one's death.
+     Outside that window a namesake (the Neptune Bennetts of 1880–1923, two centuries after Geertje Bennet) is not the same family and lights nothing */
+  const rng={}; Object.values(P).forEach(p=>{ if(!p.G||p.virt||famKey(p)!=='Other') return; const s=surnC(surn(p)); if(!keep.includes(s)) return; const b=yr(p.b), d=yr(p.d)||(b?b+70:null); if(!b&&!d) return; const r=rng[s]||(rng[s]=[9999,0]); r[0]=Math.min(r[0],(b||d-70)-30); r[1]=Math.max(r[1],(d||b+70)+30); });
+  RX={keep:new Set(keep),col,rng}; return RX; }
+function roadInLine(f,y){ const r=roadKeys().rng[f]; return !r||(y>=r[0]&&y<=r[1]); }
 function roadKey(p){ const k=famKey(p); if(k!=='Other') return k; const s=surnC(surn(p)); return roadKeys().keep.has(s)?s:'Other'; }
 function roadCol(k){ return roadKeys().col[k]||FCOLS[FCOLS.length-1][1]; }
 /* the abstracted families you can switch on and off; every other surname rides with the family it ties to,
@@ -2050,11 +2054,11 @@ function roadData(){ if(ROADD) return ROADD;
   const add=(id,q)=>{ (byP[id]=byP[id]||[]).push(q); };
   /* after 1700 a side branch far up the bay (the Safety Laytons of Brooklyn, 1855–1915) does not light its family's zone; direct-line people (the Lomells in Brooklyn) still do */
   const farOff=(y,lat)=>y>1700&&lat>40.6;
-  const zone=(id,y,lat,lon)=>{ const p=P[id]; if(!p||p.living||(farOff(y,lat)&&!p.G)) return; const f=roadKey(p); if(f==='Other') return; Z.push({f,y,lat,lon,id}); };
+  const zone=(id,y,lat,lon)=>{ const p=P[id]; if(!p||p.living||(farOff(y,lat)&&!p.G)) return; const f=roadKey(p); if(f==='Other'||(!p.G&&!roadInLine(f,y))) return; Z.push({f,y,lat,lon,id}); };
   D.records.forEach(r=>{ const pl=PL[r.pl], y=parseInt(String(r.sd||'').slice(0,4)); if(!pl||!(y>1500)) return;
     (r.home||[]).forEach(id=>{ zone(id,y,pl.lat,pl.lon); if(ids.has(id)) add(id,{y,lat:pl.lat,lon:pl.lon,lab:pl.label,r:r.id}); });
     /* residents named in the workbook who have no page in the app: their surname still lights the family's zone */
-    if(!farOff(y,pl.lat)) (r.hz||[]).forEach(n=>{ const f=roadKey({n}); if(f!=='Other') Z.push({f,y,lat:pl.lat,lon:pl.lon,id:null}); }); });
+    if(!farOff(y,pl.lat)) (r.hz||[]).forEach(n=>{ const f=roadKey({n}); if(f!=='Other'&&roadInLine(f,y)) Z.push({f,y,lat:pl.lat,lon:pl.lon,id:null}); }); });
   /* the Long Island years, from the story: these families were at Gravesend and Flatlands before any Monmouth record,
      so their country there is lit one point every three years across the span the story gives */
   ROAD_EARLY.forEach(([f,lat,lon,a,b])=>{ for(let y=a;y<=b;y+=3) Z.push({f,y,lat,lon,id:null,early:1}); });

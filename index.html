@@ -1491,23 +1491,27 @@ function badge(lv,text){return `<span class="badge lv-${lv}">${esc(text||LVL[lv]
 
 
 /* ---------- Tree › Strength: one surname line, oldest at the top ---------- */
-const SLINES=[['Williams','Williams'],['Layton','Layton'],['Newman','Newman'],['Wolcott','Wolcott'],['Bowne','Bowne'],['Grover','Grover'],['Stout','Stout'],['Cooper','Cooper'],['Brewer','Brewer'],['Borden','Borden'],['Worthley','Worthley'],['White','White'],['Hance','Hance']];
+const SLINES=[['Williams','Williams'],['Layton','Layton'],['Newman','Newman'],['Wolcott','Wolcott'],['Bowne','Bowne'],['Grover','Grover'],['Stout','Stout'],['Cooper','Cooper'],['Brewer','Brewer'],['Borden','Borden'],['Worthley','Worthley'],['White','White'],['Hance','Hance'],['Clevenger','Clevenger'],['Morse','Morse'],['Wall','Wall'],['Baker','Baker'],['Hadden','Hadden'],['VanPelt','Van Pelt'],['Lippincott','Lippincott']];
+/* a line's surname as a pattern, where its spellings differ (Van Pelt, VanPelt) */
+const SRE={VanPelt:'van ?pelt',Baker:'\\bbaker\\b'}, sre=f=>new RegExp(SRE[f]||f,'i');
 function strEntry(f){ const te=P[D.anchor];
   return {Williams:D.anchor, Layton:findP('Elizabeth Layton',1805), Newman:findP('Catherine Louisa Newman',1840),
     Wolcott:te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n)), Bowne:findP('Catherine Bowne',1718),
     Grover:findP('Esther Grover',1688), Stout:findP('Mary Stout',1650), Cooper:findP('Neeltje Cooper',1726), Brewer:findP('Mary Brewer',1764),
-    Borden:findP('Lydia A Borden',1773), Worthley:findP('Lydia Worthley',1749), White:findP('Mary White',1730), Hance:findP('Elizabeth Hance',1672)}[f]; }
+    Borden:findP('Lydia A Borden',1773), Worthley:findP('Lydia Worthley',1749), White:findP('Mary White',1730), Hance:findP('Elizabeth Hance',1672),
+    Clevenger:findP('Elizabeth Ann Clevenger',1845), Morse:findP('Harriet Britton Morse',1805), Wall:findP('Mary Elizabeth Wall',1705), Baker:findP('Hannah Baker',1725),
+    Hadden:findP('Sarah Hadden',1656), VanPelt:findP('Catherine VanPelt',1748), Lippincott:findP('Elizabeth Lippincott',1717)}[f]; }
 const SC={proved:'#2f6b35',documented:'#2f6b35',strong:'#5f9a4a',probable:'#d08a3c',compiled:'#d9a441',hypothesis:'#a65d9b',open:'#c0392b',tree:'#c96a55',user:'#b7dba6'};
 const SD={probable:'7 5',compiled:'7 5',hypothesis:'3 4',open:'4 4',tree:'2 4',user:'3 3'};
 /* every point where a surname enters the direct line is its own route to the founder; the first is the main one */
 const STRV={};
-function strEntries(f){ const re=new RegExp(f,'i'), main=strEntry(f), out=main&&P[main]?[main]:[];
+function strEntries(f){ const re=sre(f), main=strEntry(f), out=main&&P[main]?[main]:[];
   const upOf=e=>{const a=[e]; let x=e,g=0; while(g++<30){const ps=(P[x].par||[]).filter(y=>P[y]&&P[y].G0); if(!ps.length) break; const s=ps.filter(y=>re.test(P[y].n)); x=(s.length?s:ps)[0]; a.push(x);} return a;};
   const cand=D.people.filter(p=>p.G0&&!p.virt&&re.test(p.n)&&!D.people.some(k=>k.G0&&(k.par||[]).includes(p.id)&&re.test(k.n))).sort((a,b)=>a.G0-b.G0);
   cand.forEach(p=>{ if(out.includes(p.id)) return; const u=upOf(p.id); if(u.length<2) return; /* a lone name with no parents on the line is not a route */ if(out.some(e=>u.includes(e)||upOf(e).includes(p.id))) return; out.push(p.id); });
   return out; }
 function strLine(f,e){ e=e||strEntry(f); if(!e||!P[e]) return {up:[],down:[]};
-  const re=new RegExp(f,'i'); const up=[e]; let x=e, guard=0;
+  const re=sre(f); const up=[e]; let x=e, guard=0;
   while(guard++<30){ const ps=(P[x].par||[]).filter(y=>P[y]&&P[y].G0); if(!ps.length) break;
     const same=ps.filter(y=>re.test(P[y].n)); const pick=(same.length?same:ps).sort((a,b)=>(sex(a)===2?1:0)-(sex(b)===2?1:0))[0];
     up.push(pick); x=pick; }
@@ -1533,7 +1537,7 @@ function vStr(f){
   const cnt=k=>segs.filter(x=>x.own&&(k.includes(x.lv))).length;
   const strip=`<div class="sstrip">${segs.map(x=>`<i style="background:${SC[x.lv]};opacity:${x.own?1:.45}" title="G${x.g}"></i>`).join('')}</div>
     <div class="sstripg"><span style="left:0">G${sgv(P[all[0]])}</span><span style="left:${(nUp-1)/Math.max(1,segs.length)*100}%;transform:translateX(-50%)">G${sgv(P[all[nUp-1]])}</span><span style="right:0">G${sgv(P[all[all.length-1]])}</span></div>
-    <div class="tiny muted" style="margin:2px 2px 0">${f} line, G${sgv(P[all[0]])}–G${sgv(P[up[nUp-1]])}: ${cnt(['proved','documented'])} documented · ${cnt(['strong'])} strong · ${cnt(['probable','compiled'])} probable or compiled · ${cnt(['hypothesis','open','tree'])} hypothesis, open or unproven${cnt(['user'])?` · ${cnt(['user'])} user`:''}</div>`;
+    <div class="tiny muted" style="margin:2px 2px 0">${(SLINES.find(l=>l[0]===f)||[,f])[1]} line, G${sgv(P[all[0]])}–G${sgv(P[up[nUp-1]])}: ${cnt(['proved','documented'])} documented · ${cnt(['strong'])} strong · ${cnt(['probable','compiled'])} probable or compiled · ${cnt(['hypothesis','open','tree'])} hypothesis, open or unproven${cnt(['user'])?` · ${cnt(['user'])} user`:''}</div>`;
   const row=(id,muted)=>{const p=P[id]; const b=band(p.sc);
     return `<div class="srow${muted?' mute':''}${id===STRHL?' shl':''}" onclick="go('p-${id}')"><span class="sg" style="background:${b?b.color:'#bbb'}">G${sgv(p)}</span>
       <div class="sn"><div class="t">${esc(ME&&ME.you&&id===ME.you?'You':(!(ME&&ME.you&&P[ME.you])&&id===D.root?'The compiler':(p.living?'Living':p.n)))}${p.flag?' <span class="badge flag" style="font-size:10.5px">needs proof to child</span>':''}</div><div class="s">${esc(years(p))}${p.sc!=null&&!p.living?` · support ${p.sc}/100`:''}</div></div><span class="chev">›</span></div>`;};

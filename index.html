@@ -1572,9 +1572,9 @@ function strGrade(f,e){ const {up,down}=strLine(f,e), all=up.concat(down), own=[
   if(A.includes('hypothesis')||A.some(x=>x==='open'||x==='tree')) g=Math.min(g,5.4);
   return Math.max(1,Math.min(10,Math.round(g))); }
 function strCol(v){ return v>=.85?'#2f6b35':v>=.65?'#5f9a4a':v>=.45?'#d9a441':v>=.25?'#d08a3c':'#c0392b'; }
-function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),g:strGrade(k,strEntries(k)[0])||1,n:strEntries(k).length})).sort((a,b)=>b.g-a.g||b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
+function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),g:Math.max(1,...strEntries(k).map(e=>strGrade(k,e)||1)),n:strEntries(k).length})).sort((a,b)=>b.g-a.g||b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
   const chip=x=>{ const c=strCol(x.g/10); return `<button class="chip schip ${x.k===f?'on':''}${x.n>1?' multi':''}" style="--sc:${c}" title="Line grade ${x.g}/10" onclick="strPick('${x.k}')"><i></i>${esc(x.l)}${x.n>1?`<sup class="rtn">${x.n}</sup>`:''}</button>`; };
-  const top=L.filter(x=>x.g>=5), low=L.filter(x=>x.g<5);
+  const top=L.filter(x=>x.g>=6), low=L.filter(x=>x.g<6);
   return `<div class="srows" id="sf"><div class="chips srow1">${top.map(chip).join('')}</div><div class="chips srow2">${low.map(chip).join('')}</div></div>`; }
 function sgv(p){ return p.G||(p.G0&&isFinite(GOFF)&&p.G0-GOFF>=1?p.G0-GOFF:p.G0); }
 function vStr(f){

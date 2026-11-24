@@ -1572,8 +1572,9 @@ function strGrade(f,e){ const {up,down}=strLine(f,e), all=up.concat(down), own=[
   if(A.includes('hypothesis')||A.some(x=>x==='open'||x==='tree')) g=Math.min(g,5.4);
   return Math.max(1,Math.min(10,Math.round(g))); }
 function strCol(v){ return v>=.85?'#2f6b35':v>=.65?'#5f9a4a':v>=.45?'#d9a441':v>=.25?'#d08a3c':'#c0392b'; }
+const gCol=g=>g>=9?'#2f6b35':g>=6?'#5f9a4a':g>=4?'#d9a441':g>=2?'#d08a3c':'#c0392b';
 function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),g:Math.max(1,...strEntries(k).map(e=>strGrade(k,e)||1)),n:strEntries(k).length})).sort((a,b)=>b.g-a.g||b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
-  const chip=x=>{ const c=strCol(x.g/10); return `<button class="chip schip ${x.k===f?'on':''}${x.n>1?' multi':''}" style="--sc:${c}" title="Line grade ${x.g}/10" onclick="strPick('${x.k}')"><i></i>${esc(x.l)}${x.n>1?`<sup class="rtn">${x.n}</sup>`:''}</button>`; };
+  const chip=x=>{ const c=gCol(x.g); return `<button class="chip schip ${x.k===f?'on':''}${x.n>1?' multi':''}" style="--sc:${c}" title="Line grade ${x.g}/10" onclick="strPick('${x.k}')"><i></i>${esc(x.l)}${x.n>1?`<sup class="rtn">${x.n}</sup>`:''}</button>`; };
   const top=L.filter(x=>x.g>=6), low=L.filter(x=>x.g<6);
   return `<div class="srows" id="sf"><div class="chips srow1">${top.map(chip).join('')}</div><div class="chips srow2">${low.map(chip).join('')}</div></div>`; }
 function sgv(p){ return p.G||(p.G0&&isFinite(GOFF)&&p.G0-GOFF>=1?p.G0-GOFF:p.G0); }
@@ -1596,7 +1597,7 @@ function vStr(f){
   const con=(child,muted,par)=>{const L=lnk(child,par); return `<div class="scon${muted?' mute':''}"><svg width="34" height="34"><line x1="17" y1="0" x2="17" y2="34" stroke="${SC[L.lv]}" stroke-width="4" ${SD[L.lv]?`stroke-dasharray="${SD[L.lv]}"`:''} stroke-linecap="round"/></svg>${badge(L.lv,L.s)}${L.note?`<span class="snote">${esc(L.note)}</span>`:''}</div>`;};
   let h=''; all.forEach((id,i)=>{ const muted=i>=nUp; if(i>0) h+=con(id,i>nUp-1&&i>=nUp,all[i-1]); if(i===nUp) h=h; h+=(i===nUp?`<div class="sjoin">Below: the line continues down to ${ME&&ME.you&&P[ME.you]?'you':'the compiler'}</div>`:'')+row(id,muted); });
   app.innerHTML=topBar('Strength of each line',true)+`<div class="wrap">
-    <div class="chartbar">${treeSeg('str')}${(()=>{const g=strGrade(f,ENT[vi]); return g==null?'':`<span class="sgrade" style="--sc:${strCol(g/10)}" title="Line grade, 1 to 10: how well every link from the founder down to the compiler is proved"><b>${g}</b><small>/10</small></span>`;})()}</div>
+    <div class="chartbar">${treeSeg('str')}${(()=>{const g=strGrade(f,ENT[vi]); return g==null?'':`<span class="sgrade" style="--sc:${gCol(g)}" title="Line grade, 1 to 10: how well every link from the founder down to the compiler is proved"><b>${g}</b><small>/10</small></span>`;})()}</div>
     ${strChips(f)}
     ${ENT.length>1?`<div class="rtbar"><span>Route ${vi+1} of ${ENT.length}: through <b>${esc(P[ENT[vi]].n)}</b>${gtag(P[ENT[vi]])}</span><button class="btn" onclick="strPick('${f}')">Next route ›</button></div>`:''}
     ${STRNOTE&&(!STRHL||all.includes(STRHL))?`<div class="tiny muted" style="margin:0 2px 6px">${esc(STRNOTE)}</div>`:''}<div class="card">${strip}</div>

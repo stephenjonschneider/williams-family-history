@@ -1215,7 +1215,7 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .sstripg{position:relative;height:14px;font-size:11px;color:var(--muted);margin:0 1px}.sstripg span{position:absolute;top:0}
 .sladder{padding:10px 12px}
 .mseg{display:inline-flex;background:rgba(246,240,226,.16);border-radius:999px;padding:2px;gap:1px}.mseg button{border:0;background:none;color:#f6f0e2;font:inherit;font-size:13px;line-height:1;padding:7px 10px;border-radius:999px;cursor:pointer}.mseg button.on{background:#d9a441;color:#2a2112;font-weight:600}
-.topbar:has(.mseg)>h1{display:none}.mseg button{white-space:nowrap}@media (max-width:420px){.mseg button{padding:7px 8px;font-size:12.5px}}.hsbar{padding:8px 12px;margin-bottom:8px}.hstop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.hsmode{background:#e9e0cc}.hsmode button{color:#4a3d2a}.hsnow{font-size:13px}.hs-nolbl .hslbl{display:none}#map{position:relative}.hstrail{position:absolute;top:10px;right:10px;z-index:1000;background:#fffaf0;box-shadow:0 1px 4px rgba(0,0,0,.25)}.hsswipe{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;width:240px;gap:14px;scrollbar-width:none}.hsswipe::-webkit-scrollbar{display:none}.hsswipe>.hspop{flex:0 0 240px;scroll-snap-align:start}.hsn{margin-bottom:3px}
+.topbar:has(.mseg)>h1{display:none}.mseg button{white-space:nowrap}@media (max-width:420px){.mseg button{padding:7px 8px;font-size:12.5px}}.hsbar{padding:8px 12px;margin-bottom:8px}.hstop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.hsmode{background:#e9e0cc}.hsmode button{color:#4a3d2a}.hsnow{font-size:13px}.hs-nolbl .hslbl:not(.hshi){display:none}#map{position:relative}.hstrail{position:absolute;top:10px;right:10px;z-index:1000;background:#fffaf0;box-shadow:0 1px 4px rgba(0,0,0,.25)}.hsswipe{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;width:240px;gap:14px;scrollbar-width:none}.hsswipe::-webkit-scrollbar{display:none}.hsswipe>.hspop{flex:0 0 240px;scroll-snap-align:start}.hsn{margin-bottom:3px}.hssearch{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}.hssearch input{flex:1;min-width:180px;font:inherit;font-size:14px;padding:7px 10px;border:1px solid #d8ccb4;border-radius:10px;background:#fffdf8}.hsoff{display:none!important}.plabel.hshi{color:#c2410c!important;font-weight:700}
 .hslg{display:grid;gap:5px;margin-top:8px;font-size:13px}.hslg>div{display:flex;align-items:center;gap:8px}.hsk{display:inline-block;width:14px;height:14px;border-radius:50%;flex:none}
 .hs-photo{background:#7a5a32;box-shadow:0 0 0 2px #fff,0 0 0 3px #d8ccb4}.hs-site{background:#fffaf0;border:3px solid #7a5a32;box-sizing:border-box}.hs-place{background:rgba(122,90,50,.72)}
 .hs-township{width:18px;height:18px;background:rgba(122,90,50,.16);border:1px dashed rgba(122,90,50,.7);box-sizing:border-box}.hs-bd{width:10px;height:10px;margin:0 2px;background:rgba(154,138,112,.4);border:1px solid rgba(154,138,112,.6)}
@@ -2757,7 +2757,7 @@ const TIERTXT={exact:'exact location',site:'identified site',place:'approximate 
 const HST={photo:5,exact:5,site:4,place:3,township:2,bd:1};
 const HSTXT={photo:'Photographed home',exact:'Exact spot',site:'Located tract of land',place:'Village or neighbourhood',township:'Township only',bd:'Birth or death place only'};
 const HSJ={photo:.0005,exact:.0005,site:.0012,place:.003,township:.009,bd:.005};
-let HSD=null, HSY=null;
+let HSD=null, HSY=null, HSQ='';
 function hsData(){ if(HSD) return HSD;
   const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={};
   const add=(id,q)=>{ const L=(byP[id]=byP[id]||{}); const o=L[q.k]||(L[q.k]={k:q.k,lat:q.lat,lon:q.lon,lab:q.lab,t:q.t,ys:[],rs:[]}); if(q.y) o.ys.push(q.y); if(q.r&&!o.rs.includes(q.r)) o.rs.push(q.r); if(HST[q.t]>HST[o.t]){ o.t=q.t; o.lat=q.lat; o.lon=q.lon; o.lab=q.lab; } };
@@ -2784,11 +2784,12 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
   const H=hsData(); if(HSY!=null&&(HSY<H.lo||HSY>H.hi)) HSY=null;
   app.innerHTML=topBar('Map',false,mapTog('home')+'<div class="mcount" id="mcount" title="Direct-line ancestors placed at a home"></div>')+`<div class="wrap">
     <div class="card small hsbar"><div class="hstop"><div class="mseg hsmode"><button id="hsall" class="${HSY==null?'on':''}">All years</button><button id="hsyr" class="${HSY!=null?'on':''}">By year</button></div><div class="hsnow" id="hsnow"></div></div>
-      <input type="range" class="roadslide" id="hssl" min="${H.lo}" max="${H.hi}" step="1" value="${HSY==null?Math.round((H.lo+H.hi)/2):HSY}" aria-label="Year"${HSY==null?' hidden':''}></div>
+      <input type="range" class="roadslide" id="hssl" min="${H.lo}" max="${H.hi}" step="1" value="${HSY==null?Math.round((H.lo+H.hi)/2):HSY}" aria-label="Year"${HSY==null?' hidden':''}>
+      <div class="hssearch"><input id="hsq" type="search" placeholder="Find a name, e.g. Lomell or Daniel Williams" value="${esc(HSQ)}" autocomplete="off"><span id="hsqn" class="tiny"></span></div></div>
     <div id="map"></div>
     <div class="card small"><b>Homesteads.</b> Each pin is one direct-line ancestor at their main home: the best-located place the records show them living or holding land. Tap a pin for every place they lived. Move to <b>By year</b> and slide to see where the family was living in any year.
       <div class="hslg">${['photo','site','place','township','bd'].map(t=>`<div><i class="hsk hs-${t}"></i>${t==='photo'?'Exact spot or photographed home':HSTXT[t]} <span class="muted" id="hsc-${t}"></span></div>`).join('')}</div>
-      <div class="tiny muted" style="margin-top:6px">The pin style shows how exactly the place is known, not how well the person is proved. Pins sharing a village or township are spread a little so each can be seen. Labels appear as you zoom in. Living people are not shown.</div></div></div>`;
+      <div class="tiny muted" style="margin-top:6px">The pin style shows how exactly the place is known, not how well the person is proved. Pins sharing a village or township are spread a little so each can be seen. Labels appear as you zoom in, each set beside its pin where it overlaps least; where pins crowd, a few labels wait until you zoom closer. Search a name to light up every place that person lived. Living people are not shown.</div></div></div>`;
   document.getElementById('hsall').onclick=()=>{ if(MAP) MCARRY={c:MAP.getCenter(),z:MAP.getZoom()}; HSY=null; vHomes(); };
   document.getElementById('hsyr').onclick=()=>{ if(MAP) MCARRY={c:MAP.getCenter(),z:MAP.getZoom()}; HSY=+document.getElementById('hssl').value; vHomes(); };
   if(typeof L==='undefined'){ document.getElementById('map').innerHTML='<div class="empty">Map could not load.</div>'; return; }
@@ -2809,7 +2810,40 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
   const tb=document.createElement('button'); tb.className='chip hstrail'; tb.textContent='✕ Hide homes trail'; tb.hidden=true; document.getElementById('map').appendChild(tb);
   L.DomEvent.disableClickPropagation(tb); tb.onclick=()=>{ trail.clearLayers(); trailBtn(false); };
   function trailBtn(on){ tb.hidden=!on; }
-  const draw=()=>{ layer.clearLayers(); trail.clearLayers(); trailBtn(false); const by={}, n={}; let shown=0;
+  let MKS=[]; const srch=L.layerGroup().addTo(MAP);
+  /* labels: each goes to whichever side of its pin (right, left, above, below, or a corner) collides least with the other pins and labels */
+  const MW={}, msr=t=>{ if(MW[t]) return MW[t]; let e=document.getElementById('hsmsr'); if(!e){ e=document.createElement('div'); e.id='hsmsr'; e.className='leaflet-tooltip plabel minor'; e.style.cssText='position:absolute;visibility:hidden;left:-999px;top:0'; document.body.appendChild(e); } e.textContent=t; return MW[t]=[e.offsetWidth,e.offsetHeight]; };
+  const tip=(k,dir,off,hide)=>{ k.m.unbindTooltip(); k.m.bindTooltip(k.hi&&k.mt?k.mt:k.txt,{permanent:true,direction:dir,offset:off,className:'plabel minor hslbl'+(k.hi?' hshi':'')+(hide?' hsoff':'')}); if(k.hi===0) k.m.getTooltip().setOpacity(.3); };
+  const place=()=>{ const lo=MAP.getZoom()<11.5, sz=MAP.getSize(), boxes=[];
+    MKS.forEach(k=>{ if(k.key===null){ k.key='d'; tip(k,'right',[7,0]); } });
+    const hit=(a,b)=>Math.max(0,Math.min(a[2],b[2])-Math.max(a[0],b[0]))*Math.max(0,Math.min(a[3],b[3])-Math.max(a[1],b[1]));
+    const vis=MKS.filter(k=>{ if(!MAP.hasLayer(k.m)||(lo&&k.hi!==1)) return false; const q=MAP.latLngToContainerPoint(k.m.getLatLng()); k.q=q; return q.x>-150&&q.y>-40&&q.x<sz.x+150&&q.y<sz.y+40; });
+    vis.forEach(k=>{ const r=k.m.getRadius()+1; boxes.push([k.q.x-r,k.q.y-r,k.q.x+r,k.q.y+r]); });
+    vis.sort((a,c)=>(c.hi||0)-(a.hi||0)||c.hh.length-a.hh.length||HST[c.t]-HST[a.t]);
+    vis.forEach(k=>{ const {x,y}=k.q, r=k.m.getRadius()-3, t=k.hi&&k.mt?k.mt:k.txt, [w,h]=msr(t), v=h-6, P=6;
+      /* Leaflet sets a tooltip 6px off its anchor; boxes are the text itself (the 6px padding is trimmed) */
+      const bx=(dir,o)=>{ const ax=x+o[0], ay=y+o[1]; return dir==='right'?[ax+P+6,ay-v/2,ax+w,ay+v/2]:dir==='left'?[ax-w,ay-v/2,ax-P-6,ay+v/2]:dir==='top'?[ax-w/2+6,ay-h-P+3,ax+w/2-6,ay-P-3]:[ax-w/2+6,ay+P+3,ax+w/2-6,ay+h+P-3]; };
+      const C=[['right',[r,0]],['left',[-r,0]],['top',[0,-r]],['bottom',[0,r]],['right',[r-2,-v]],['right',[r-2,v]],['left',[-r+2,-v]],['left',[-r+2,v]],['top',[0,-r-v]],['bottom',[0,r+v]]].map(([d,o])=>[d,o,bx(d,o)]);
+      let best=null; C.forEach((c,i)=>{ const sc=boxes.reduce((t,b)=>t+hit(c[2],b),0)+i*.5; if(!best||sc<best.sc) best={c,sc}; });
+      /* a label that would still sit mostly on top of others is held back until you zoom in (the pin can still be tapped) */
+      const hide=!k.hi&&best.sc>40; if(!hide) boxes.push(best.c[2]); const key=best.c[0]+best.c[1]+hide; if(k.key!==key){ k.key=key; tip(k,best.c[0],best.c[1],hide); } }); };
+  MAP.on('zoomend moveend',()=>{ clearTimeout(MAP._hsp); MAP._hsp=setTimeout(place,80); });
+  const norm=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z ]/g,' ');
+  const hilite=()=>{ srch.clearLayers(); const q=norm(HSQ).split(/\s+/).filter(Boolean), out=document.getElementById('hsqn');
+    const M=new Set(); if(q.length) H.L.forEach(o=>{ const w=norm(o.p.n+' '+(surn(o.p)||'')).split(/\s+/).filter(Boolean); if(q.every(t=>w.some(x=>x.startsWith(t)))) M.add(o.id); });
+    MKS.forEach(k=>{ const on=q.length?k.hh.some(([o])=>M.has(o.id)):null; k.hi=on===null?undefined:on?1:0; k.key=null;
+      if(on){ const sn=[...new Set([...k.hh.filter(([o])=>M.has(o.id)),...k.hh].map(([o])=>hsLabel(o)))]; k.mt=sn.slice(0,2).join(' · ')+(sn.length>2?' +'+(sn.length-2):''); }
+      k.m.setStyle(on===null?k.st:on?{color:'#fff',weight:2.5,opacity:1,fillColor:'#ff5a1f',fillOpacity:1,dashArray:null}:{...k.st,opacity:.25,fillOpacity:.1});
+      k.m.setRadius(on?k.st.radius+3:k.st.radius); if(on) k.m.bringToFront(); });
+    let pts=[];
+    if(q.length&&M.size&&M.size<=4){ H.L.filter(o=>M.has(o.id)).forEach(o=>o.S.forEach(s=>{ pts.push([s.lat,s.lon]); if(MKS.some(k=>k.hi&&k.hh.some(([x,y])=>x===o&&y===s))) return;
+        const m=L.circleMarker([s.lat,s.lon],{pane:'pins',renderer:pinR,radius:6,color:'#fff',weight:2,fillColor:'#ff5a1f',fillOpacity:.9}).addTo(srch);
+        m.bindTooltip(`${esc(String(s.lab).split(',')[0])}${s.y0?' '+s.y0:''}`,{direction:'top',className:'plabel hshi'}); m.bindPopup(()=>card(o),{maxWidth:280}); })); }
+    else MKS.forEach(k=>{ if(k.hi) pts.push(k.m.getLatLng()); });
+    const nPl=MKS.filter(k=>k.hi).length+srch.getLayers().length;
+    if(out) out.innerHTML=!q.length?'':M.size?`<b>${M.size}</b> ${M.size===1?'person':'people'} · <b>${nPl}</b> place${nPl===1?'':'s'}${M.size<=4?' (all their homes)':''}`:'<span class="muted">No one by that name is placed on the map</span>';
+    if(pts.length) MAP.fitBounds(L.latLngBounds(pts).pad(.25),{maxZoom:13}); setTimeout(place,350); };
+  const draw=()=>{ layer.clearLayers(); trail.clearLayers(); trailBtn(false); MKS=[]; const by={}, n={}; let shown=0;
     H.L.forEach(o=>{ const s=hsAt(o,HSY); if(!s) return; (by[s.k]=by[s.k]||[]).push([o,s]); });
     const spo=(a,b)=>(a.p.sp||[]).some(x=>(Array.isArray(x)?x[0]:x)===b.id)||(b.p.sp||[]).some(x=>(Array.isArray(x)?x[0]:x)===a.id);
     Object.values(by).forEach(G=>{ G.sort((a,c)=>(c[0].p.G-a[0].p.G)||a[0].p.n.localeCompare(c[0].p.n));
@@ -2818,13 +2852,15 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
       HH.forEach((hh,i)=>{ const s=hh[0][1];
       const j=s.t==='township'?i+1:i, r=HSJ[s.t]*Math.sqrt(j), an=j*2.39996; const ll=[s.lat+r*Math.sin(an)*.76,s.lon+r*Math.cos(an)];
       const m=L.circleMarker(ll,{pane:'pins',renderer:pinR,...style(s.t),...(hh.length>1?{radius:style(s.t).radius+2}:{})}).addTo(layer); shown+=hh.length; n[s.t]=(n[s.t]||0)+hh.length;
-      const sn=[...new Set(hh.map(([o])=>hsLabel(o)))]; m.bindTooltip(sn.slice(0,2).join(' · ')+(sn.length>2?' +'+(sn.length-2):''),{permanent:true,direction:'right',className:'plabel minor hslbl',offset:[7,0]});
+      const sn=[...new Set(hh.map(([o])=>hsLabel(o)))], txt=sn.slice(0,2).join(' · ')+(sn.length>2?' +'+(sn.length-2):''); m.bindTooltip(txt,{permanent:true,direction:'right',className:'plabel minor hslbl',offset:[7,0]});
+      MKS.push({m,hh,txt,t:s.t,st:{...style(s.t),...(hh.length>1?{radius:style(s.t).radius+2}:{})}});
       m.bindPopup(()=>hh.length>1?`<div class="hsswipe">${hh.map(([o],k)=>card(o,k,hh.length)).join('')}</div>`:card(hh[0][0]),{maxWidth:280,minWidth:240}); }); });
     const mc=document.getElementById('mcount'); if(mc) mc.innerHTML=`<div><b>${shown}</b><span>ancestor${shown===1?'':'s'}</span></div>`;
     ['photo','site','place','township','bd'].forEach(t=>{ const e=document.getElementById('hsc-'+t); if(e) e.textContent='· '+((n[t]||0)+(t==='photo'?(n.exact||0):0)); });
     const nw=document.getElementById('hsnow'); if(nw) nw.innerHTML=HSY==null?`<span class="muted">Each ancestor at their main home</span>`:`<b>${HSY}</b> <span class="muted">· ${shown} living and placed</span>`; };
-  draw();
-  const sl=document.getElementById('hssl'); sl.oninput=()=>{ HSY=+sl.value; draw(); };
+  draw(); if(HSQ) hilite(); else place();
+  const sl=document.getElementById('hssl'); sl.oninput=()=>{ HSY=+sl.value; draw(); hilite(); };
+  const qi=document.getElementById('hsq'); let qt; qi.oninput=()=>{ clearTimeout(qt); qt=setTimeout(()=>{ HSQ=qi.value; hilite(); },250); };
 }
 function vMap(focus){
   setTab('map');

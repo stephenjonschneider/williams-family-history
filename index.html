@@ -2761,7 +2761,9 @@ let HSD=null, HSY=null, HSQ='', HSOPEN=false;
 function hsData(){ if(HSD) return HSD;
   const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={};
   const add=(id,q)=>{ const L=(byP[id]=byP[id]||{}); const o=L[q.k]||(L[q.k]={k:q.k,lat:q.lat,lon:q.lon,lab:q.lab,t:q.t,ys:[],rs:[]}); if(q.y) o.ys.push(q.y); if(q.r&&!o.rs.includes(q.r)) o.rs.push(q.r); if(HST[q.t]>HST[o.t]){ o.t=q.t; o.lat=q.lat; o.lon=q.lon; o.lab=q.lab; } };
-  D.records.forEach(r=>{ if(r.side) return; const pl=PL[r.pl]; if(!pl||pl.tier==='court') return; const y=yr(r.sd)||0;
+  /* no one of the family lived on the Monmouth side before the English came in 1664: an earlier date there (family tradition) does not count as a year lived */
+  const MON=1664, inMon=lat=>lat<40.55;
+  D.records.forEach(r=>{ if(r.side) return; const pl=PL[r.pl]; if(!pl||pl.tier==='court') return; let y=yr(r.sd)||0; if(y&&y<MON&&inMon(pl.lat)) y=0;
     new Set([...(r.ppl||[]),...(r.home||[])]).forEach(id=>{ if(ids.has(id)&&tieOf(r,id)==='home') add(id,{k:r.pl,lat:pl.lat,lon:pl.lon,lab:pl.label,t:pl.tier,y,r:r.id}); }); });
   (D.homes||[]).forEach((h,i)=>{ if(!h.ll) return; (h.ppl||[]).forEach(id=>{ if(ids.has(id)) ((String(h.y||'').match(/1[6-9]\d\d|20\d\d/g)||[null]).map(Number)).forEach(y=>add(id,{k:'home'+i,lat:h.ll[0],lon:h.ll[1],lab:h.a,t:'photo',y})); }); });
   const out=[]; let lo=2100, hi=1500;
@@ -2777,8 +2779,12 @@ function hsData(){ if(HSD) return HSD;
   return HSD={L:out,lo:Math.max(lo,1640),hi:Math.min(hi,new Date().getFullYear())}; }
 /* where an ancestor lived in year Y: the place of their latest record by then, else their earliest place */
 function hsAt(o,Y){ if(Y==null) return o.main; if(!o.s||!o.e||Y<o.s||Y>o.e) return null;
-  let best=null; o.S.forEach(s=>{ const k=s.ys.filter(y=>y<=Y); const m=k.length?Math.max(...k):null; if(m!=null&&(!best||m>best.m||(m===best.m&&HST[s.t]>HST[best.s.t]))) best={s,m}; });
-  return best?best.s:o.S[0]; }
+  /* before 1664 an ancestor can only be shown off the Monmouth side (Gravesend, New England): if nothing places them there, they are not shown */
+  const ok=s=>!(Y<1664&&s.lat<40.55), S=o.S.filter(ok); if(!S.length) return null;
+  let best=null; S.forEach(s=>{ const k=s.ys.filter(y=>y<=Y); const m=k.length?Math.max(...k):null; if(m!=null&&(!best||m>best.m||(m===best.m&&HST[s.t]>HST[best.s.t]))) best={s,m}; });
+  if(best) return best.s;
+  /* nothing dated yet by year Y: someone born here (1670 on) is shown at their first home; an earlier settler appears only when a record first places them */
+  const b=yr(o.p.b); return b&&b>=1670&&Y>=b?S[0]:null; }
 function hsLabel(o){ return (surn(o.p)||o.p.n.split(' ').pop())+' G'+o.p.G; }
 function vHomes(){ setTab('map'); store('wfh-mapmode','home');
   const H=hsData(); if(HSY!=null&&(HSY<H.lo||HSY>H.hi)) HSY=null;

@@ -1215,7 +1215,7 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .sstripg{position:relative;height:14px;font-size:11px;color:var(--muted);margin:0 1px}.sstripg span{position:absolute;top:0}
 .sladder{padding:10px 12px}
 .mseg{display:inline-flex;background:rgba(246,240,226,.16);border-radius:999px;padding:2px;gap:1px}.mseg button{border:0;background:none;color:#f6f0e2;font:inherit;font-size:13px;line-height:1;padding:7px 10px;border-radius:999px;cursor:pointer}.mseg button.on{background:#d9a441;color:#2a2112;font-weight:600}
-.topbar:has(.mseg)>h1{display:none}.mseg button{white-space:nowrap}@media (max-width:420px){.mseg button{padding:7px 8px;font-size:12.5px}}.hsbar{padding:8px 12px;margin-bottom:8px}.hstop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.hsmode{background:#e9e0cc}.hsmode button{color:#4a3d2a}.hsnow{font-size:13px}.hs-nolbl .hslbl:not(.hshi){display:none}#map{position:relative}.hstrail{position:absolute;top:10px;right:10px;z-index:1000;background:#fffaf0;box-shadow:0 1px 4px rgba(0,0,0,.25)}.hsswipe{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;width:240px;gap:14px;scrollbar-width:none}.hsswipe::-webkit-scrollbar{display:none}.hsswipe>.hspop{flex:0 0 240px;scroll-snap-align:start}.hsn{margin-bottom:3px}.hssearch{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}.hssearch input{flex:1;min-width:180px;font:inherit;font-size:14px;padding:7px 10px;border:1px solid #d8ccb4;border-radius:10px;background:#fffdf8}.hsoff{display:none!important}.plabel.hshi{color:#c2410c!important;font-weight:700}
+.topbar:has(.mseg)>h1{display:none}.mseg button{white-space:nowrap}@media (max-width:420px){.mseg button{padding:7px 8px;font-size:12.5px}}.hsbar{padding:8px 12px;margin-bottom:8px}.hstop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.hsmode{background:#e9e0cc}.hsmode button{color:#4a3d2a}.hsnow{font-size:13px;margin-top:6px}.hs-nolbl .hslbl:not(.hshi){display:none}#map{position:relative}.hstrail{position:absolute;top:10px;right:10px;z-index:1000;background:#fffaf0;box-shadow:0 1px 4px rgba(0,0,0,.25)}.hsswipe{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;width:240px;gap:14px;scrollbar-width:none}.hsswipe::-webkit-scrollbar{display:none}.hsswipe>.hspop{flex:0 0 240px;scroll-snap-align:start}.hsn{margin-bottom:3px}.hsfind{margin-left:auto;flex:none}.hsfind.on{background:#ff5a1f;border-color:#ff5a1f;color:#fff}.hssearch{margin-top:8px}.hssearch[hidden]{display:none}.hsqrow{display:flex;gap:8px;align-items:center;margin-bottom:4px}.hssearch input{flex:1;min-width:0;font:inherit;font-size:14px;padding:7px 10px;border:1px solid #d8ccb4;border-radius:10px;background:#fffdf8}.hsoff{display:none!important}.plabel.hshi{color:#c2410c!important;font-weight:700}
 .hslg{display:grid;gap:5px;margin-top:8px;font-size:13px}.hslg>div{display:flex;align-items:center;gap:8px}.hsk{display:inline-block;width:14px;height:14px;border-radius:50%;flex:none}
 .hs-photo{background:#7a5a32;box-shadow:0 0 0 2px #fff,0 0 0 3px #d8ccb4}.hs-site{background:#fffaf0;border:3px solid #7a5a32;box-sizing:border-box}.hs-place{background:rgba(122,90,50,.72)}
 .hs-township{width:18px;height:18px;background:rgba(122,90,50,.16);border:1px dashed rgba(122,90,50,.7);box-sizing:border-box}.hs-bd{width:10px;height:10px;margin:0 2px;background:rgba(154,138,112,.4);border:1px solid rgba(154,138,112,.6)}
@@ -2757,7 +2757,7 @@ const TIERTXT={exact:'exact location',site:'identified site',place:'approximate 
 const HST={photo:5,exact:5,site:4,place:3,township:2,bd:1};
 const HSTXT={photo:'Photographed home',exact:'Exact spot',site:'Located tract of land',place:'Village or neighbourhood',township:'Township only',bd:'Birth or death place only'};
 const HSJ={photo:.0005,exact:.0005,site:.0012,place:.003,township:.009,bd:.005};
-let HSD=null, HSY=null, HSQ='';
+let HSD=null, HSY=null, HSQ='', HSOPEN=false;
 function hsData(){ if(HSD) return HSD;
   const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={};
   const add=(id,q)=>{ const L=(byP[id]=byP[id]||{}); const o=L[q.k]||(L[q.k]={k:q.k,lat:q.lat,lon:q.lon,lab:q.lab,t:q.t,ys:[],rs:[]}); if(q.y) o.ys.push(q.y); if(q.r&&!o.rs.includes(q.r)) o.rs.push(q.r); if(HST[q.t]>HST[o.t]){ o.t=q.t; o.lat=q.lat; o.lon=q.lon; o.lab=q.lab; } };
@@ -2783,9 +2783,9 @@ function hsLabel(o){ return (surn(o.p)||o.p.n.split(' ').pop())+' G'+o.p.G; }
 function vHomes(){ setTab('map'); store('wfh-mapmode','home');
   const H=hsData(); if(HSY!=null&&(HSY<H.lo||HSY>H.hi)) HSY=null;
   app.innerHTML=topBar('Map',false,mapTog('home')+'<div class="mcount" id="mcount" title="Direct-line ancestors placed at a home"></div>')+`<div class="wrap">
-    <div class="card small hsbar"><div class="hstop"><div class="mseg hsmode"><button id="hsall" class="${HSY==null?'on':''}">All years</button><button id="hsyr" class="${HSY!=null?'on':''}">By year</button></div><div class="hsnow" id="hsnow"></div></div>
+    <div class="card small hsbar"><div class="hstop"><div class="mseg hsmode"><button id="hsall" class="${HSY==null?'on':''}">All years</button><button id="hsyr" class="${HSY!=null?'on':''}">By year</button></div><button class="chip hsfind${HSQ?' on':''}" id="hsfind">${HSOPEN?'Close':'🔍 Search'}</button></div><div class="hsnow" id="hsnow"></div>
       <input type="range" class="roadslide" id="hssl" min="${H.lo}" max="${H.hi}" step="1" value="${HSY==null?Math.round((H.lo+H.hi)/2):HSY}" aria-label="Year"${HSY==null?' hidden':''}>
-      <div class="hssearch"><input id="hsq" type="search" placeholder="Find a name, e.g. Lomell or Daniel Williams" value="${esc(HSQ)}" autocomplete="off"><span id="hsqn" class="tiny"></span></div></div>
+      <div class="hssearch"${HSOPEN?'':' hidden'}><div class="hsqrow"><input id="hsq" type="text" placeholder="Find a name, e.g. Lomell or Daniel Williams" value="${esc(HSQ)}" autocomplete="off"><button class="chip" id="hsclr"${HSQ?'':' hidden'}>✕ Clear</button></div><span id="hsqn" class="tiny"></span></div></div>
     <div id="map"></div>
     <div class="card small"><b>Homesteads.</b> Each pin is one direct-line ancestor at their main home: the best-located place the records show them living or holding land. Tap a pin for every place they lived. Move to <b>By year</b> and slide to see where the family was living in any year.
       <div class="hslg">${['photo','site','place','township','bd'].map(t=>`<div><i class="hsk hs-${t}"></i>${t==='photo'?'Exact spot or photographed home':HSTXT[t]} <span class="muted" id="hsc-${t}"></span></div>`).join('')}</div>
@@ -2860,7 +2860,12 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
     const nw=document.getElementById('hsnow'); if(nw) nw.innerHTML=HSY==null?`<span class="muted">Each ancestor at their main home</span>`:`<b>${HSY}</b> <span class="muted">· ${shown} living and placed</span>`; };
   draw(); if(HSQ) hilite(); else place();
   const sl=document.getElementById('hssl'); sl.oninput=()=>{ HSY=+sl.value; draw(); hilite(); };
-  const qi=document.getElementById('hsq'); let qt; qi.oninput=()=>{ clearTimeout(qt); qt=setTimeout(()=>{ HSQ=qi.value; hilite(); },250); };
+  const qi=document.getElementById('hsq'), fb=document.getElementById('hsfind'), cb=document.getElementById('hsclr'), sb=document.querySelector('.hssearch'); let qt;
+  /* closing the search keeps a name lit (the button shows it); open it again to clear */
+  const fbTxt=()=>{ fb.textContent=HSOPEN?'Close':HSQ?'🔍 '+(HSQ.length>14?HSQ.slice(0,13)+'…':HSQ):'🔍 Search'; fb.classList.toggle('on',!!HSQ&&!HSOPEN); cb.hidden=!HSQ; };
+  fb.onclick=()=>{ HSOPEN=!HSOPEN; sb.hidden=!HSOPEN; fbTxt(); if(HSOPEN) qi.focus(); MAP.invalidateSize(); };
+  cb.onclick=()=>{ qi.value=''; HSQ=''; hilite(); fbTxt(); qi.focus(); };
+  qi.oninput=()=>{ clearTimeout(qt); qt=setTimeout(()=>{ HSQ=qi.value.trim(); hilite(); fbTxt(); },250); }; fbTxt();
 }
 function vMap(focus){
   setTab('map');

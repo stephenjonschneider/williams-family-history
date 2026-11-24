@@ -1160,6 +1160,7 @@ input,select,textarea{color:#2e2a24;-webkit-text-fill-color:#2e2a24}
 #pf{flex-wrap:nowrap;gap:3px}#pf .chip{padding:5px 6px;font-size:clamp(10.5px,2.9vw,13px);flex:0 1 auto;white-space:nowrap}#pf .chip[data-f=__photos]{background:#eef3ea;border-color:#c9d8bf}
 .chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 11px;font-size:13.5px;cursor:pointer;white-space:nowrap}
 .chip.on{background:var(--green);border-color:var(--green);color:#f6f0e2}
+.sgrade{margin-left:auto;display:flex;align-items:baseline;gap:1px;background:var(--sc);color:#fff;border-radius:12px;padding:4px 11px 5px;line-height:1;box-shadow:0 1px 0 rgba(0,0,0,.15)}.sgrade b{font-size:24px;font-family:'Fredoka','Trebuchet MS',sans-serif;font-weight:600}.sgrade small{font-size:12px;opacity:.85}
 .srows{margin:8px -14px 8px;padding:0 14px}.srows .chips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0;padding:4px 14px 3px;margin:0 -14px;gap:6px}.srows .chips::-webkit-scrollbar{display:none}
 .srows .chip{flex:none}.srow2 .chip{font-size:12.5px;padding:4px 10px}
 .schip{background:color-mix(in srgb,var(--sc) 14%,var(--paper));border-color:color-mix(in srgb,var(--sc) 45%,var(--line))}
@@ -1538,6 +1539,18 @@ const SW={proved:1,documented:1,strong:.85,user:.6,probable:.55,compiled:.5,hypo
 function strScore(f){ if(SCORE[f]!=null) return SCORE[f]; const {up}=strLine(f,strEntries(f)[0]); let t=0,n=0;
   for(let i=1;i<up.length;i++){ t+=SW[strLnk(up[i],up[i-1]).lv]??0; n++; }
   return SCORE[f]=n?t/n:0; }
+/* a 1-10 grade for one route: its own links (founder down to the join) weigh 80%, the path on down to the compiler 20%;
+   each Open or tree-only link anywhere costs a little, and any Hypothesis, Open or tree-only link caps the route at 5;
+   a line of only one or two links loses half a point */
+const GW={proved:1,documented:1,strong:.85,probable:.45,compiled:.3,hypothesis:.1,open:0,tree:0};
+function strGrade(f,e){ const {up,down}=strLine(f,e), all=up.concat(down), own=[], dn=[];
+  for(let i=1;i<all.length;i++){ const lv=strLnk(all[i],all[i-1]).lv; if(lv==='user') continue; (i<up.length?own:dn).push(lv); }
+  if(!own.length) return null;
+  const av=a=>a.length?a.reduce((t,x)=>t+(GW[x]??0),0)/a.length:1, A=own.concat(dn);
+  let g=1+9*(.8*av(own)+.2*av(dn))-.3*A.filter(x=>x==='open'||x==='tree').length;
+  if(own.length<3) g-=.5; /* one or two links is thin evidence however good */
+  if(A.includes('hypothesis')||A.some(x=>x==='open'||x==='tree')) g=Math.min(g,5.4);
+  return Math.max(1,Math.min(10,Math.round(g))); }
 function strCol(v){ return v>=.85?'#2f6b35':v>=.65?'#5f9a4a':v>=.45?'#d9a441':v>=.25?'#d08a3c':'#c0392b'; }
 function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),n:strEntries(k).length})).sort((a,b)=>b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
   const chip=x=>{ const c=strCol(x.v); return `<button class="chip schip ${x.k===f?'on':''}${x.n>1?' multi':''}" style="--sc:${c}" title="${Math.round(x.v*100)}% of links documented or well supported" onclick="strPick('${x.k}')"><i></i>${esc(x.l)}${x.n>1?`<sup class="rtn">${x.n}</sup>`:''}</button>`; };
@@ -1563,7 +1576,7 @@ function vStr(f){
   const con=(child,muted,par)=>{const L=lnk(child,par); return `<div class="scon${muted?' mute':''}"><svg width="34" height="34"><line x1="17" y1="0" x2="17" y2="34" stroke="${SC[L.lv]}" stroke-width="4" ${SD[L.lv]?`stroke-dasharray="${SD[L.lv]}"`:''} stroke-linecap="round"/></svg>${badge(L.lv,L.s)}${L.note?`<span class="snote">${esc(L.note)}</span>`:''}</div>`;};
   let h=''; all.forEach((id,i)=>{ const muted=i>=nUp; if(i>0) h+=con(id,i>nUp-1&&i>=nUp,all[i-1]); if(i===nUp) h=h; h+=(i===nUp?`<div class="sjoin">Below: the line continues down to ${ME&&ME.you&&P[ME.you]?'you':'the compiler'}</div>`:'')+row(id,muted); });
   app.innerHTML=topBar('Strength of each line',true)+`<div class="wrap">
-    <div class="chartbar">${treeSeg('str')}</div>
+    <div class="chartbar">${treeSeg('str')}${(()=>{const g=strGrade(f,ENT[vi]); return g==null?'':`<span class="sgrade" style="--sc:${strCol(g/10)}" title="Line grade, 1 to 10: how well every link from the founder down to the compiler is proved"><b>${g}</b><small>/10</small></span>`;})()}</div>
     ${strChips(f)}
     ${ENT.length>1?`<div class="rtbar"><span>Route ${vi+1} of ${ENT.length}: through <b>${esc(P[ENT[vi]].n)}</b>${gtag(P[ENT[vi]])}</span><button class="btn" onclick="strPick('${f}')">Next route ›</button></div>`:''}
     ${STRNOTE&&(!STRHL||all.includes(STRHL))?`<div class="tiny muted" style="margin:0 2px 6px">${esc(STRNOTE)}</div>`:''}<div class="card">${strip}</div>

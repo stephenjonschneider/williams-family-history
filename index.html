@@ -1160,6 +1160,11 @@ input,select,textarea{color:#2e2a24;-webkit-text-fill-color:#2e2a24}
 #pf{flex-wrap:nowrap;gap:3px}#pf .chip{padding:5px 6px;font-size:clamp(10.5px,2.9vw,13px);flex:0 1 auto;white-space:nowrap}#pf .chip[data-f=__photos]{background:#eef3ea;border-color:#c9d8bf}
 .chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 11px;font-size:13.5px;cursor:pointer;white-space:nowrap}
 .chip.on{background:var(--green);border-color:var(--green);color:#f6f0e2}
+.srows{margin:8px -14px 8px;padding:0 14px}.srows .chips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0;padding:4px 14px 3px;margin:0 -14px;gap:6px}.srows .chips::-webkit-scrollbar{display:none}
+.srows .chip{flex:none}.srow2 .chip{font-size:12.5px;padding:4px 10px}
+.schip{background:color-mix(in srgb,var(--sc) 14%,var(--paper));border-color:color-mix(in srgb,var(--sc) 45%,var(--line))}
+.schip i{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--sc);margin-right:5px;vertical-align:0}
+.schip.on{background:var(--sc);border-color:var(--sc);color:#fff}.schip.on i{background:#fff}
 select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 13px) 55%,calc(100% - 8px) 55%;background-size:5px 5px;background-repeat:no-repeat}
 .row{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--paper);border:1px solid var(--line);border-radius:10px;margin-bottom:7px;cursor:pointer;text-decoration:none;color:inherit}
 .row:active{background:#f1ead9}
@@ -1521,6 +1526,23 @@ function strLine(f,e){ e=e||strEntry(f); if(!e||!P[e]) return {up:[],down:[]};
     const c=viewer?kids.find(q=>q.G&&P[x].G&&q.G===P[x].G-1):kids.find(q=>q.G0&&q.G0===P[x].G0-1);
     if(!c) break; down.push(c.id); x=c.id; }
   return {up:up.reverse(), down}; }
+/* the grade of one parent link: the child's proof status, or, where the workbook grades the two parents apart
+   ("Documented (father) · Strong (mother)"), the grade for the parent this line runs through */
+function strLnk(c,par){ const p=P[c]; let lv=lvOf(p); const s=String(p.ps&&p.ps.s||'');
+  const side=par&&P[par]?(sex(par)===1?'father':'mother'):null, m=side&&s.match(new RegExp('(Documented|Strong|Probable|Compiled|Hypothesis|Open|Tree only)[^·]*\\('+side+'\\)','i'));
+  if(m){ const k={documented:'documented',strong:'strong',probable:'probable',compiled:'compiled',hypothesis:'hypothesis',open:'open','tree only':'tree'}[m[1].toLowerCase()]; if(k) lv=k; }
+  return {lv, s:LVL[lv], note:STRNOTEP[c]||''}; }
+/* how well documented a line is, 0-1: its own links (from the founder down to where it joins), each weighted by grade,
+   on its main route. The family buttons are shaded by it and sorted into two rows */
+const SW={proved:1,documented:1,strong:.85,user:.6,probable:.55,compiled:.5,hypothesis:.25,open:0,tree:0}, SCORE={};
+function strScore(f){ if(SCORE[f]!=null) return SCORE[f]; const {up}=strLine(f,strEntries(f)[0]); let t=0,n=0;
+  for(let i=1;i<up.length;i++){ t+=SW[strLnk(up[i],up[i-1]).lv]??0; n++; }
+  return SCORE[f]=n?t/n:0; }
+function strCol(v){ return v>=.85?'#2f6b35':v>=.65?'#5f9a4a':v>=.45?'#d9a441':v>=.25?'#d08a3c':'#c0392b'; }
+function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),n:strEntries(k).length})).sort((a,b)=>b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
+  const chip=x=>{ const c=strCol(x.v); return `<button class="chip schip ${x.k===f?'on':''}${x.n>1?' multi':''}" style="--sc:${c}" title="${Math.round(x.v*100)}% of links documented or well supported" onclick="strPick('${x.k}')"><i></i>${esc(x.l)}${x.n>1?`<sup class="rtn">${x.n}</sup>`:''}</button>`; };
+  const top=L.filter(x=>x.v>=.45), low=L.filter(x=>x.v<.45);
+  return `<div class="srows" id="sf"><div class="chips srow1">${top.map(chip).join('')}</div><div class="chips srow2">${low.map(chip).join('')}</div></div>`; }
 function sgv(p){ return p.G||(p.G0&&isFinite(GOFF)&&p.G0-GOFF>=1?p.G0-GOFF:p.G0); }
 function vStr(f){
   if(!SLINES.some(l=>l[0]===f)) f='Williams'; setTab('tree'); store('wfh-tree','str'); store('wfh-str',f);
@@ -1528,10 +1550,7 @@ function vStr(f){
   const {up,down}=strLine(f,ENT[vi]); const all=up.concat(down); const nUp=up.length;
   /* the tag names the grade only. Where the workbook grades the two parents apart ("Documented (father) · Strong (mother)"),
      the tag shows the grade of the parent this line runs through */
-  const lnk=(c,par)=>{ const p=P[c]; let lv=lvOf(p); const s=String(p.ps&&p.ps.s||'');
-    const side=par&&P[par]?(sex(par)===1?'father':'mother'):null, m=side&&s.match(new RegExp('(Documented|Strong|Probable|Compiled|Hypothesis|Open|Tree only)[^·]*\\('+side+'\\)','i'));
-    if(m){ const k={documented:'documented',strong:'strong',probable:'probable',compiled:'compiled',hypothesis:'hypothesis',open:'open','tree only':'tree'}[m[1].toLowerCase()]; if(k) lv=k; }
-    return {lv, s:LVL[lv], note:STRNOTEP[c]||''}; };
+  const lnk=strLnk;
   // strip across the top: one segment per parent link, oldest on the left
   const segs=[]; for(let i=1;i<all.length;i++){ const L=lnk(all[i],all[i-1]); segs.push({lv:L.lv,g:sgv(P[all[i-1]]),own:i<nUp}); }
   const cnt=k=>segs.filter(x=>x.own&&(k.includes(x.lv))).length;
@@ -1545,11 +1564,12 @@ function vStr(f){
   let h=''; all.forEach((id,i)=>{ const muted=i>=nUp; if(i>0) h+=con(id,i>nUp-1&&i>=nUp,all[i-1]); if(i===nUp) h=h; h+=(i===nUp?`<div class="sjoin">Below: the line continues down to ${ME&&ME.you&&P[ME.you]?'you':'the compiler'}</div>`:'')+row(id,muted); });
   app.innerHTML=topBar('Strength of each line',true)+`<div class="wrap">
     <div class="chartbar">${treeSeg('str')}</div>
-    <div class="chips" id="sf">${SLINES.map(([k,l])=>{const n=strEntries(k).length; return `<button class="chip ${k===f?'on':''}${n>1?' multi':''}" onclick="strPick('${k}')">${l}${n>1?`<sup class="rtn">${n}</sup>`:''}</button>`}).join('')}</div>
+    ${strChips(f)}
     ${ENT.length>1?`<div class="rtbar"><span>Route ${vi+1} of ${ENT.length}: through <b>${esc(P[ENT[vi]].n)}</b>${gtag(P[ENT[vi]])}</span><button class="btn" onclick="strPick('${f}')">Next route ›</button></div>`:''}
     ${STRNOTE&&(!STRHL||all.includes(STRHL))?`<div class="tiny muted" style="margin:0 2px 6px">${esc(STRNOTE)}</div>`:''}<div class="card">${strip}</div>
     <div class="card sladder">${h}</div>
     <div class="tiny muted" style="margin:6px 2px 14px">Each line between two names is one parent link, coloured by its proof: green documented or strong, orange probable or compiled, purple a working hypothesis, red open or unproven (dashed when not documented), the palest green “User” for a link a family member entered themselves — trusted, but with no record or tree behind it yet. The G-tag is shaded by how well that person is supported. Tap a name to open the person.</div></div>`;
+  { const on=document.querySelector('#sf .chip.on'); if(on) on.scrollIntoView({block:'nearest',inline:'center'}); }
   if(STRHL){ const el=document.querySelector('.srow.shl'); if(el) setTimeout(()=>el.scrollIntoView({block:'center'}),60); }
 }
 

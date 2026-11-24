@@ -1215,6 +1215,10 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .sstripg{position:relative;height:14px;font-size:11px;color:var(--muted);margin:0 1px}.sstripg span{position:absolute;top:0}
 .sladder{padding:10px 12px}
 .mseg{display:inline-flex;background:rgba(246,240,226,.16);border-radius:999px;padding:2px;gap:1px}.mseg button{border:0;background:none;color:#f6f0e2;font:inherit;font-size:13px;line-height:1;padding:7px 10px;border-radius:999px;cursor:pointer}.mseg button.on{background:#d9a441;color:#2a2112;font-weight:600}
+.topbar:has(.mseg)>h1{display:none}.mseg button{white-space:nowrap}@media (max-width:420px){.mseg button{padding:7px 8px;font-size:12.5px}}.hsbar{padding:8px 12px;margin-bottom:8px}.hstop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.hsmode{background:#e9e0cc}.hsmode button{color:#4a3d2a}.hsnow{font-size:13px}.hs-nolbl .hslbl{display:none}
+.hslg{display:grid;gap:5px;margin-top:8px;font-size:13px}.hslg>div{display:flex;align-items:center;gap:8px}.hsk{display:inline-block;width:14px;height:14px;border-radius:50%;flex:none}
+.hs-photo{background:#7a5a32;box-shadow:0 0 0 2px #fff,0 0 0 3px #d8ccb4}.hs-site{background:#fffaf0;border:3px solid #7a5a32;box-sizing:border-box}.hs-place{background:rgba(122,90,50,.72)}
+.hs-township{width:18px;height:18px;background:rgba(122,90,50,.16);border:1px dashed rgba(122,90,50,.7);box-sizing:border-box}.hs-bd{width:10px;height:10px;margin:0 2px;background:rgba(154,138,112,.4);border:1px solid rgba(154,138,112,.6)}
 .mcount{margin-left:auto;display:flex;gap:11px;line-height:1.05;color:#f6f0e2;flex:0 0 auto}.mcount>div{display:flex;flex-direction:column;align-items:flex-end}
 .mcount b{font:700 15px system-ui,sans-serif;letter-spacing:.2px}
 .mcount span{font:500 9.5px system-ui,sans-serif;opacity:.75;letter-spacing:.3px}
@@ -1485,7 +1489,7 @@ function relLine(id){const r=relation(id); if(!r) return ''; const you=refName()
 const app=document.getElementById('app');
 const TABS=[['home','Home','<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],['story','Story','<path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/>'],['people','People','<circle cx="9" cy="8" r="3.2"/><path d="M3 20c.8-3.5 3.2-5.5 6-5.5s5.2 2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5c2.6.2 4.3 2 5 5"/>'],['tree','Tree','<circle cx="12" cy="5" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M12 7.2v4.3M6 15.8V12h12v3.8"/>'],['map','Map','<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/>'],['kids','Kids','']];
 document.getElementById('tabs').innerHTML=TABS.map(([k,l,s])=>k==='kids'?`<button data-t="kids" class="kidtab" aria-label="Kids">${'K,i,d,s'.split(',').map((c,i)=>`<b style="color:${['#e63b2e','#1f6fd1','#f2a400','#2e9e4f'][i]};transform:rotate(${[-10,7,-5,11][i]}deg) translateY(${[1,-2,2,-1][i]}px)">${c}</b>`).join('')}</button>`:`<button data-t="${k}"><svg viewBox="0 0 24 24">${s}</svg>${l}</button>`).join('');
-document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b){const t=b.dataset.t; if(t==='map'){ mState.ids=null; if(store('wfh-mapmode')==='move'){ go('mapmove'); return; } } if(t==='records') rState.pp=''; go(t==='tree'?(store('wfh-tree')==='fan'?(TREEP&&P[TREEP]?fanGo(TREEP):'fan'):{chart:'chart-',list:'anc-'}[store('wfh-tree')]?{chart:'chart-',list:'anc-'}[store('wfh-tree')]+treeMe():(TREEP&&P[TREEP]?strHash(TREEP):'str-'+(store('wfh-str')||'Williams'))):t)}};
+document.getElementById('tabs').onclick=e=>{const b=e.target.closest('button');if(b){const t=b.dataset.t; if(t==='map'){ mState.ids=null; if(store('wfh-mapmode')==='move'){ go('mapmove'); return; } if(store('wfh-mapmode')==='home'){ go('maphome'); return; } } if(t==='records') rState.pp=''; go(t==='tree'?(store('wfh-tree')==='fan'?(TREEP&&P[TREEP]?fanGo(TREEP):'fan'):{chart:'chart-',list:'anc-'}[store('wfh-tree')]?{chart:'chart-',list:'anc-'}[store('wfh-tree')]+treeMe():(TREEP&&P[TREEP]?strHash(TREEP):'str-'+(store('wfh-str')||'Williams'))):t)}};
 /* a surname chosen from Family names holds while you stay in the People tab (lists and person pages) */
 function setTab(t){ if(t!=='people'&&typeof pState!=='undefined'){ pState.sn=''; pState.sv=''; } document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
 function go(h){ if(location.hash==='#'+h) route(); else location.hash=h; }
@@ -2221,9 +2225,9 @@ function roadPos(o,Y){ if(Y<o.s||Y>=o.e+1) return null; const Q=o.pts; let k=-1;
   if(k<0) return [Q[0].lat,Q[0].lon,0]; const a=Q[k], n=Q[k+1];
   if(n){ const span=Math.min(3,Math.max(1,n.y-a.y)); let f=(Y-(n.y-span))/span; if(f>0){ f=Math.min(1,f); f=f*f*(3-2*f); return [a.lat+(n.lat-a.lat)*f,a.lon+(n.lon-a.lon)*f,k]; } }
   return [a.lat,a.lon,k]; }
-function mapTog(m){ const cur=m==='tour'?'tour':m?'move':'std';
+function mapTog(m){ const cur=m==='tour'?'tour':m==='home'?'home':m?'move':'std';
   const b=(k,l,a)=>`<button class="${cur===k?'on':''}" onclick="${a}" aria-pressed="${cur===k}">${l}</button>`;
-  return `<div class="mseg" role="group" aria-label="Map view">${b('std','Map',"store('wfh-mapmode','std');go('map')")}${b('move','In motion',"store('wfh-mapmode','move');go('mapmove')")}${b('tour','Tour',"go('maptour')")}</div>`; }
+  return `<div class="mseg" role="group" aria-label="Map view">${b('std','Map',"store('wfh-mapmode','std');go('map')")}${b('move','In motion',"store('wfh-mapmode','move');go('mapmove')")}${b('tour','Tour',"go('maptour')")}${b('home','Homesteads',"go('maphome')")}</div>`; }
 function roadW(y,Y){ if(Y<y-4) return 0; if(Y<y) return (Y-(y-4))/4; if(Y<=y+15) return 1; if(Y<=y+40) return 1-(Y-y-15)/25; return 0; }
 function vRoad(asMap,tour){ RLEG=''; TS=null; setTab(asMap?'map':'story'); if(asMap&&!tour) store('wfh-mapmode','move'); const RD=roadData(); ROADPLAY=false; if(ROADY<RD.lo||ROADY>RD.hi) ROADY=RD.lo;
   if(tour){ ROADY=1643; RFAMT=RFAM; RFAM=new Set(RCORE); } else if(RFAMT){ RFAM=RFAMT; RFAMT=null; }
@@ -2748,6 +2752,71 @@ function tieOf(r,pid){const p=P[pid]; if(!p||!r.pl) return 'ref';
   return 'ref';}
 function recTie(r){ if(r._tie) return r._tie; const ps=(r.ppl||[]).filter(x=>P[x]); r._tie=r.home?((r.hany||r.home.length)?'home':'ref'):ps.length?(ps.some(x=>tieOf(r,x)==='home')?'home':'ref'):(HOMEK.has(r.tk)?'home':'ref'); return r._tie; }
 const TIERTXT={exact:'exact location',site:'identified site',place:'approximate — named place',township:'approximate — township only',court:'county court house (where the record was made)'};
+/* ---------- Homesteads: one pin per direct-line ancestor at their best-located home ---------- */
+const HST={photo:5,exact:5,site:4,place:3,township:2,bd:1};
+const HSTXT={photo:'Photographed home',exact:'Exact spot',site:'Located tract of land',place:'Village or neighbourhood',township:'Township only',bd:'Birth or death place only'};
+const HSJ={photo:.0005,exact:.0005,site:.0012,place:.003,township:.009,bd:.005};
+let HSD=null, HSY=null;
+function hsData(){ if(HSD) return HSD;
+  const dl=Object.values(P).filter(p=>p.G&&!p.living&&!p.virt), ids=new Set(dl.map(p=>p.id)), byP={};
+  const add=(id,q)=>{ const L=(byP[id]=byP[id]||{}); const o=L[q.k]||(L[q.k]={k:q.k,lat:q.lat,lon:q.lon,lab:q.lab,t:q.t,ys:[],rs:[]}); if(q.y) o.ys.push(q.y); if(q.r&&!o.rs.includes(q.r)) o.rs.push(q.r); if(HST[q.t]>HST[o.t]){ o.t=q.t; o.lat=q.lat; o.lon=q.lon; o.lab=q.lab; } };
+  D.records.forEach(r=>{ if(r.side) return; const pl=PL[r.pl]; if(!pl||pl.tier==='court') return; const y=yr(r.sd)||0;
+    new Set([...(r.ppl||[]),...(r.home||[])]).forEach(id=>{ if(ids.has(id)&&tieOf(r,id)==='home') add(id,{k:r.pl,lat:pl.lat,lon:pl.lon,lab:pl.label,t:pl.tier,y,r:r.id}); }); });
+  (D.homes||[]).forEach((h,i)=>{ if(!h.ll) return; (h.ppl||[]).forEach(id=>{ if(ids.has(id)) add(id,{k:'home'+i,lat:h.ll[0],lon:h.ll[1],lab:h.a,t:'photo',y:yr(h.y)}); }); });
+  const out=[]; let lo=2100, hi=1500;
+  dl.forEach(p=>{ const b=yr(p.b), d=yr(p.d); let S=Object.values(byP[p.id]||{});
+    if(!S.length){ [[p.bpl,b,'born'],[p.dpl,d,'died']].forEach(([k,y])=>{ const pl=PL[k]; if(pl&&pl.tier!=='court'&&!(y&&y<1664&&pl.lat<40.55)) add(p.id,{k,lat:pl.lat,lon:pl.lon,lab:pl.label,t:'bd',y}); }); S=Object.values(byP[p.id]||{}); S.forEach(s=>s.t='bd'); }
+    if(!S.length) return;
+    S.forEach(s=>{ s.ys.sort((a,c)=>a-c); s.y0=s.ys[0]||null; s.y1=s.ys[s.ys.length-1]||null; });
+    const main=S.slice().sort((a,c)=>HST[c.t]-HST[a.t]||c.rs.length-a.rs.length||((c.y1||0)-(c.y0||0))-((a.y1||0)-(a.y0||0)))[0];
+    const ys=S.flatMap(s=>s.ys); const r0=ys.length?Math.min(...ys):null, r1=ys.length?Math.max(...ys):null;
+    const s=b||(r0?r0-20:null), e=d||(b?Math.min(b+70,new Date().getFullYear()):(r1?r1+10:null));
+    S.sort((a,c)=>(a.y0||9999)-(c.y0||9999));
+    out.push({id:p.id,p,S,main,s,e}); if(s&&e){ lo=Math.min(lo,s); hi=Math.max(hi,e); } });
+  return HSD={L:out,lo:Math.max(lo,1640),hi:Math.min(hi,new Date().getFullYear())}; }
+/* where an ancestor lived in year Y: the place of their latest record by then, else their earliest place */
+function hsAt(o,Y){ if(Y==null) return o.main; if(!o.s||!o.e||Y<o.s||Y>o.e) return null;
+  let best=null; o.S.forEach(s=>{ const k=s.ys.filter(y=>y<=Y); const m=k.length?Math.max(...k):null; if(m!=null&&(!best||m>best.m||(m===best.m&&HST[s.t]>HST[best.s.t]))) best={s,m}; });
+  return best?best.s:o.S[0]; }
+function hsLabel(o){ return (surn(o.p)||o.p.n.split(' ').pop())+' G'+o.p.G; }
+function vHomes(){ setTab('map'); store('wfh-mapmode','home');
+  const H=hsData(); if(HSY!=null&&(HSY<H.lo||HSY>H.hi)) HSY=null;
+  app.innerHTML=topBar('Map',false,mapTog('home')+'<div class="mcount" id="mcount" title="Direct-line ancestors placed at a home"></div>')+`<div class="wrap">
+    <div class="card small hsbar"><div class="hstop"><div class="mseg hsmode"><button id="hsall" class="${HSY==null?'on':''}">All years</button><button id="hsyr" class="${HSY!=null?'on':''}">By year</button></div><div class="hsnow" id="hsnow"></div></div>
+      <input type="range" class="roadslide" id="hssl" min="${H.lo}" max="${H.hi}" step="1" value="${HSY==null?Math.round((H.lo+H.hi)/2):HSY}" aria-label="Year"${HSY==null?' hidden':''}></div>
+    <div id="map"></div>
+    <div class="card small"><b>Homesteads.</b> Each pin is one direct-line ancestor at their main home: the best-located place the records show them living or holding land. Tap a pin for every place they lived. Move to <b>By year</b> and slide to see where the family was living in any year.
+      <div class="hslg">${['photo','site','place','township','bd'].map(t=>`<div><i class="hsk hs-${t}"></i>${t==='photo'?'Exact spot or photographed home':HSTXT[t]} <span class="muted" id="hsc-${t}"></span></div>`).join('')}</div>
+      <div class="tiny muted" style="margin-top:6px">The pin style shows how exactly the place is known, not how well the person is proved. Pins sharing a village or township are spread a little so each can be seen. Labels appear as you zoom in. Living people are not shown.</div></div></div>`;
+  document.getElementById('hsall').onclick=()=>{ if(MAP) MCARRY={c:MAP.getCenter(),z:MAP.getZoom()}; HSY=null; vHomes(); };
+  document.getElementById('hsyr').onclick=()=>{ if(MAP) MCARRY={c:MAP.getCenter(),z:MAP.getZoom()}; HSY=+document.getElementById('hssl').value; vHomes(); };
+  if(typeof L==='undefined'){ document.getElementById('map').innerHTML='<div class="empty">Map could not load.</div>'; return; }
+  const pinR=mkMap(); if(MCARRY){ MAP.setView(MCARRY.c,MCARRY.z); MCARRY=null; }
+  let layer=L.layerGroup().addTo(MAP), trail=L.layerGroup().addTo(MAP);
+  const lbl=()=>MAP.getContainer().classList.toggle('hs-nolbl',MAP.getZoom()<11.5); MAP.on('zoomend',lbl); lbl();
+  const style=t=>({photo:{radius:7,color:'#fff',weight:2,fillColor:'#7a5a32',fillOpacity:.95},exact:{radius:7,color:'#fff',weight:2,fillColor:'#7a5a32',fillOpacity:.95},
+    site:{radius:6,color:'#7a5a32',weight:3,fillColor:'#fffaf0',fillOpacity:1},place:{radius:7,color:'#fff',weight:1,fillColor:'#7a5a32',fillOpacity:.72},
+    township:{radius:10,color:'#7a5a32',weight:1.2,opacity:.75,dashArray:'3 3',fillColor:'#7a5a32',fillOpacity:.22},bd:{radius:5,color:'#9a8a70',weight:1,opacity:.5,fillColor:'#9a8a70',fillOpacity:.35}})[t];
+  const card=o=>{ const p=o.p; return `<div class="hspop"><b>${esc(p.n)}</b> <span class="gtag">G${p.G}</span><div class="tiny muted">${esc(years(p))}</div>
+      <div class="tiny" style="margin-top:6px">${o.S.map(s=>`${s===o.main?'<b>':''}${esc(String(s.lab).split(',')[0])}${s===o.main?'</b>':''}${s.y0?` · ${s.y0}${s.y1&&s.y1!==s.y0?'–'+s.y1:''}`:''} <span class="muted">(${HSTXT[s.t].toLowerCase()})</span>`).join('<br>')}</div>
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${o.S.length>1?`<button class="chip" onclick="hsTrail('${p.id}')">Show all their homes</button>`:''}<button class="chip" onclick="go('p-${p.id}')">Person page ›</button></div></div>`; };
+  window.hsTrail=id=>{ const o=H.L.find(x=>x.id===id); if(!o) return; trail.clearLayers(); MAP.closePopup();
+    const pts=o.S.map(s=>[s.lat,s.lon]); if(pts.length>1) L.polyline(pts,{color:'#b5642c',weight:3,opacity:.85,dashArray:'6 5'}).addTo(trail);
+    o.S.forEach((s,i)=>{ const m=L.circleMarker([s.lat,s.lon],{pane:'pins',renderer:pinR,radius:6,color:'#fff',weight:2,fillColor:'#b5642c',fillOpacity:1}).addTo(trail);
+      m.bindTooltip(`${i+1}. ${esc(String(s.lab).split(',')[0])}${s.y0?' '+s.y0:''}`,{permanent:true,direction:'right',className:'plabel',offset:[7,0]}); });
+    MAP.fitBounds(L.latLngBounds(pts).pad(.3),{maxZoom:13}); };
+  const draw=()=>{ layer.clearLayers(); trail.clearLayers(); const by={}, n={}; let shown=0;
+    H.L.forEach(o=>{ const s=hsAt(o,HSY); if(!s) return; (by[s.k]=by[s.k]||[]).push([o,s]); });
+    Object.values(by).forEach(G=>{ G.sort((a,c)=>(c[0].p.G-a[0].p.G)||a[0].p.n.localeCompare(c[0].p.n)); G.forEach(([o,s],i)=>{
+      const j=s.t==='township'?i+1:i, r=HSJ[s.t]*Math.sqrt(j), an=j*2.39996; const ll=[s.lat+r*Math.sin(an)*.76,s.lon+r*Math.cos(an)];
+      const m=L.circleMarker(ll,{pane:'pins',renderer:pinR,...style(s.t)}).addTo(layer); shown++; n[s.t]=(n[s.t]||0)+1;
+      m.bindTooltip(hsLabel(o),{permanent:true,direction:'right',className:'plabel minor hslbl',offset:[7,0]}); m.bindPopup(()=>card(o),{maxWidth:280}); }); });
+    const mc=document.getElementById('mcount'); if(mc) mc.innerHTML=`<div><b>${shown}</b><span>ancestor${shown===1?'':'s'}</span></div>`;
+    ['photo','site','place','township','bd'].forEach(t=>{ const e=document.getElementById('hsc-'+t); if(e) e.textContent='· '+((n[t]||0)+(t==='photo'?(n.exact||0):0)); });
+    const nw=document.getElementById('hsnow'); if(nw) nw.innerHTML=HSY==null?`<span class="muted">Each ancestor at their main home</span>`:`<b>${HSY}</b> <span class="muted">· ${shown} living and placed</span>`; };
+  draw();
+  const sl=document.getElementById('hssl'); sl.oninput=()=>{ HSY=+sl.value; draw(); };
+}
 function vMap(focus){
   setTab('map');
   store('wfh-mapmode','std'); app.innerHTML=topBar('Map',!!focus||!!mState.ids,mapTog(false)+'<div class="mcount" id="mcount" title="Documents shown on the map, and the direct-line ancestors they name"></div>')+`<div class="wrap">${mState.ids?`<div class="card small" style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:8px"><div style="flex:1"><b>${esc(mState.label)}</b> · ${mState.ids.size} mapped record${mState.ids.size===1?'':'s'}</div><button class="chip" id="mclr">Show all</button></div>`:''}<div class="chips mfrow" id="mf">${['',...mOrder(),...(mSur().other.size?['Other']:[])].map(f=>`<button class="chip ${mState.f===f?'on':''}${f&&!MFAMS.includes(f)?' msur':''}" data-f="${f}"${f==='Other'?` title="${esc(mSur().small.map(mSurLabel).join(', '))}"`:''}>${f?mSurLabel(f):'All'}</button>`).join('')}</div><div id="map"></div>
@@ -4124,7 +4193,7 @@ function route(){
   const back=RETURNING; RETURNING=false; CURKEY='';
   if((h==='map'||h.startsWith('map-'))&&!back) MHIDE.clear();
   if(h==='home') vHome(); else if(h==='ask') vAsk(); else if(h==='ask-log') vAskLog(); else if(h.startsWith('ask-')) vAsk(h.slice(4)); else if(h==='people') vPeople(); else if(h==='records') vRecords(); else if(h==='map') vMap();
-  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='kidstory') vKStory(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='names') vNames(); else if(h==='lives') vLives(); else if(h.startsWith('life-')) vLife(h.slice(5)); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='maptour') vRoad(true,true); else if(h==='mapmove') vRoad(true); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
+  else if(h==='me') vMe(); else if(h==='kids') vKids(); else if(h==='kidstory') vKStory(); else if(h==='story') vStory(); else if(h==='family') vFamily(); else if(h==='names') vNames(); else if(h==='lives') vLives(); else if(h.startsWith('life-')) vLife(h.slice(5)); else if(h==='marks') vMarks(); else if(h==='road') vRoad(); else if(h==='maptour') vRoad(true,true); else if(h==='mapmove') vRoad(true); else if(h==='maphome') vHomes(); else if(h==='fan') vFan(); else if(h.startsWith('fan-')) vFan(h.slice(4)); else if(h==='help') vHelp(); else if(h==='gather') vGather(); else if(h.startsWith('gather-')) vGatherStory(h.slice(7)); else if(h==='land') vLand(); else if(h.startsWith('land-')) vLandStory(h.slice(5)); else if(h.startsWith('kid-')) vKidGame(h.slice(4));
   else if(h.startsWith('p-')) vPerson(h.slice(2)); else if(h.startsWith('anc-')) vAnc(h.slice(4)); else if(h.startsWith('str-')) vStr(h.slice(4)); else if(h.startsWith('chart-')) vChart(h.slice(6)); else if(h.startsWith('desc-')) vDesc(h.slice(5));
   else if(h.startsWith('r-')) vRecord(h.slice(2)); else if(h.startsWith('map-')) vMap(h.slice(4)); else if(h.startsWith('pmap-')) vPMap(h.slice(5)); else if(h.startsWith('pic-')) vPic(h.slice(4)); else if(h==='pics') vPics(); else if(h==='sources') vSources(); else vHome();
   const key=NAVN+'|'+h, y=back?(SCROLLMEM[key]||0):0;

@@ -1963,8 +1963,13 @@ function fanPar(id){ const p=P[id]; if(!p) return [null,null]; const ps=(p.par||
   let f=ps.find(x=>sex(x)===1)||null, m=ps.find(x=>x!==f&&sex(x)!==1)||null;
   if(!f&&!m&&ps.length) f=ps[0]; if(f&&!m&&ps.length>1) m=ps.find(x=>x!==f)||null; return [f,m]; }
 function fanSlots(root,n){ const S=[[root]]; for(let g=1;g<=n;g++){ const row=[]; S[g-1].forEach(id=>{ const [f,m]=id?fanPar(id):[null,null]; row.push(f,m); }); S.push(row); } return S; }
+/* the fan's Family colours: the family buttons, plus every line on the Strength page that has none (Borden, Hance, …) */
+const FANCOLS=FCOLS.filter(x=>x[0]!=='Other').concat([['Borden','#c2477a'],['Worthley','#8a9a2b'],['White','#7fb3d5'],['Hance','#e07b39'],['Clevenger','#7a5230'],['Morse','#e8a0b4'],['Wall','#4a7c59'],['Baker','#c9b03a'],['Hadden','#5e5e66'],['VanPelt','#1f8fb3'],['Lippincott','#a3a36b'],['Other','#8f8574']]);
+function fanFam(p){ const k=famKey(p); if(k!=='Other') return k; const s=surnC(surn(p));
+  const hit=SLINES.find(([f])=>FANCOLS.some(x=>x[0]===f)&&sre(f).test(s)); return hit?hit[0]:'Other'; }
+function fanFamCol(p){ const k=fanFam(p); return (FANCOLS.find(x=>x[0]===k)||FANCOLS[FANCOLS.length-1])[1]; }
 function fanFill(id,child,mode){ const p=P[id]; if(!p) return null;
-  if(mode==='fam') return famCol(p);
+  if(mode==='fam') return fanFamCol(p);
   if(mode==='proof'){ if(!child) return '#cfc6b4'; return SC[lvOf(P[child])]||'#cfc6b4'; }
   if(p.living) return '#e3dccb'; const b=band(p.sc); return b?b.color:'#cfc6b4'; }
 function fanShort(s,n){ s=String(s||''); return s.length>n?s.slice(0,n-1)+'…':s; }
@@ -1987,8 +1992,10 @@ function fanSvg(root,n,mode,mini){
         s+=`<g transform="translate(${pt(rm,am)}) rotate(${rot.toFixed(1)})" class="ftx"><text y="${fs*.35}" text-anchor="middle" font-size="${fs}">${esc(fanShort(fn,mx))}</text></g>`; }
     }); }
   return s+'</svg>'; }
-function fanLegend(mode){
-  if(mode==='fam') return FCOLS.map(([k,c])=>`<span><i style="background:${c}"></i>${k==='Other'?'Other surnames':k}</span>`).join('');
+function fanLegend(mode,root){
+  /* Family: the families actually in the fan as drawn, in the order of the list */
+  if(mode==='fam'){ const S=fanSlots(root||fanRoot(),FANS.n), on=new Set(); S.forEach(r=>r.forEach(x=>{ if(x&&P[x]) on.add(fanFam(P[x])); }));
+    return FANCOLS.filter(([k])=>on.has(k)).map(([k,c])=>`<span><i style="background:${c}"></i>${k==='Other'?'Other surnames':(SLINES.find(l=>l[0]===k)||[,k])[1]}</span>`).join(''); }
   if(mode==='proof') return ['documented','strong','probable','compiled','hypothesis','open','tree'].map(k=>`<span><i style="background:${SC[k]}"></i>${LVL[k]}</span>`).join('');
   return BANDS.map(b=>`<span><i style="background:${b[2]}"></i>${b[1]}</span>`).join(''); }
 function vFan(id){ setTab('tree'); store('wfh-tree','fan'); const root=(id&&P[id])?id:fanRoot(); const rp=P[root];
@@ -1999,7 +2006,7 @@ function vFan(id){ setTab('tree'); store('wfh-tree','fan'); const root=(id&&P[id
    <div class="chips">${[['sup','Support'],['proof','Proof of link'],['fam','Family']].map(([k,l])=>`<button class="chip ${FANS.mode===k?'on':''}" onclick="FANS.mode='${k}';vFan('${root}')">${l}</button>`).join('')}</div>
    <div class="fanbar"><span class="tiny muted">Generations</span>${[5,6,7,8].map(n=>`<button class="chip sm ${FANS.n===n?'on':''}" onclick="FANS.n=${n};vFan('${root}')">${n}</button>`).join('')}<span style="flex:1"></span><button class="chip sm" onclick="FANS.z=Math.max(1,FANS.z-.5);fanZoom()" aria-label="Zoom out">−</button><button class="chip sm" onclick="FANS.z=Math.min(3,FANS.z+.5);fanZoom()" aria-label="Zoom in">+</button></div>
    <div class="fanbox" id="fanbox"><div id="fanin">${fanSvg(root,FANS.n,FANS.mode,false)}</div></div>
-   <div class="fanleg">${fanLegend(FANS.mode)}</div>
+   <div class="fanleg">${fanLegend(FANS.mode,root)}</div>
    <div id="faninfo" class="card small" style="min-height:58px"><span class="muted">${mtext[FANS.mode]} Tap any wedge to see who it is. Dashed spaces are ancestors not yet identified.</span></div>
    <div class="tiny muted" style="margin:4px 2px 10px">Centred on <b>${esc(rp.living?'Living':rp.n)}</b>${gtag(rp)}. ${known} of ${poss} possible ancestors in ${FANS.n} generations are named; ${strong} of them are very strongly or well supported.</div>
    <div class="card small"><b style="display:block">Centre the fan on someone else</b><input class="search" id="fanq" type="search" placeholder="Type a name…" autocomplete="off" style="margin-top:8px"><div id="fanres"></div>

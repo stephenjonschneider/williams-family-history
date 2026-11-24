@@ -1382,6 +1382,9 @@ function mSur(){ if(MSUR) return MSUR; const by={}, core=new Set(MFAMS);
   const keys=Object.keys(by).filter(k=>by[k].size>=MSUR_MIN).sort((a,b)=>by[b].size-by[a].size||a.localeCompare(b)), other=new Set(), small=[];
   Object.keys(by).forEach(k=>{ if(by[k].size<MSUR_MIN){ small.push(k); by[k].forEach(x=>other.add(x)); } });
   return MSUR={by,keys,other,small}; }
+let MORD=null; function mOrder(){ if(MORD) return MORD; const R=D.records.filter(r=>r.pl&&!r.side), L=[...MFAMS,...mSur().keys], n={};
+  L.forEach(f=>n[f]=R.filter(r=>inMF(r,f)).length); return MORD=L.sort((a,b)=>n[b]-n[a]||a.localeCompare(b)).map(f=>(MORDN[f]=n[f],f)); }
+const MORDN={};
 const mSurLabel=k=>k==='Other'?'Other':k.replace(/^Van(?=[A-Z])/,'Van ');
 function mAncIn(id,f){ const p=P[id]; if(MFAMS.includes(f)) return tallyFam(id)===f; const k=surnC(surn(p)), S=mSur(); return f==='Other'?S.small.includes(k):k===f; }
 const inMF=(r,f)=>MFAMS.includes(f)?((f==='Bowne'||f==='Grover'||f==='Stout')?(inF(r,'Bowne')&&(r.bgs||['Bowne']).includes(f)):inF(r,f)):f==='Other'?mSur().other.has(r.id):!!(mSur().by[f]&&mSur().by[f].has(r.id));
@@ -2747,7 +2750,7 @@ function recTie(r){ if(r._tie) return r._tie; const ps=(r.ppl||[]).filter(x=>P[x
 const TIERTXT={exact:'exact location',site:'identified site',place:'approximate — named place',township:'approximate — township only',court:'county court house (where the record was made)'};
 function vMap(focus){
   setTab('map');
-  store('wfh-mapmode','std'); app.innerHTML=topBar('Map',!!focus||!!mState.ids,mapTog(false)+'<div class="mcount" id="mcount" title="Documents shown on the map, and the direct-line ancestors they name"></div>')+`<div class="wrap">${mState.ids?`<div class="card small" style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:8px"><div style="flex:1"><b>${esc(mState.label)}</b> · ${mState.ids.size} mapped record${mState.ids.size===1?'':'s'}</div><button class="chip" id="mclr">Show all</button></div>`:''}<div class="chips mfrow" id="mf">${['',...MFAMS,...mSur().keys,...(mSur().other.size?['Other']:[])].map(f=>`<button class="chip ${mState.f===f?'on':''}${f&&!MFAMS.includes(f)?' msur':''}" data-f="${f}"${f==='Other'?` title="${esc(mSur().small.map(mSurLabel).join(', '))}"`:''}>${f?mSurLabel(f):'All'}</button>`).join('')}</div><div id="map"></div>
+  store('wfh-mapmode','std'); app.innerHTML=topBar('Map',!!focus||!!mState.ids,mapTog(false)+'<div class="mcount" id="mcount" title="Documents shown on the map, and the direct-line ancestors they name"></div>')+`<div class="wrap">${mState.ids?`<div class="card small" style="display:flex;align-items:center;gap:8px;padding:9px 12px;margin-bottom:8px"><div style="flex:1"><b>${esc(mState.label)}</b> · ${mState.ids.size} mapped record${mState.ids.size===1?'':'s'}</div><button class="chip" id="mclr">Show all</button></div>`:''}<div class="chips mfrow" id="mf">${['',...mOrder(),...(mSur().other.size?['Other']:[])].map(f=>`<button class="chip ${mState.f===f?'on':''}${f&&!MFAMS.includes(f)?' msur':''}" data-f="${f}"${f==='Other'?` title="${esc(mSur().small.map(mSurLabel).join(', '))}"`:''}>${f?mSurLabel(f):'All'}</button>`).join('')}</div><div id="map"></div>
   ${mLegend()}
   <div class="card tiny muted">Pins are placed from the Locality column of each abstract. Most are approximate: a named brook, village or township, not a surveyed parcel. Exact parcels can be added as they are plotted. Base map: modern roads, streams and water from U.S. Census TIGER/Line 2024. Zoom in for local roads and stream names.</div></div>`;
   const mc=document.getElementById('mclr'); if(mc) mc.onclick=()=>{mState.ids=null;vMap(focus)};

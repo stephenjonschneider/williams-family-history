@@ -1565,9 +1565,9 @@ function strGrade(f,e){ const {up,down}=strLine(f,e), all=up.concat(down), own=[
   if(A.includes('hypothesis')||A.some(x=>x==='open'||x==='tree')) g=Math.min(g,5.4);
   return Math.max(1,Math.min(10,Math.round(g))); }
 function strCol(v){ return v>=.85?'#2f6b35':v>=.65?'#5f9a4a':v>=.45?'#d9a441':v>=.25?'#d08a3c':'#c0392b'; }
-function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),n:strEntries(k).length})).sort((a,b)=>b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
-  const chip=x=>{ const c=strCol(x.v); return `<button class="chip schip ${x.k===f?'on':''}${x.n>1?' multi':''}" style="--sc:${c}" title="${Math.round(x.v*100)}% of links documented or well supported" onclick="strPick('${x.k}')"><i></i>${esc(x.l)}${x.n>1?`<sup class="rtn">${x.n}</sup>`:''}</button>`; };
-  const top=L.filter(x=>x.v>=.45), low=L.filter(x=>x.v<.45);
+function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),g:strGrade(k,strEntries(k)[0])||1,n:strEntries(k).length})).sort((a,b)=>b.g-a.g||b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
+  const chip=x=>{ const c=strCol(x.g/10); return `<button class="chip schip ${x.k===f?'on':''}${x.n>1?' multi':''}" style="--sc:${c}" title="Line grade ${x.g}/10" onclick="strPick('${x.k}')"><i></i>${esc(x.l)}${x.n>1?`<sup class="rtn">${x.n}</sup>`:''}</button>`; };
+  const top=L.filter(x=>x.g>=5), low=L.filter(x=>x.g<5);
   return `<div class="srows" id="sf"><div class="chips srow1">${top.map(chip).join('')}</div><div class="chips srow2">${low.map(chip).join('')}</div></div>`; }
 function sgv(p){ return p.G||(p.G0&&isFinite(GOFF)&&p.G0-GOFF>=1?p.G0-GOFF:p.G0); }
 function vStr(f){
@@ -2433,7 +2433,7 @@ function goStoryMap(){ go('story'); const f=()=>{ const m=document.getElementByI
 function goMarks(){ go('marks'); }
 function vPeople(){
   setTab('people');
-  app.innerHTML=topBar('People',false,`<button class="tbtn" onclick="picState='people';picQ='';go('pics')">Photos ›</button>`)+`<div class="wrap"><div class="srow"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><button class="keybtn" onclick="keyOpen()" aria-label="How to read the marks" title="How to read the marks"><i class="kb1"></i><i class="kb2"></i><span>Key</span></button></div><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof to child']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
+  app.innerHTML=topBar('People',false,`<span style="display:flex;gap:8px;margin-left:auto"><button class="tbtn" onclick="go('lives')">Bios ›</button><button class="tbtn" onclick="picState='people';picQ='';go('pics')">Photos ›</button></span>`)+`<div class="wrap"><div class="srow"><input class="search" id="pq" type="search" placeholder="Search names, places, years…" value="${esc(pState.q)}" autocomplete="off"><button class="keybtn" onclick="keyOpen()" aria-label="How to read the marks" title="How to read the marks"><i class="kb1"></i><i class="kb2"></i><span>Key</span></button></div><div class="chips" id="pf">${[['dl','Direct line'],['strong','Strongest'],['weak','Weakest'],['all','Everyone'],['flag','Needs proof to child']].map(([k,l])=>`<button class="chip ${pState.f===k?'on':''}" data-f="${k}">${l}</button>`).join('')}</div><div id="pl"></div></div>`;
   const draw=()=>{
     const SL=listOf(pState.q); if(SL) pState.f='list';
     const q=SL?'':pState.q.trim().toLowerCase(); let L=Object.values(P).filter(p=>!p.virt);

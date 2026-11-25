@@ -1332,7 +1332,7 @@ details.rs summary{cursor:pointer;font-weight:600;color:var(--green)}
 /* records */
 .rtype{font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--clay)}
 .recbody p{margin:6px 0}
-.long{white-space:pre-wrap}
+.long{white-space:pre-wrap}.rlog b{display:flex!important;align-items:center;gap:8px;flex-wrap:wrap}.rln{font-weight:400;text-transform:none;letter-spacing:0}.rlbtn{margin-left:auto;font:600 12.5px var(--body,inherit);text-transform:none;letter-spacing:0;color:#fff;background:var(--green);border:0;border-radius:999px;padding:5px 12px;cursor:pointer}
 /* map */
 #map{position:relative;z-index:0;height:calc(100vh - 230px - var(--safe-b) - var(--safe-t));min-height:380px;border-radius:12px;border:1px solid var(--line);background:#bcdcee}
 .leaflet-container{font-family:var(--body);background:#bcdcee}
@@ -2515,6 +2515,13 @@ function supportCard(p){
    ${tc?`<details class="rs"><summary>Workbook tree checks (${(p.tc||[]).length})</summary>${tc}</details>`:''}
   </div>`;
 }
+/* research log: the opening paragraph shows; the rest opens with a button */
+function rlogSplit(t){ t=String(t); if(t.length<=520) return [t,''];
+  let k=t.indexOf('\n',160); if(k<0||k>480){ const m=/[.;]\s+(?=[A-Z0-9\[(“"'])/g; k=-1; let x; while((x=m.exec(t))){ if(x.index>=220){ if(x.index<=480) k=x.index+1; break; } } }
+  if(k<0){ k=t.lastIndexOf(' ',420); } return [t.slice(0,k).trim(),t.slice(k).trim()]; }
+function rlogHtml(t){ const [h,r]=rlogSplit(t); if(!r) return `<div class="kv"><b>Research log</b><span class="long">${esc(h)}</span></div>`;
+  const n=r.split(/\s+/).length;
+  return `<div class="kv rlog"><b>Research log <button class="rlbtn" onclick="const g=this.closest('.rlog'),d=g.querySelector('.rlbody'); d.hidden=!d.hidden; g.querySelector('.rldots').hidden=!d.hidden; this.textContent=d.hidden?'Read the rest ▾':'Show less ▴'">Read the rest ▾</button></b><span class="long">${esc(h)}</span><span class="rldots"> … <span class="rln">(${n.toLocaleString()} more words)</span></span><span class="long rlbody" hidden>\n${esc(r)}</span></div>`; }
 function vPerson(id){
   const p=P[id]; if(!p) return vHome();
   setTab('people');
@@ -2534,7 +2541,7 @@ function vPerson(id){
   const wrs=p.living?'':(T.sum||also.length?`<h3 class="sec">What the records say</h3><div class="card wrs">${T.sum?T.sum.split(/\n\s*\n/).map(x=>`<p>${recLinkify(x.trim())}</p>`).join(''):''}${also.length?`${T.sum?'<div class="wrsh">Also noted</div>':''}<dl class="facts">${also.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>`:''}${T.sum&&T.sumfam?`<div class="tiny muted" style="margin-top:6px">Summary from the ${esc(fname(T.sumfam))} workbook</div>`:''}</div>`:'');
   const flag=p.flag?`<div style="margin-top:8px"><span class="badge flag">needs proof to child</span> <span class="small muted">Compiler’s flag: the link from this person to the next generation needs more proof.</span></div>`:'';
   const rs=(p.rs||[]).map(r=>`<details class="rs" ${p.G?'open':''}><summary>${esc(fname(r.fam))} workbook · ${esc(r.pid)}${r.line?' · '+esc(r.line):''}</summary>
-     ${r.cc?`<div class="kv cc"><b>Current conclusion</b><span class="long">${esc(r.cc)}</span></div>`:''}${r.name?`<div class="kv"><b>Name in the research</b>${esc(r.name)}</div>`:''}${r.label?`<div class="kv"><b>Who</b>${esc(r.label)}</div>`:''}${r.dates?`<div class="kv"><b>Dates</b>${esc(r.dates)}</div>`:''}${r.par?`<div class="kv"><b>Parents (basis)</b>${esc(r.par)}</div>`:''}${r.spouse?`<div class="kv"><b>Spouse</b>${esc(r.spouse)}</div>`:''}${r.res?`<div class="kv"><b>Residence</b>${esc(r.res)}</div>`:''}${r.proof?`<div class="kv"><b>Proof status</b>${esc(r.proof)}</div>`:''}${r.notes?`<div class="kv"><b>Research log</b><span class="long">${esc(r.notes)}</span></div>`:''}</details>`).join('');
+     ${r.cc?`<div class="kv cc"><b>Current conclusion</b><span class="long">${esc(r.cc)}</span></div>`:''}${r.name?`<div class="kv"><b>Name in the research</b>${esc(r.name)}</div>`:''}${r.label?`<div class="kv"><b>Who</b>${esc(r.label)}</div>`:''}${r.dates?`<div class="kv"><b>Dates</b>${esc(r.dates)}</div>`:''}${r.par?`<div class="kv"><b>Parents (basis)</b>${esc(r.par)}</div>`:''}${r.spouse?`<div class="kv"><b>Spouse</b>${esc(r.spouse)}</div>`:''}${r.res?`<div class="kv"><b>Residence</b>${esc(r.res)}</div>`:''}${r.proof?`<div class="kv"><b>Proof status</b>${esc(r.proof)}</div>`:''}${r.notes?rlogHtml(r.notes):''}</details>`).join('');
   const recs=(p.rec||[]).map(x=>R[x]).filter(Boolean).sort((a,b)=>String(a.sd).localeCompare(String(b.sd)));
   app.innerHTML=topBar(p.living?'Living relative':p.n,true)+`<div class="wrap">
    <div class="card">${portrait(p)}<div class="pname">${esc(p.n)}${gtag(p)}</div>${facts}${ps}${flag}${relLine(id)}

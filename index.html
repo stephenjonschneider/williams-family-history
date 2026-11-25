@@ -13,7 +13,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Williams Family">
-<title>Williams Family History</title>
+<title>Williams Family History – Monmouth County, New Jersey</title>
+<meta name="description" content="The Williams, Layton, Newman, Wolcott, Bowne, Grover, Stout, Cooper and Brewer families of Monmouth County, New Jersey, 1640s to 1950s: deeds, wills, surveys and the people and places behind them, every link graded from the records.">
+<link rel="canonical" href="https://stephenjonschneider.github.io/williams-family-history/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Source+Sans+3:wght@400;600;700&family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
@@ -1720,7 +1722,7 @@ function vHome(){
     </div>
     <button class="storybtn askbtn" onclick="go('ask')"><span class="sbk">ASK</span><b>Ask the family history</b><span class="sbs">Who were someone’s parents? How is a cousin related to you? Who lived at a place? Ask in plain words, and the answer comes from the records.</span><span class="sbgo">Ask ›</span></button>
     <button class="storybtn helpbtn" onclick="go('help')"><span class="sbk">HELP WANTED</span><b>Can you help?</b><span class="sbs">The links still waiting for proof, most important first. A letter, a Bible page or a photo in a drawer could settle one. Share it with family.</span><span class="sbgo">See list ›</span></button>
-    <div class="foot">Compiled by Stephen J. Schneider, Point Pleasant Beach<br>Data: ${['Williams','Layton','Newman','Wolcott','Bowne','Safety','Cooper','Brewer'].filter(f=>D.meta[f]).map(f=>`${fname(f)} v${esc((D.meta[f]||{}).FileVersion||'')}`).join(' · ')} workbooks · Family tree reports of 6 Nov 2026</div>
+    <div class="foot">Compiled by Stephen J. Schneider, Point Pleasant Beach<br><a href="people/index.html">Browse the family as simple pages</a> · <a href="stories/index.html">stories</a> · <a href="places/index.html">places</a><br>Data: ${['Williams','Layton','Newman','Wolcott','Bowne','Safety','Cooper','Brewer'].filter(f=>D.meta[f]).map(f=>`${fname(f)} v${esc((D.meta[f]||{}).FileVersion||'')}`).join(' · ')} workbooks · Family tree reports of 6 Nov 2026</div>
   </div>`;
   archWire();
 }

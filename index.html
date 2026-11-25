@@ -1215,7 +1215,8 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .sstripg{position:relative;height:14px;font-size:11px;color:var(--muted);margin:0 1px}.sstripg span{position:absolute;top:0}
 .sladder{padding:10px 12px}
 .mseg{display:inline-flex;background:rgba(246,240,226,.16);border-radius:999px;padding:2px;gap:1px}.mseg button{border:0;background:none;color:#f6f0e2;font:inherit;font-size:13px;line-height:1;padding:7px 10px;border-radius:999px;cursor:pointer}.mseg button.on{background:#d9a441;color:#2a2112;font-weight:600}
-.topbar:has(.mseg)>h1{display:none}.mseg button{white-space:nowrap}@media (max-width:420px){.mseg button{padding:7px 8px;font-size:12.5px}}.hsbar{padding:8px 12px;margin-bottom:8px}.hstop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.hsmode{background:#e9e0cc}.hsmode button{color:#4a3d2a}.hsnow{font-size:13px;margin-top:6px}.hs-nolbl .hslbl:not(.hshi){display:none}#map{position:relative}.hstrail{position:absolute;top:10px;right:10px;z-index:1000;background:#fffaf0;box-shadow:0 1px 4px rgba(0,0,0,.25)}.hsswipe{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;width:240px;gap:14px;scrollbar-width:none}.hsswipe::-webkit-scrollbar{display:none}.hsswipe>.hspop{flex:0 0 240px;scroll-snap-align:start}.hsn{margin-bottom:3px}.hsfind{margin-left:auto;flex:none}.hsfind.on{background:#ff5a1f;border-color:#ff5a1f;color:#fff}.hssearch{margin-top:8px}.hssearch[hidden]{display:none}.hsqrow{display:flex;gap:8px;align-items:center;margin-bottom:4px}.hssearch input{flex:1;min-width:0;font:inherit;font-size:14px;padding:7px 10px;border:1px solid #d8ccb4;border-radius:10px;background:#fffdf8}.hsoff{display:none!important}.plabel.hshi{color:#c2410c!important;font-weight:700}
+.topbar:has(.mseg)>h1{display:none}.mseg button{white-space:nowrap}@media (max-width:420px){.mseg button{padding:7px 8px;font-size:12.5px}}.hsbar{padding:8px 12px;margin-bottom:8px}.hstop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.hsmode{background:#e9e0cc}.hsmode button{color:#4a3d2a}.hsnow{font-size:13px;margin-top:6px}.hs-nolbl .hslbl:not(.hshi){display:none}#map{position:relative}.hstrail{position:absolute;top:10px;right:10px;z-index:1000;background:#fffaf0;box-shadow:0 1px 4px rgba(0,0,0,.25)}.hsswipe{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;width:240px;gap:14px;scrollbar-width:none}.hsswipe::-webkit-scrollbar{display:none}.hsswipe>.hspop{flex:0 0 240px;scroll-snap-align:start}.hsn{margin-bottom:3px}.hsfind{margin-left:auto;flex:none}.hsfind.on{background:#ff5a1f;border-color:#ff5a1f;color:#fff}.hssearch{margin-top:8px}.hssearch[hidden]{display:none}.hsqrow{display:flex;gap:8px;align-items:center;margin-bottom:4px}.hssearch input{flex:1;min-width:0;font:inherit;font-size:14px;padding:7px 10px;border:1px solid #d8ccb4;border-radius:10px;background:#fffdf8}.hsoff{display:none!important}.leaflet-tooltip.hslbl,#hsmsr{font-family:'Fredoka','Trebuchet MS',sans-serif;font-weight:600;font-size:13px;color:#5a4a33;
+  text-shadow:0 0 2px #fffcf2,0 0 2px #fffcf2,1px 1px 1px #fffcf2,-1px -1px 1px #fffcf2,1px -1px 1px #fffcf2,-1px 1px 1px #fffcf2,0 0 5px #fffcf2}.hslbl.hshi span{color:#c2410c!important}.plabel.hshi{color:#c2410c!important;font-weight:700}
 .hslg{display:grid;gap:5px;margin-top:8px;font-size:13px}.hslg>div{display:flex;align-items:center;gap:8px}.hsk{display:inline-block;width:14px;height:14px;border-radius:50%;flex:none}
 .hs-photo{background:#7a5a32;box-shadow:0 0 0 2px #fff,0 0 0 3px #d8ccb4}.hs-site{background:#fffaf0;border:3px solid #7a5a32;box-sizing:border-box}.hs-place{background:rgba(122,90,50,.72)}
 .hs-township{width:18px;height:18px;background:rgba(122,90,50,.16);border:1px dashed rgba(122,90,50,.7);box-sizing:border-box}.hs-bd{width:10px;height:10px;margin:0 2px;background:rgba(154,138,112,.4);border:1px solid rgba(154,138,112,.6)}
@@ -2785,6 +2786,8 @@ function hsAt(o,Y){ if(Y==null) return o.main; if(!o.s||!o.e||Y<o.s||Y>o.e) retu
   if(best) return best.s;
   /* nothing dated yet by year Y: someone born here (1670 on) is shown at their first home; an earlier settler appears only when a record first places them */
   const b=yr(o.p.b); return b&&b>=1670&&Y>=b?S[0]:null; }
+function hsHtml(L){ const seen=new Set(), out=[]; L.forEach(o=>{ const t=hsLabel(o); if(seen.has(t)) return; seen.add(t); out.push([t,o]); });
+  return out.slice(0,2).map(([t,o])=>`<span style="color:${roadCol(roadKey(o.p))}">${esc(t)}</span>`).join(' · ')+(out.length>2?` <span>+${out.length-2}</span>`:''); }
 function hsLabel(o){ return (surn(o.p)||o.p.n.split(' ').pop())+' G'+o.p.G; }
 function vHomes(){ setTab('map'); store('wfh-mapmode','home');
   const H=hsData(); if(HSY!=null&&(HSY<H.lo||HSY>H.hi)) HSY=null;
@@ -2818,7 +2821,7 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
   function trailBtn(on){ tb.hidden=!on; }
   let MKS=[]; const srch=L.layerGroup().addTo(MAP);
   /* labels: each goes to whichever side of its pin (right, left, above, below, or a corner) collides least with the other pins and labels */
-  const MW={}, msr=t=>{ if(MW[t]) return MW[t]; let e=document.getElementById('hsmsr'); if(!e){ e=document.createElement('div'); e.id='hsmsr'; e.className='leaflet-tooltip plabel minor'; e.style.cssText='position:absolute;visibility:hidden;left:-999px;top:0'; document.body.appendChild(e); } e.textContent=t; return MW[t]=[e.offsetWidth,e.offsetHeight]; };
+  const MW={}, msr=t=>{ if(MW[t]) return MW[t]; let e=document.getElementById('hsmsr'); if(!e){ e=document.createElement('div'); e.id='hsmsr'; e.className='leaflet-tooltip plabel minor hslbl'; e.style.cssText='position:absolute;visibility:hidden;left:-999px;top:0'; document.body.appendChild(e); } e.innerHTML=t; return MW[t]=[e.offsetWidth,e.offsetHeight]; };
   const tip=(k,dir,off,hide)=>{ k.m.unbindTooltip(); k.m.bindTooltip(k.hi&&k.mt?k.mt:k.txt,{permanent:true,direction:dir,offset:off,className:'plabel minor hslbl'+(k.hi?' hshi':'')+(hide?' hsoff':'')}); if(k.hi===0) k.m.getTooltip().setOpacity(.3); };
   const place=()=>{ const lo=MAP.getZoom()<11.5, sz=MAP.getSize(), boxes=[];
     MKS.forEach(k=>{ if(k.key===null){ k.key='d'; tip(k,'right',[7,0]); } });
@@ -2838,7 +2841,7 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
   const hilite=()=>{ srch.clearLayers(); const q=norm(HSQ).split(/\s+/).filter(Boolean), out=document.getElementById('hsqn');
     const M=new Set(); if(q.length) H.L.forEach(o=>{ const w=norm(o.p.n+' '+(surn(o.p)||'')).split(/\s+/).filter(Boolean); if(q.every(t=>w.some(x=>x.startsWith(t)))) M.add(o.id); });
     MKS.forEach(k=>{ const on=q.length?k.hh.some(([o])=>M.has(o.id)):null; k.hi=on===null?undefined:on?1:0; k.key=null;
-      if(on){ const sn=[...new Set([...k.hh.filter(([o])=>M.has(o.id)),...k.hh].map(([o])=>hsLabel(o)))]; k.mt=sn.slice(0,2).join(' · ')+(sn.length>2?' +'+(sn.length-2):''); }
+      if(on) k.mt=hsHtml([...k.hh.filter(([o])=>M.has(o.id)),...k.hh].map(([o])=>o));
       k.m.setStyle(on===null?k.st:on?{color:'#fff',weight:2.5,opacity:1,fillColor:'#ff5a1f',fillOpacity:1,dashArray:null}:{...k.st,opacity:.25,fillOpacity:.1});
       k.m.setRadius(on?k.st.radius+3:k.st.radius); if(on) k.m.bringToFront(); });
     let pts=[];
@@ -2858,7 +2861,7 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
       HH.forEach((hh,i)=>{ const s=hh[0][1];
       const j=s.t==='township'?i+1:i, r=HSJ[s.t]*Math.sqrt(j), an=j*2.39996; const ll=[s.lat+r*Math.sin(an)*.76,s.lon+r*Math.cos(an)];
       const m=L.circleMarker(ll,{pane:'pins',renderer:pinR,...style(s.t),...(hh.length>1?{radius:style(s.t).radius+2}:{})}).addTo(layer); shown+=hh.length; n[s.t]=(n[s.t]||0)+hh.length;
-      const sn=[...new Set(hh.map(([o])=>hsLabel(o)))], txt=sn.slice(0,2).join(' · ')+(sn.length>2?' +'+(sn.length-2):''); m.bindTooltip(txt,{permanent:true,direction:'right',className:'plabel minor hslbl',offset:[7,0]});
+      const txt=hsHtml(hh.map(([o])=>o)); m.bindTooltip(txt,{permanent:true,direction:'right',className:'plabel minor hslbl',offset:[7,0]});
       MKS.push({m,hh,txt,t:s.t,st:{...style(s.t),...(hh.length>1?{radius:style(s.t).radius+2}:{})}});
       m.bindPopup(()=>hh.length>1?`<div class="hsswipe">${hh.map(([o],k)=>card(o,k,hh.length)).join('')}</div>`:card(hh[0][0]),{maxWidth:280,minWidth:240}); }); });
     const mc=document.getElementById('mcount'); if(mc) mc.innerHTML=`<div><b>${shown}</b><span>ancestor${shown===1?'':'s'}</span></div>`;

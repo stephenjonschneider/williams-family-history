@@ -3596,7 +3596,7 @@ function smapSvg(){
    <text class="sea" x="${X(-73.83)}" y="${Y(40.30)}" text-anchor="middle" transform="rotate(-90 ${X(-73.83)} ${Y(40.30)})">ATLANTIC  OCEAN</text>
    ${SMAP_SIDE.map(ids=>`<path d="${curve(ids)}" fill="none" stroke="#7a5a32" stroke-width="1.6" stroke-dasharray="1 5" stroke-linecap="round"/>`).join('')}
    <path d="${curve(SMAP_ROAD)}" fill="none" stroke="#8c2f1c" stroke-width="2.6" stroke-dasharray="9 5" stroke-linecap="round" opacity=".9"/>
-   ${SMAP.map(s=>`<g class="seal" onclick="smapPick(${s[0]})" transform="translate(${P[s[0]].x.toFixed(1)},${P[s[0]].y.toFixed(1)})"><circle r="11" fill="${SMAP_ROAD.includes(s[0])?'#8c2f1c':'#6b4e2a'}" stroke="#e9c97f" stroke-width="1.6"/><text y="4" text-anchor="middle">${s[0]}</text></g>`).join('')}
+   ${SMAP.map(s=>`<g class="seal" onclick="event.stopPropagation();smapPick(${s[0]})" transform="translate(${P[s[0]].x.toFixed(1)},${P[s[0]].y.toFixed(1)})"><circle r="11" fill="${SMAP_ROAD.includes(s[0])?'#8c2f1c':'#6b4e2a'}" stroke="#e9c97f" stroke-width="1.6"/><text y="4" text-anchor="middle">${s[0]}</text></g>`).join('')}
    <text class="gvl" x="${(P[1].x-15).toFixed(1)}" y="${(P[1].y+4).toFixed(1)}" text-anchor="end">Gravesend</text>
    ${SMAP.map(lab).join('')}
    ${rose}

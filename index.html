@@ -1242,7 +1242,7 @@ select.chip{appearance:none;-webkit-appearance:none;padding-right:24px;backgroun
 .hslg{display:grid;gap:5px;margin-top:8px;font-size:13px}.hslg>div{display:flex;align-items:center;gap:8px}.hsk{display:inline-block;width:14px;height:14px;border-radius:50%;flex:none}
 .hs-photo{background:#7a5a32;box-shadow:0 0 0 2px #fff,0 0 0 3px #d8ccb4}.hs-site{background:#fffaf0;border:3px solid #7a5a32;box-sizing:border-box}.hs-place{background:rgba(122,90,50,.72)}
 .hs-township{width:18px;height:18px;background:rgba(122,90,50,.16);border:1px dashed rgba(122,90,50,.7);box-sizing:border-box}.hs-bd{width:10px;height:10px;margin:0 2px;background:rgba(154,138,112,.4);border:1px solid rgba(154,138,112,.6)}
-.mcount{margin-left:auto;display:flex;gap:11px;line-height:1.05;color:#f6f0e2;flex:0 0 auto}.mcount>div{display:flex;flex-direction:column;align-items:flex-end}
+.mrelbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 6px;font-size:13.5px}.mrelseg{background:#e9e0cc}.mrelseg button{color:#4a3d2a}.mcount{margin-left:auto;display:flex;gap:11px;line-height:1.05;color:#f6f0e2;flex:0 0 auto}.mcount>div{display:flex;flex-direction:column;align-items:flex-end}
 .mcount b{font:700 15px system-ui,sans-serif;letter-spacing:.2px}
 .mcount span{font:500 9.5px system-ui,sans-serif;opacity:.75;letter-spacing:.3px}
 @media (max-width:380px){.mcount{gap:6px}.mcount span{font-size:8.5px;letter-spacing:0}.mcount b{font-size:14px}}
@@ -2744,11 +2744,17 @@ function vRecord(id){
 let MAP=null, mState={f:'',ids:null,label:''}, MCARRY=null;
 /* map legend toggles: kept while on the map page (family changes, back from a pin), reset on a fresh visit */
 const MHIDE=new Set();
+/* who a document must name to show on the main map: anyone (all), a relative by blood or marriage (rel), or a direct-line ancestor (anc) */
+let MREL=store('wfh-mrel')||'all'; const RELC={};
+function isRel(id){ if(id in RELC) return RELC[id]; const p=P[id]; return RELC[id]=!!(p&&!p.virt&&(p.G||relation(id))); }
+function recRelOk(r){ if(MREL==='all') return true; const L=[...(r.ppl||[]),...(r.home||[])]; return MREL==='anc'?recAnc(r).length>0:L.some(isRel); }
+function setMRel(k){ MREL=k; store('wfh-mrel',k); if(MAP) MCARRY={c:MAP.getCenter(),z:MAP.getZoom()}; vMap(); }
 const MLEG=[['Records',[['lived','<span class="dot" style="background:#3f6b3a"></span>','Lived or held land'],['named','<span class="dot" style="background:#fffdf6;border:2px solid #3f6b3a;box-sizing:border-box"></span>','Named or visiting only']]],
  ['How exact',[['exact','<span class="dot" style="background:#e0201b"></span>','Exact location'],['site','<span class="dot" style="background:#9c3b2e"></span>','Identified site'],['place','<span class="dot" style="background:#3f6b3a"></span>','Named place (approx.)'],['township','<span class="dot" style="background:transparent;border:2px dashed #8a7452;box-sizing:border-box"></span>','Township only'],['court','<span class="dot" style="background:#6b6f73"></span>','Court house']]],
  ['Also on the map',[['homes','<span class="dot" style="background:#7a5a32"></span>','🏠 Family homes'],['gather','<span class="dot" style="background:#6b3a7a"></span>','⛪ Where they gathered'],['photos','<span class="dot" style="background:#b5642c"></span>','📷 Photos of places']]]];
 function mLegend(){ const extra=!mState.ids&&!mState.f;
-  return `<div class="maplegend" id="mlg"><div class="lghead"><span>Tap a key to show or hide it</span>${MHIDE.size?'<button class="lgall" data-g="*">Show all</button>':''}</div>`+MLEG.map(([h,items])=>{
+  return `<div class="mrelbar"><span>Documents that name</span><div class="mseg mrelseg">${[['all','All'],['rel','Related'],['anc','Ancestor']].map(([k,l])=>`<button class="${MREL===k?'on':''}" onclick="setMRel('${k}')">${l}</button>`).join('')}</div><span class="tiny muted">${MREL==='all'?'anyone in the research':MREL==='rel'?'a relative by blood or marriage':'a direct-line ancestor'}</span></div>
+  <div class="maplegend" id="mlg"><div class="lghead"><span>Tap a key to show or hide it</span>${MHIDE.size?'<button class="lgall" data-g="*">Show all</button>':''}</div>`+MLEG.map(([h,items])=>{
     const dis=h==='Also on the map'&&!extra;
     return `<div class="lgrow"><div class="lgt">${h}</div>${items.map(([k,dot,l])=>`<button class="lg${MHIDE.has(k)?' off':''}" data-g="${k}"${dis?' disabled':''} aria-pressed="${!MHIDE.has(k)}">${dot}${l}</button>`).join('')}${h==='Records'?'<span class="lgnote"><span class="dot" style="background:#3f6b3a;box-shadow:0 0 0 2px #fffdf6,0 0 0 3.5px #3f6b3a"></span>ringed = both</span>':''}${dis?'<div class="lgnote" style="width:100%">Shown when All families is selected.</div>':''}</div>`;}).join('')+'</div>'; }
 /* remember where the map was (view, open bubble, scroll in its list) so Back returns to the same spot */
@@ -2985,7 +2991,7 @@ function vMap(focus){
   document.getElementById('mf').onclick=e=>{const b=e.target.closest('[data-f]');if(b){ if(MAP) MCARRY={c:MAP.getCenter(),z:MAP.getZoom()}; mState.f=b.dataset.f;vMap(focus)}};
   if(typeof L==='undefined'){document.getElementById('map').innerHTML='<div class="empty">Map could not load.</div>';return}
   const pinR=mkMap();
-  const recs=D.records.filter(r=>r.pl&&(!mState.f||inMF(r,mState.f))&&(!mState.ids||mState.ids.has(r.id))&&!MHIDE.has(recTie(r)==='home'?'lived':'named')&&!(PL[r.pl]&&MHIDE.has(PL[r.pl].tier)));
+  const recs=D.records.filter(r=>r.pl&&(!mState.f||inMF(r,mState.f))&&(!mState.ids||mState.ids.has(r.id))&&!MHIDE.has(recTie(r)==='home'?'lived':'named')&&!(PL[r.pl]&&MHIDE.has(PL[r.pl].tier))&&recRelOk(r));
   const by={}; recs.forEach(r=>(by[r.pl]=by[r.pl]||[]).push(r));
   { const mc=document.getElementById('mcount'); if(mc){ const an=new Set(); recs.forEach(r=>recAnc(r).forEach(id=>{ if(!mState.f||mAncIn(id,mState.f)) an.add(id); })); mc.innerHTML=cntHTML(recs.length,`document${recs.length===1?'':'s'}`,an.size); } }
   const col={exact:'#e0201b',site:'#9c3b2e',place:'#3f6b3a',township:'#a08c6c',court:'#6b6f73'};

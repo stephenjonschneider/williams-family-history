@@ -1992,8 +1992,8 @@ let RIVC=null;
 const RVPAL=['#8a5a9a','#3a7f8f','#a0662b','#5a7d3a','#9a4a5f','#4a6aa0','#7a6a3a','#2f8a6a','#b0703a','#6a5aa0','#8a3a3a','#3a6a5a'];
 function rivCol(p){ const k=roadKey(p); if(k!=='Other') return roadCol(k); const s=surnC(surn(p))||p.n; let h=0; for(const c of s) h=(h*31+c.charCodeAt(0))>>>0; return RVPAL[h%RVPAL.length]; }
 function rivName(p){ if(!p) return ''; if(p.living) return 'Living'; const w=String(p.n).replace(/\(.*?\)|".*?"/g,' ').trim().split(/\s+/).filter(x=>!/^(captain|capt|lieutenant|lt|judge|rev|dr|col|major|ensign|deacon)\.?$/i.test(x)); const s=surnC(surn(p)); return w[0]&&s&&w[0]!==s?w[0]+' '+s:(w[0]||p.n); }
-function riversData(){ const me=refId(); if(RIVC&&RIVC.me===me) return RIVC;
-  const ps=x=>(P[x].par||[]).filter(y=>P[y]&&!P[y].virt);
+function riversData(){ const me=refId(), key=me+'|'+JSON.stringify(ME||null); if(RIVC&&RIVC.key===key) return RIVC;
+  const ps=x=>(P[x].par||[]).filter(y=>P[y]);
   const fa=x=>{ const L=ps(x); return L.find(y=>sex(y)===1)||(L.length===2?L.find(y=>sex(y)!==2):(L.length===1&&sex(L[0])!==2?L[0]:null))||null; };
   const mo=x=>{ const f=fa(x); return ps(x).find(y=>y!==f)||null; };
   const S={}, order=[], kid={};
@@ -2005,7 +2005,7 @@ function riversData(){ const me=refId(); if(RIVC&&RIVC.me===me) return RIVC;
   Object.values(mem).forEach(L=>L.sort((a,b)=>(Y[a]||0)-(Y[b]||0)));
   const heads=order.filter(id=>S[id]===id), multi=heads.filter(h=>mem[h].length>=2||h===S[me]);
   const merges=[]; heads.forEach(h=>{ if(h===S[me]) return; const L=mem[h], end=L[L.length-1], c=kid[end]; if(!c) return; const f=fa(c); merges.push({h,end,c,f,to:f?S[f]:S[c],multi:multi.includes(h)}); });
-  return RIVC={me,S,Y,mem,heads,multi,merges,fa,mo}; }
+  return RIVC={me,key,S,Y,mem,heads,multi,merges,fa,mo}; }
 function riversSvg(){ const R=riversData(), {S,Y,mem,multi,merges}=R, me=R.me;
   const ys=multi.map(h=>Y[mem[h][0]]).filter(Boolean); if(multi.length<2) return '';
   const top=Math.max(1560,Math.floor(Math.min(...ys)/10)*10-6), bot=(Y[me]||new Date().getFullYear()-30)+8, K=1.9, T=46, yy=y=>T+((y||top)-top)*K;

@@ -2861,19 +2861,26 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
       const hide=!k.hi&&best.sc>40; if(!hide) boxes.push(best.c[2]); const key=best.c[0]+best.c[1]+hide; if(k.key!==key){ k.key=key; tip(k,best.c[0],best.c[1],hide); } }); };
   MAP.on('zoomend moveend',()=>{ clearTimeout(MAP._hsp); MAP._hsp=setTimeout(place,80); });
   const norm=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z ]/g,' ');
-  const hilite=()=>{ srch.clearLayers(); const q=norm(HSQ).split(/\s+/).filter(Boolean), out=document.getElementById('hsqn');
+  const hilite=(fit=true)=>{ srch.clearLayers(); const q=norm(HSQ).split(/\s+/).filter(Boolean), out=document.getElementById('hsqn');
     const M=new Set(); if(q.length) H.L.forEach(o=>{ const w=norm(o.p.n+' '+(surn(o.p)||'')).split(/\s+/).filter(Boolean); if(q.every(t=>w.some(x=>x.startsWith(t)))) M.add(o.id); });
     MKS.forEach(k=>{ const on=q.length?k.hh.some(([o])=>M.has(o.id)):null; k.hi=on===null?undefined:on?1:0; k.key=null;
       if(on) k.mt=hsHtml([...k.hh.filter(([o])=>M.has(o.id)),...k.hh].map(([o])=>o));
       k.m.setStyle(on===null?k.st:on?{color:'#fff',weight:2.5,opacity:1,fillColor:'#ff5a1f',fillOpacity:1,dashArray:null}:{...k.st,opacity:.25,fillOpacity:.1});
       k.m.setRadius(on?k.st.radius+3:k.st.radius); if(on) k.m.bringToFront(); });
     let pts=[];
-    if(q.length&&M.size&&M.size<=4){ H.L.filter(o=>M.has(o.id)).forEach(o=>o.S.forEach(s=>{ pts.push([s.lat,s.lon]); if(MKS.some(k=>k.hi&&k.hh.some(([x,y])=>x===o&&y===s))) return;
+    /* by year, a name lights up only where those people were living that year; all their homes show in All years */
+    if(q.length&&M.size&&M.size<=4&&HSY==null){ H.L.filter(o=>M.has(o.id)).forEach(o=>o.S.forEach(s=>{ pts.push([s.lat,s.lon]); if(MKS.some(k=>k.hi&&k.hh.some(([x,y])=>x===o&&y===s))) return;
         const m=L.circleMarker([s.lat,s.lon],{pane:'pins',renderer:pinR,radius:6,color:'#fff',weight:2,fillColor:'#ff5a1f',fillOpacity:.9}).addTo(srch);
         m.bindTooltip(`${esc(String(s.lab).split(',')[0])}${s.y0?' '+s.y0:''}`,{direction:'top',className:'plabel hshi'}); m.bindPopup(()=>card(o),{maxWidth:280}); })); }
     else MKS.forEach(k=>{ if(k.hi) pts.push(k.m.getLatLng()); });
     const nPl=MKS.filter(k=>k.hi).length+srch.getLayers().length;
-    if(out) out.innerHTML=!q.length?'':M.size?`<b>${M.size}</b> ${M.size===1?'person':'people'} · <b>${nPl}</b> place${nPl===1?'':'s'}${M.size<=4?' (all their homes)':''}`:'<span class="muted">No one by that name is placed on the map</span>';
+    let yrs=null; if(q.length&&M.size){ const mm=H.L.filter(o=>M.has(o.id)); for(let y=H.lo;y<=H.hi;y++) if(mm.some(o=>hsAt(o,y))){ yrs=yrs||[y,y]; yrs[1]=y; } }
+    const nLiv=MKS.filter(k=>k.hi).reduce((t,k)=>t+k.hh.filter(([o])=>M.has(o.id)).length,0);
+    if(out) out.innerHTML=!q.length?'':!M.size?'<span class="muted">No one by that name is placed on the map</span>':HSY==null?`<b>${M.size}</b> ${M.size===1?'person':'people'} · <b>${nPl}</b> place${nPl===1?'':'s'}${M.size<=4?' (all their homes)':''}`
+      :`<b>${M.size}</b> ${M.size===1?'person':'people'} · <b>${nLiv}</b> placed in ${HSY}${yrs?` <span class="muted">(on the map ${yrs[0]}–${yrs[1]})</span>`:''}${!nLiv&&yrs?` <button class="chip" id="hsjump">Go to ${HSY<yrs[0]?yrs[0]:yrs[1]}</button>`:''}`;
+    const jb=document.getElementById('hsjump'); if(jb) jb.onclick=()=>{ HSY=HSY<yrs[0]?yrs[0]:yrs[1]; const sl=document.getElementById('hssl'); sl.value=HSY; draw(); hilite(true); };
+    /* while sliding, the map only moves if none of the lit pins is in view */
+    if(!fit&&pts.some(x=>MAP.getBounds().contains(x))) pts=[];
     if(pts.length) MAP.fitBounds(L.latLngBounds(pts).pad(.25),{maxZoom:13}); setTimeout(place,350); };
   const draw=()=>{ layer.clearLayers(); trail.clearLayers(); trailBtn(false); MKS=[]; const by={}, n={}; let shown=0;
     H.L.forEach(o=>{ const s=hsAt(o,HSY); if(!s) return; (by[s.k]=by[s.k]||[]).push([o,s]); });
@@ -2891,7 +2898,7 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
     ['photo','site','place','township','bd'].forEach(t=>{ const e=document.getElementById('hsc-'+t); if(e) e.textContent='· '+((n[t]||0)+(t==='photo'?(n.exact||0):0)); });
     const nw=document.getElementById('hsnow'); if(nw) nw.innerHTML=HSY==null?`<span class="muted">Each ancestor at their main home</span>`:`<b>${HSY}</b> <span class="muted">· ${shown} living and placed</span>`; };
   draw(); if(HSQ) hilite(); else place();
-  const sl=document.getElementById('hssl'); sl.oninput=()=>{ HSY=+sl.value; draw(); hilite(); };
+  const sl=document.getElementById('hssl'); sl.oninput=()=>{ HSY=+sl.value; draw(); hilite(false); };
   const qi=document.getElementById('hsq'), fb=document.getElementById('hsfind'), cb=document.getElementById('hsclr'), sb=document.querySelector('.hssearch'); let qt;
   /* closing the search keeps a name lit (the button shows it); open it again to clear */
   const fbTxt=()=>{ fb.textContent=HSOPEN?'Close':HSQ?'🔍 '+(HSQ.length>14?HSQ.slice(0,13)+'…':HSQ):'🔍 Search'; fb.classList.toggle('on',!!HSQ&&!HSOPEN); cb.hidden=!HSQ; };

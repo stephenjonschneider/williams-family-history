@@ -2862,9 +2862,16 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
       <div class="tiny" style="margin-top:6px">${o.S.map(s=>`${s===o.main?'<b>':''}${esc(String(s.lab).split(',')[0])}${s===o.main?'</b>':''}${s.via?` <span class="muted">(placed with ${esc(s.via)})</span>`:''}${s.y0?` · ${s.y0}${s.y1&&s.y1!==s.y0?'–'+s.y1:''}`:''} <span class="muted">(${HSTXT[s.t].toLowerCase()})</span>`).join('<br>')}</div>
       <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${o.S.length>1?`<button class="chip" onclick="hsTrail('${p.id}')">Show all their homes</button>`:''}<button class="chip" onclick="go('p-${p.id}')">Person page ›</button></div></div>`; };
   window.hsTrail=id=>{ const o=H.L.find(x=>x.id===id); if(!o) return; trail.clearLayers(); MAP.closePopup();
-    trailBtn(true); const pts=o.S.map(s=>[s.lat,s.lon]); if(pts.length>1) L.polyline(pts,{color:'#b5642c',weight:3,opacity:.85,dashArray:'6 5'}).addTo(trail);
+    trailBtn(true); const pts=o.S.map(s=>[s.lat,s.lon]); if(pts.length>1) L.polyline(pts,{color:'#b5642c',weight:3,opacity:.85,dashArray:'6 5',interactive:false}).addTo(trail);
     o.S.forEach((s,i)=>{ const m=L.circleMarker([s.lat,s.lon],{pane:'pins',renderer:pinR,radius:6,color:'#fff',weight:2,fillColor:'#b5642c',fillOpacity:1}).addTo(trail);
-      m.bindTooltip(`${i+1}. ${esc(String(s.lab).split(',')[0])}${s.y0?' '+s.y0:''}`,{permanent:true,direction:'right',className:'plabel',offset:[7,0]}); });
+      m.bindTooltip(`${i+1}. ${esc(String(s.lab).split(',')[0])}${s.y0?' '+s.y0:''}`,{permanent:true,direction:'right',className:'plabel',offset:[7,0]});
+      /* each stop on the trail opens its own card: the place, the years, how exactly it is known, and the records that put them there */
+      m.bindPopup(()=>{ const rs=(s.rs||[]).map(x=>R[x]).filter(Boolean).sort((a,b)=>String(a.sd).localeCompare(String(b.sd)));
+        return `<div class="hspop"><div class="tiny muted">Home ${i+1} of ${o.S.length} · ${esc(o.p.n)}</div><b>${esc(s.lab)}</b>
+          <div class="tiny">${s.y0?`${s.y0}${s.y1&&s.y1!==s.y0?'–'+s.y1:''} · `:''}<span class="muted">${esc(HSTXT[s.t]||'')}${s.via?` (placed with ${esc(s.via)})`:''}</span></div>
+          ${rs.length?`<div class="tiny" style="margin-top:6px">${rs.slice(0,6).map(r=>`<a onclick="go('r-${r.id}')">${esc(String(r.sd||'').slice(0,4))} · ${esc(String(r.t||'').slice(0,70))}</a>`).join('<br>')}${rs.length>6?`<br><span class="muted">and ${rs.length-6} more</span>`:''}</div>`:''}
+          <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${PL[s.k]?`<button class="chip" onclick="go('map-${s.k}')">📍 All records here ›</button>`:''}<button class="chip" onclick="go('p-${o.p.id}')">Person page ›</button></div></div>`; },{maxWidth:290});
+      m.bringToFront(); });
     MAP.fitBounds(L.latLngBounds(pts).pad(.3),{maxZoom:13}); };
   const tb=document.createElement('button'); tb.className='chip hstrail'; tb.textContent='✕ Hide homes trail'; tb.hidden=true; document.getElementById('map').appendChild(tb);
   L.DomEvent.disableClickPropagation(tb); tb.onclick=()=>{ trail.clearLayers(); trailBtn(false); };

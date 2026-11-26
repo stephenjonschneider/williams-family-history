@@ -2073,8 +2073,8 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   const multi=m0.map((h,i)=>[h,i]).sort((a,b)=>rank(a[0])-rank(b[0])||(a[0]===S[me]?-1:b[0]===S[me]?1:0)||a[1]-b[1]).map(x=>x[0]);
   const ys=multi.map(h=>Y[mem[h][0]]).filter(Boolean);
   const top=Math.floor(Math.min(...ys)/10)*10-10, bot=(Y[me]||new Date().getFullYear()-30)+8, K=1.9, T=62, yy=y=>T+((y||top)-top)*K;
-  const CW=50, X0=46, W=Math.max(680,X0+multi.length*CW+130), H=yy(bot)+70;
-  const colX={}; multi.forEach((h,i)=>colX[h]=X0+i*CW+14);
+  const CW=50, X0=46, W=Math.max(680,X0+multi.length*CW+130+30*8), H=yy(bot)+70;
+  const colX={}; { let gap=0, prev; multi.forEach((h,i)=>{ const f=lineOf(h); if(i&&f!==prev) gap+=30; prev=f; colX[h]=X0+i*CW+14+gap; }); } /* a little extra room between families */
   const weak=new Set(['compiled','hypothesis','open','tree','rejected']); /* a visitor's own entries for themselves and their parents are drawn solid */
   /* joins on the same stream that would sit on top of each other are eased apart a little */
   const JY={}; { const by={}; merges.forEach(m=>{ if(colX[m.to]==null) return; (by[m.to]=by[m.to]||[]).push(m); });
@@ -2094,10 +2094,11 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   const boxes=[], lines=[], hit=b=>boxes.some(q=>b[0]<q[2]&&b[2]>q[0]&&b[1]<q[3]&&b[3]>q[1]), cross=b=>lines.some(([x,y1,y2])=>x>b[0]+1&&x<b[2]-1&&y2>b[1]&&y1<b[3])||soft.some(q=>b[0]<q[2]&&b[2]>q[0]&&b[1]<q[3]&&b[3]>q[1]), soft=[];
   boxes.push([0,0,W,34]);
   const tw=(t,fs)=>t.length*fs*.53+6;
-  const place=(x,y,texts,cls,click,pref,fs,side)=>{ for(const pass of [0,1]) for(const t of texts){ const w=tw(t,fs), h=fs+3, G=10;
-      const C=pref==='top'?[[x-w/2,y-h-6],[x-w/2,y-2*h-6],[x+8,y-h-4],[x-w-8,y-h-4],[x+9,y-h/2],[x-w-9,y-h/2]]
-        :(()=>{ /* same gap from every join; first on the side the joining stream comes in from */ const Rt=[[x+G,y-h/2],[x+G,y+3],[x+G,y-h-3]], Lt=[[x-G-w,y-h/2],[x-G-w,y+3],[x-G-w,y-h-3]]; return side<0?[...Lt,...Rt]:[...Rt,...Lt]; })();
-      for(const [bx,by] of C){ const b=[bx,by,bx+w,by+h]; if(bx<2||bx+w>W-2||by<36||hit(b)||(pass===0&&cross(b))) continue; boxes.push(b); return `<text x="${bx+3}" y="${by+h-3.5}" class="${cls}" onclick="${click}">${esc(t)}</text>`; } }
+  const place=(x,y,texts,cls,click,pref,fs,side)=>{ for(const t of texts){ const w=tw(t,fs), h=fs+3, G=10;
+      /* stream heads: above; joins: the side the joining stream comes in from first (even if it touches a stream), then the other side */
+      const groups=pref==='top'?[[[x-w/2,y-h-6],[x-w/2,y-2*h-6],[x+8,y-h-4],[x-w-8,y-h-4],[x+9,y-h/2],[x-w-9,y-h/2]]]
+        :(()=>{ const Rt=[[x+G,y-h/2],[x+G,y+3],[x+G,y-h-3]], Lt=[[x-G-w,y-h/2],[x-G-w,y+3],[x-G-w,y-h-3]]; return side<0?[Lt,Rt]:[Rt,Lt]; })();
+      for(const C of groups) for(const pass of [0,1]) for(const [bx,by] of C){ const b=[bx,by,bx+w,by+h]; if(bx<2||bx+w>W-2||by<36||hit(b)||(pass===0&&cross(b))) continue; boxes.push(b); return `<text x="${bx+3}" y="${by+h-3.5}" class="${cls}" onclick="${click}">${esc(t)}</text>`; } }
     return ''; };
   multi.forEach(h=>{ const L=mem[h], x=colX[h], col=rivCol(P[h]); let d='';
     for(let i=1;i<L.length;i++){ const a=L[i-1], b=L[i], lv=strLnk(b,a).lv; d+=`<line x1="${x}" y1="${yy(Y[a])}" x2="${x}" y2="${yy(Y[b])}" stroke="${col}" class="rvs${weak.has(lv)?' rvw':''}"/>`; }

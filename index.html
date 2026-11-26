@@ -3123,9 +3123,9 @@ function vMap(focus){
     m.bindTooltip(pl.label.split(/[(/–—,]/)[0].trim(),{permanent:true,direction:pl.tier==='township'?'center':pl.tier==='exact'?'bottom':'right',className:'plabel '+cls+(pl.tier==='exact'?' exact':''),pane:'pins',offset:pl.tier==='township'?[0,0]:pl.tier==='exact'?[0,6]:[rad/2+2,0]});
     rs.sort((a,b)=>String(a.sd).localeCompare(String(b.sd)));
     m.bindPopup((pl.id==='miery'?`<img src="${IMG.survey}" style="width:100%;border-radius:4px;margin-bottom:6px" alt="">`:'')+`<b>${esc(pl.label)}</b><div class="tiny muted">${rs.length} record${rs.length>1?'s':''} · ${TIERTXT[pl.tier]||''}</div>${pl.src?`<div class="tiny" style="margin-top:3px"><b>Located from:</b> ${esc(pl.src)}</div>`:''}`+(()=>{const ln=r=>`<a href="#r-${r.id}">${esc(String(r.sd||'').slice(0,4))} · ${esc((r.t||'').split(/[—(;]/)[0].trim())}: ${esc(rtitle(r).slice(0,60))}</a>`;
-      const H=rs.filter(r=>recTie(r)==='home'), F=rs.filter(r=>recTie(r)!=='home'); let n=0; const cap=60; let out='';
+      const H=rs.filter(r=>recTie(r)==='home'), F=rs.filter(r=>recTie(r)!=='home'); let n=0; const cap=100; let out='';
       [[H,'Lived or held land here'],[F,'Named or visiting']].forEach(([A,t])=>{ if(!A.length) return; out+=`<div class="pphead">${t} (${A.length})</div>`; A.forEach(r=>{ if(n++<cap) out+=ln(r); }); });
-      return out+(rs.length>cap?`<div class="tiny muted">…and ${rs.length-cap} more (use Records › On the map)</div>`:'');})(),{maxWidth:280});
+      return out+(rs.length>cap?`<div class="tiny muted">…and ${rs.length-cap} more (use Records › On the map)</div>`:'');})(),{maxWidth:280,maxHeight:Math.round(innerHeight*.55)});
     if(focus===pl.id) focusMarker=m; MK[pl.id]=m;
   });
   const zc=()=>{const z=MAP.getZoom(),c=MAP.getContainer().classList;c.toggle('zlow',z<12);c.toggle('zmid',z<13)}; MAP.on('zoomend',zc); zc();

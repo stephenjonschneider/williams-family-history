@@ -2153,7 +2153,11 @@ function famCol(p){ const k=famKey(p); return (FCOLS.find(x=>x[0]===k)||FCOLS[FC
 /* ---------- the evidence fan ---------- */
 let FANS={mode:'sup',n:7,z:1};
 /* a visitor in the tree: the fan centres on their nearest ancestor who is in the research (e.g. the Williams child they come from) */
-function fanRoot(){ if(viewer()){ let id=ME.you, n=0; while(P[id]&&P[id].virt&&n++<30){ const up=(P[id].par||[]).find(x=>P[x]); if(!up) break; id=up; } return P[id]&&!P[id].virt?id:ME.you; } return P.wkids?'wkids':D.anchor; }
+function fanRoot(){ if(viewer()){ let id=ME.you, n=0; while(P[id]&&P[id].virt&&n++<30){ const up=(P[id].par||[]).find(x=>P[x]); if(!up) break; id=up; } if(!P[id]||P[id].virt) return ME.you;
+    /* never lower than the Williams children: someone below them centres on the child of Thomas and Mary they come from */
+    const kid=x=>P[x]&&!P[x].virt&&(P[x].par||[]).includes(D.anchor); const seen=new Set(), q=[id];
+    while(q.length){ const x=q.shift(); if(seen.has(x)||!P[x]) continue; seen.add(x); if(kid(x)) return x; (P[x].par||[]).forEach(y=>q.push(y)); }
+    return id; } return P.wkids?'wkids':D.anchor; }
 function fanPar(id){ const p=P[id]; if(!p) return [null,null]; const ps=(p.par||[]).filter(x=>P[x]);
   let f=ps.find(x=>sex(x)===1)||null, m=ps.find(x=>x!==f&&sex(x)!==1)||null;
   if(!f&&!m&&ps.length) f=ps[0]; if(f&&!m&&ps.length>1) m=ps.find(x=>x!==f)||null; return [f,m]; }

@@ -2058,7 +2058,7 @@ function riversData(){ const me=viewer()?ME.you:(P.wkids?'wkids':refId()), key=m
   const heads=order.filter(id=>S[id]===id), multi=heads.filter(h=>mem[h].length>=2||h===S[me]);
   const merges=[]; heads.forEach(h=>{ if(h===S[me]) return; const L=mem[h], end=L[L.length-1], c=kid[end]; if(!c) return; const f=fa(c); merges.push({h,end,c,f,to:f?S[f]:S[c],multi:multi.includes(h)}); });
   /* a daughter in the middle of a stream (e.g. a second White sister) who married into another line: her own branch off the stream */
-  order.forEach(id=>{ const m=mo(id); if(!m||S[m]===S[id]||merges.some(x=>x.c===id)) return; const h=S[m]; if(!multi.includes(h)) return; merges.push({h,end:m,c:id,f:fa(id),to:S[id],multi:true,branch:true}); });
+  order.forEach(id=>{ const m=mo(id); if(!m||S[m]===S[id]||merges.some(x=>x.c===id)) return; const h=S[m]; if(!multi.includes(h)) return; merges.push({h,end:m,c:id,f:fa(id),to:S[id],multi:false,branch:true}); });
   return RIVC={me,key,S,Y,mem,heads,multi,merges,fa,mo}; }
 function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   if(R.multi.length<2) return '';
@@ -2127,7 +2127,7 @@ function riverPick(c,ev){ const R=riversData(), m=R.merges.find(x=>x.c===c)||{},
   const el=document.createElement('div'); el.id='rvpop'; el.className='rvpop'; document.body.appendChild(el);
   const nm=id=>id&&P[id]?`<a onclick="go('p-${id}')">${esc(P[id].living?'Living':P[id].n)}</a>${P[id].G?` <span class="gtag">G${P[id].G}</span>`:''}`:'unknown';
   const yb=yr(P[c].b);
-  el.innerHTML=!mo?`<div class="small"><b>${nm(f)}</b> &nbsp;×&nbsp; <i>wife not yet known</i></div><div class="tiny muted" style="margin-top:3px">Their child ${nm(c)}${yr(P[c].b)&&!P[c].living?` (born ${yr(P[c].b)})`:''} carries the line on. The records do not yet name the mother.</div>`:`<div class="small"><b>${nm(mo)}</b> &nbsp;×&nbsp; <b>${nm(f)}</b></div><div class="tiny muted" style="margin-top:3px">${(()=>{ const a=surnC(surn(P[m.h||mo]||{}))||'', b=surnC(surn(P[m.to||f]||{}))||''; return a&&b&&a!==b&&(R.mem[m.h]||[]).length>1?`Here the ${esc(a)} line joins the ${esc(b)} line`:`Here ${esc(rivName(P[mo]))} married into the ${esc(b)} line`; })()}, through their child ${nm(c)}${yb&&!P[c].living?` (born ${yb})`:''}.</div>`;
+  el.innerHTML=!mo?`<div class="small"><b>${nm(f)}</b> &nbsp;×&nbsp; <i>wife not yet known</i></div><div class="tiny muted" style="margin-top:3px">Their child ${nm(c)}${yr(P[c].b)&&!P[c].living?` (born ${yr(P[c].b)})`:''} carries the line on. The records do not yet name the mother.</div>`:`<div class="small"><b>${nm(mo)}</b> &nbsp;×&nbsp; <b>${nm(f)}</b></div><div class="tiny muted" style="margin-top:3px">${(()=>{ const a=surnC(surn(P[m.h||mo]||{}))||'', b=surnC(surn(P[m.to||f]||{}))||''; return a&&b&&a!==b&&(R.mem[m.h]||[]).length>1?`Here the ${esc(a)} line joins the ${esc(b)} line`:`Here ${esc(rivName(P[mo]))} married into the ${esc(b)} line`; })()}, through their child ${nm(c)}${yb&&!P[c].living?` (born ${yb})`:''}.${m.branch?` Her own family, the ${esc(surnC(surn(P[mo]))||'')} line, is drawn as its own stream elsewhere on the chart; she is shown here as a short branch so no long line crosses the chart.`:''}</div>`;
   el.insertAdjacentHTML('afterbegin','<button class="rvpx" aria-label="Close" onclick="rvPopClose()">×</button>');
   /* beside the join that was tapped, kept on screen */
   const t=ev&&ev.target&&ev.target.getBoundingClientRect?ev.target.getBoundingClientRect():null, w=Math.min(300,innerWidth-24); el.style.width=w+'px';

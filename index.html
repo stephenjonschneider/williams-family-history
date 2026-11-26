@@ -2152,7 +2152,8 @@ function famCol(p){ const k=famKey(p); return (FCOLS.find(x=>x[0]===k)||FCOLS[FC
 
 /* ---------- the evidence fan ---------- */
 let FANS={mode:'sup',n:7,z:1};
-function fanRoot(){ return viewer()?ME.you:(P.wkids?'wkids':D.anchor); }
+/* a visitor in the tree: the fan centres on their nearest ancestor who is in the research (e.g. the Williams child they come from) */
+function fanRoot(){ if(viewer()){ let id=ME.you, n=0; while(P[id]&&P[id].virt&&n++<30){ const up=(P[id].par||[]).find(x=>P[x]); if(!up) break; id=up; } return P[id]&&!P[id].virt?id:ME.you; } return P.wkids?'wkids':D.anchor; }
 function fanPar(id){ const p=P[id]; if(!p) return [null,null]; const ps=(p.par||[]).filter(x=>P[x]);
   let f=ps.find(x=>sex(x)===1)||null, m=ps.find(x=>x!==f&&sex(x)!==1)||null;
   if(!f&&!m&&ps.length) f=ps[0]; if(f&&!m&&ps.length>1) m=ps.find(x=>x!==f)||null; return [f,m]; }

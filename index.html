@@ -2073,7 +2073,7 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   const top=Math.floor(Math.min(...ys)/10)*10-10, bot=(Y[me]||new Date().getFullYear()-30)+8, K=1.9, T=62, yy=y=>T+((y||top)-top)*K;
   const CW=50, X0=46, W=Math.max(680,X0+multi.length*CW+60), H=yy(bot)+70;
   const colX={}; multi.forEach((h,i)=>colX[h]=X0+i*CW+14);
-  const weak=new Set(['compiled','hypothesis','open','tree','user','rejected']);
+  const weak=new Set(['compiled','hypothesis','open','tree','rejected']); /* a visitor's own entries for themselves and their parents are drawn solid */
   /* joins on the same stream that would sit on top of each other are eased apart a little */
   const JY={}; { const by={}; merges.forEach(m=>{ if(colX[m.to]==null) return; (by[m.to]=by[m.to]||[]).push(m); });
     Object.values(by).forEach(L=>{ L.sort((a,b)=>(Y[a.c]||0)-(Y[b.c]||0)); let last=-1e9; L.forEach(m=>{ let y=yy(Y[m.c]); if(y-last<11) y=last+11; JY[m.c+'|'+m.h]=y; last=y; }); }); }

@@ -2073,8 +2073,9 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   const multi=m0.map((h,i)=>[h,i]).sort((a,b)=>rank(a[0])-rank(b[0])||(a[0]===S[me]?-1:b[0]===S[me]?1:0)||a[1]-b[1]).map(x=>x[0]);
   const ys=multi.map(h=>Y[mem[h][0]]).filter(Boolean);
   const top=Math.floor(Math.min(...ys)/10)*10-10, bot=(Y[me]||new Date().getFullYear()-30)+8, K=1.9, T=62, yy=y=>T+((y||top)-top)*K;
-  const CW=50, X0=46, W=Math.max(680,X0+multi.length*CW+130+30*8), H=yy(bot)+70;
-  const colX={}; { let gap=0, prev; multi.forEach((h,i)=>{ const f=lineOf(h); if(i&&f!==prev) gap+=30; prev=f; colX[h]=X0+i*CW+14+gap; }); } /* a little extra room between families */
+  const CW=50, X0=46, W=Math.max(680,X0+multi.length*CW+130+26*6), H=yy(bot)+70;
+  const colX={}, nIn={}; multi.forEach(h=>{ const f=lineOf(h); nIn[f]=(nIn[f]||0)+1; });
+  { let gap=0, prev; multi.forEach((h,i)=>{ const f=lineOf(h); if(i&&f!==prev&&(nIn[f]===1||nIn[prev]===1)) gap+=26; prev=f; colX[h]=X0+i*CW+14+gap; }); } /* a single-stream family band is drawn a little wider, so labels beside it have room */
   const weak=new Set(['compiled','hypothesis','open','tree','rejected']); /* a visitor's own entries for themselves and their parents are drawn solid */
   /* joins on the same stream that would sit on top of each other are eased apart a little */
   const JY={}; { const by={}; merges.forEach(m=>{ if(colX[m.to]==null) return; (by[m.to]=by[m.to]||[]).push(m); });
@@ -2082,7 +2083,7 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   const jy=m=>JY[m.c+'|'+m.h]??yy(Y[m.c]);
   let bands='', g='', lab='', dots='';
   { let i=0; while(i<multi.length){ const f=lineOf(multi[i]); let j=i; while(j+1<multi.length&&lineOf(multi[j+1])===f) j++;
-      if(f){ const x1=colX[multi[i]]-22, x2=colX[multi[j]]+22, hs=multi.slice(i,j+1), ye=Math.max(...hs.map(h=>yy(Y[mem[h][mem[h].length-1]])),...merges.filter(m=>hs.includes(m.to)).map(jy))+16, col=(FCOLS.find(x=>x[0]===f)||FCOLS[FCOLS.length-1])[1];
+      if(f){ const pd=i===j?36:22, x1=colX[multi[i]]-pd, x2=colX[multi[j]]+pd, hs=multi.slice(i,j+1), ye=Math.max(...hs.map(h=>yy(Y[mem[h][mem[h].length-1]])),...merges.filter(m=>hs.includes(m.to)).map(jy))+16, col=(FCOLS.find(x=>x[0]===f)||FCOLS[FCOLS.length-1])[1];
         bands+=`<rect x="${x1}" y="0" width="${x2-x1}" height="${ye}" rx="14" fill="${col}" opacity=".08"/>`;
         const wd=x2-x1, nm=f==='Bowne'?(wd>=150?'BOWNE · GROVER · STOUT':'BOWNE'):f.toUpperCase(), geo=LINEGEO[f]||'';
         const tight=nm.length*7.4>wd-4; lab+=`<text x="${(x1+x2)/2}" y="15" text-anchor="middle" class="rvband${tight?' rvband2':''}" fill="${col}">${esc(nm)}</text>`;

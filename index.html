@@ -2057,6 +2057,8 @@ function riversData(){ const me=viewer()?ME.you:(P.wkids?'wkids':refId()), key=m
   Object.values(mem).forEach(L=>L.sort((a,b)=>(Y[a]||0)-(Y[b]||0)));
   const heads=order.filter(id=>S[id]===id), multi=heads.filter(h=>mem[h].length>=2||h===S[me]);
   const merges=[]; heads.forEach(h=>{ if(h===S[me]) return; const L=mem[h], end=L[L.length-1], c=kid[end]; if(!c) return; const f=fa(c); merges.push({h,end,c,f,to:f?S[f]:S[c],multi:multi.includes(h)}); });
+  /* a daughter in the middle of a stream (e.g. a second White sister) who married into another line: her own branch off the stream */
+  order.forEach(id=>{ const m=mo(id); if(!m||S[m]===S[id]||merges.some(x=>x.c===id)) return; const h=S[m]; if(!multi.includes(h)) return; merges.push({h,end:m,c:id,f:fa(id),to:S[id],multi:true,branch:true}); });
   return RIVC={me,key,S,Y,mem,heads,multi,merges,fa,mo}; }
 function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   if(R.multi.length<2) return '';

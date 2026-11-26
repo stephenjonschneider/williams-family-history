@@ -1371,6 +1371,16 @@ input[type=text],input[type=search],select,textarea{background-color:#fff}
 .archnext{font-family:var(--body);font-size:12px;color:var(--muted);background:none;border:1px solid #d8ccb0;border-radius:10px;padding:1px 8px;margin-left:4px;cursor:pointer;vertical-align:middle;line-height:1.5}.archnext:hover{background:#efe6d2}
 .foot{text-align:center;color:var(--muted);font-size:12.5px;padding:18px 10px}
 /* text panels over the fixed wallpaper */
+.hero{padding:16px 12px 10px;border-bottom:0}
+.hero-card{display:block;max-width:none;margin:0;border:0;border-radius:16px;padding:22px 20px 18px;background:linear-gradient(160deg,#2f4a32,#3e5f3f 60%,#5d4526);box-shadow:0 3px 0 #1f3322,0 8px 18px rgba(40,30,10,.18);outline:2px solid #c9a25a;outline-offset:-7px;backdrop-filter:none;-webkit-backdrop-filter:none}
+.hero-card::before,.hero-card::after{content:"";position:absolute;top:13px;bottom:13px;width:10px;border:1px solid rgba(226,194,124,.55);border-radius:3px}
+.hero-card::before{left:13px;border-right:0}.hero-card::after{right:13px;border-left:0}
+.hero-card .kicker{color:#e2c27c;letter-spacing:3px}
+.hero-card h1{color:#f6efdc;text-shadow:0 1px 0 rgba(0,0,0,.25)}
+.hero-card p{color:#e8dcc0}
+.hero-orn{display:block;width:150px;height:14px;margin:4px auto 8px}
+.hero-card .kicker{display:inline-block;padding:4px 16px 3px;border-radius:8px;background:linear-gradient(160deg,#6b3a26,#8a4e30 60%,#5d4526);box-shadow:inset 0 0 0 1px rgba(226,194,124,.6),0 1px 0 rgba(0,0,0,.25)}
+.hero-card p{display:inline-block;padding:5px 14px;font-size:14px;white-space:nowrap;max-width:100%;box-sizing:border-box;border-radius:8px;background:linear-gradient(160deg,#28495e,#3b6278 60%,#4d4a3a);box-shadow:inset 0 0 0 1px rgba(226,194,124,.6),0 1px 0 rgba(0,0,0,.25);color:#f1e8d2}
 .rvband{font:700 9.5px var(--body);letter-spacing:.12em;opacity:.8}.rvband2{font-size:8px;letter-spacing:.02em}.rvbandg{font:italic 9.5px var(--body);opacity:.75}.rv .rvsm{font-size:10px;fill:#7a6a52}
 .fline{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;margin:0 0 10px;overflow:hidden}
 .flmain{display:flex;align-items:center;gap:10px;padding:10px 12px 8px;cursor:pointer}.flmain b{font-family:var(--head);font-size:18px;color:var(--c)}.fltx{flex:1;min-width:0}.flriv{width:22px;height:46px;flex:none;opacity:.9}
@@ -1738,7 +1748,7 @@ function vHome(){
   const blurbs={Williams:'Metedeconk homestead · Southard (Bethel), Howell',Layton:'From founder William Layton (d.1708), Middletown',Newman:'Shark River, Wreck Pond & Harmony',Wolcott:'Shrewsbury, Eatontown & Burnt Tavern',Bowne:'Middletown patentees · through Catherine (Bowne) Layton',Safety:'Every man named Safety · Grover, Bowne & Layton',Cooper:'Howell & Middletown · two Cooper wives, Newman and Brewer sides',Brewer:'Flatlands to Blue Ball (Adelphia) · through Mary (Brewer) Williams'};
   const counts={};FAMS.forEach(f=>counts[f]=D.records.filter(r=>inF(r,f)).length);
   app.innerHTML=`
-  <div class="hero"><div class="hero-card"><div class="kicker">MONMOUTH COUNTY · N.J.</div><h1>Williams Family History</h1><p>Documents and the people and places behind them</p></div>
+  <div class="hero"><div class="hero-card"><div class="kicker">MONMOUTH COUNTY · N.J.</div><h1>Williams Family History</h1><svg class="hero-orn" viewBox="0 0 160 14" aria-hidden="true"><path d="M2 7H62M98 7H158" stroke="#e2c27c" stroke-width="1.2"/><path d="M80 1L86 7L80 13L74 7Z" fill="none" stroke="#e2c27c" stroke-width="1.3"/><circle cx="80" cy="7" r="1.8" fill="#e2c27c"/><path d="M66 7l4-3v6zM94 7l-4-3v6z" fill="#e2c27c"/></svg><p>Documents and the people and places behind them</p></div>
     <div class="photos herophotos">
       <div class="photo" onclick="go('p-${fp('Catherine Louisa Newman',1840)}')">${photo(1)}</div>
       <div class="photo" onclick="go('p-${fp('Harry Franklin Williams',1900)}')">${photo(2)}</div>

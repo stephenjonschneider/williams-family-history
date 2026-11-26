@@ -2066,7 +2066,9 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   const lineOf=h=>{ const c={}; mem[h].forEach(id=>{ if(own[id]) c[own[id]]=(c[own[id]]||0)+1; }); return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||null; };
   /* columns: the family's own stream first, then each line's streams kept side by side */
   const m0=R.multi.slice(), fo=['Brewer','Williams','Bowne','Layton','Newman','Cooper','Wolcott']; m0.forEach(h=>{ const f=lineOf(h); if(!fo.includes(f)) fo.push(f); });
-  const multi=m0.map((h,i)=>[h,i]).sort((a,b)=>fo.indexOf(lineOf(a[0]))-fo.indexOf(lineOf(b[0]))||(a[0]===S[me]?-1:b[0]===S[me]?1:0)||a[1]-b[1]).map(x=>x[0]);
+  /* a later family with no line of its own (e.g. Lomell) that marries into one of the lines goes on the far left, beside where it joins */
+  const rank=h=>{ const f=lineOf(h); if(f) return fo.indexOf(f); const mm=merges.find(m=>m.h===h); return mm&&mm.to!==h&&lineOf(mm.to)?-1:99; };
+  const multi=m0.map((h,i)=>[h,i]).sort((a,b)=>rank(a[0])-rank(b[0])||(a[0]===S[me]?-1:b[0]===S[me]?1:0)||a[1]-b[1]).map(x=>x[0]);
   const ys=multi.map(h=>Y[mem[h][0]]).filter(Boolean);
   const top=Math.floor(Math.min(...ys)/10)*10-10, bot=(Y[me]||new Date().getFullYear()-30)+8, K=1.9, T=62, yy=y=>T+((y||top)-top)*K;
   const CW=50, X0=46, W=Math.max(680,X0+multi.length*CW+60), H=yy(bot)+70;
@@ -2078,7 +2080,7 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   const jy=m=>JY[m.c+'|'+m.h]??yy(Y[m.c]);
   let bands='', g='', lab='', dots='';
   { let i=0; while(i<multi.length){ const f=lineOf(multi[i]); let j=i; while(j+1<multi.length&&lineOf(multi[j+1])===f) j++;
-      if(f){ const x1=colX[multi[i]]-22, x2=colX[multi[j]]+22, hs=multi.slice(i,j+1), ye=Math.max(...hs.map(h=>{ const L=mem[h], e=L[L.length-1], mm=merges.find(m=>m.h===h); return mm?jy(mm):yy(Y[e]); }))+16, col=(FCOLS.find(x=>x[0]===f)||FCOLS[FCOLS.length-1])[1];
+      if(f){ const x1=colX[multi[i]]-22, x2=colX[multi[j]]+22, hs=multi.slice(i,j+1), ye=Math.max(...hs.map(h=>yy(Y[mem[h][mem[h].length-1]])),...merges.filter(m=>hs.includes(m.to)).map(jy))+16, col=(FCOLS.find(x=>x[0]===f)||FCOLS[FCOLS.length-1])[1];
         bands+=`<rect x="${x1}" y="0" width="${x2-x1}" height="${ye}" rx="14" fill="${col}" opacity=".08"/>`;
         const wd=x2-x1, nm=f==='Bowne'?(wd>=150?'BOWNE · GROVER · STOUT':'BOWNE'):f.toUpperCase(), geo=LINEGEO[f]||'';
         const tight=nm.length*7.4>wd-4; lab+=`<text x="${(x1+x2)/2}" y="15" text-anchor="middle" class="rvband${tight?' rvband2':''}" fill="${col}">${esc(nm)}</text>`;

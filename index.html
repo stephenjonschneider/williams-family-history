@@ -1371,6 +1371,7 @@ input[type=text],input[type=search],select,textarea{background-color:#fff}
 .archnext{font-family:var(--body);font-size:12px;color:var(--muted);background:none;border:1px solid #d8ccb0;border-radius:10px;padding:1px 8px;margin-left:4px;cursor:pointer;vertical-align:middle;line-height:1.5}.archnext:hover{background:#efe6d2}
 .foot{text-align:center;color:var(--muted);font-size:12.5px;padding:18px 10px}
 /* text panels over the fixed wallpaper */
+.cplpic{float:right;width:42%;max-width:220px;aspect-ratio:4/3;object-fit:cover;margin:2px 0 8px 12px;border-radius:6px;border:3px solid #7a4329;outline:1.5px solid #c9a25a;outline-offset:-5px;box-shadow:0 2px 5px rgba(40,30,10,.18);cursor:pointer}
 .hero-card p{font-family:var(--sc);font-style:normal;letter-spacing:.2px;font-size:12.5px;padding:5px 12px!important}@media (min-width:640px){.hero-card p{font-size:15px;letter-spacing:.6px}}
 .cta.incta{padding:8px 14px;align-items:center}.cta.incta .inct{flex:1;font-family:var(--head);font-weight:400;font-size:17px}.cta.incta .inchg{font-size:12.5px;color:var(--muted);white-space:nowrap}
 .mepop{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(30,25,15,.45);padding:20px}
@@ -1783,7 +1784,7 @@ function vHome(){
       <button onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:false};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i>+${nRecNew}</i>`:''}</button>
       <button onclick="pState={q:'',f:'all',lim:80};go('people')"><b>${nPeople.toLocaleString()}</b><span>people</span></button>
     </div>
-    <div class="card fr fr2" style="cursor:pointer;margin-top:14px" onclick="go('p-${D.anchor}')"><div class="rtype">Start with: the couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">${meetLine()}</div></div>
+    <div class="card fr fr2" style="cursor:pointer;margin-top:14px" onclick="go('p-${D.anchor}')"><img class="cplpic" src="docs/fam/F32.jpg" alt="Thomas Edward and Mary Anne Williams in a buggy with their daughter Lottie" onclick="event.stopPropagation();go('pic-F32')"><div class="rtype">Start with: the couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">${meetLine()}</div></div>
     <div class="card homemap fr fr3" onclick="goStoryMap()"><div class="skick">WHERE IT ALL HAPPENED</div><div class="hmt">The families’ road</div>
       <div class="hmbox">${smapSvg()}<span class="smapen">Follow the road ›</span></div>
       <div class="small" style="margin-top:8px">Three centuries in one journey: from the Dutch and English villages at the western end of Long Island, across the bay to the new Monmouth settlements, inland through Middletown and Freehold to the Crosswicks country, south into the pine woods along the Metedeconk, and at last east to the shore at Point Pleasant. Side roads bring in the families who married into the line along the way.</div></div>

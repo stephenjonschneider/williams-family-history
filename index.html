@@ -1371,7 +1371,7 @@ input[type=text],input[type=search],select,textarea{background-color:#fff}
 .archnext{font-family:var(--body);font-size:12px;color:var(--muted);background:none;border:1px solid #d8ccb0;border-radius:10px;padding:1px 8px;margin-left:4px;cursor:pointer;vertical-align:middle;line-height:1.5}.archnext:hover{background:#efe6d2}
 .foot{text-align:center;color:var(--muted);font-size:12.5px;padding:18px 10px}
 /* text panels over the fixed wallpaper */
-.rvband{font:700 9.5px var(--body);letter-spacing:.12em;opacity:.8}.rvbandg{font:italic 9.5px var(--body);opacity:.75}.rv .rvsm{font-size:10px;fill:#7a6a52}
+.rvband{font:700 9.5px var(--body);letter-spacing:.12em;opacity:.8}.rvband2{font-size:8px;letter-spacing:.02em}.rvbandg{font:italic 9.5px var(--body);opacity:.75}.rv .rvsm{font-size:10px;fill:#7a6a52}
 .fline{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;margin:0 0 10px;overflow:hidden}
 .flmain{display:flex;align-items:center;gap:10px;padding:10px 12px 8px;cursor:pointer}.flmain b{font-family:var(--head);font-size:18px;color:var(--c)}.fltx{flex:1;min-width:0}.flriv{width:22px;height:46px;flex:none;opacity:.9}
 .fltog{display:flex;justify-content:space-between;width:100%;border:0;border-top:1px dashed var(--line);background:transparent;padding:7px 14px;font:600 12.5px var(--body);color:var(--muted);cursor:pointer}.fltog span{transition:transform .2s}.fltog.on span{transform:rotate(180deg)}
@@ -2065,8 +2065,8 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   FAMS.forEach(f=>{ const s0=LS[f]; if(!s0||!P[s0]) return; const q=[s0], seen=new Set(); while(q.length){ const id=q.shift(); if(seen.has(id)||!P[id]) continue; seen.add(id); if(!own[id]) own[id]=f; (P[id].par||[]).forEach(x=>{ if(!(st.has(x)&&x!==s0)) q.push(x); }); } });
   const lineOf=h=>{ const c={}; mem[h].forEach(id=>{ if(own[id]) c[own[id]]=(c[own[id]]||0)+1; }); return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||null; };
   /* columns: the family's own stream first, then each line's streams kept side by side */
-  const m0=R.multi.slice(), fo=[]; m0.forEach(h=>{ const f=lineOf(h); if(!fo.includes(f)) fo.push(f); });
-  const multi=m0.map((h,i)=>[h,i]).sort((a,b)=>(a[0]===S[me]?-1:b[0]===S[me]?1:0)||fo.indexOf(lineOf(a[0]))-fo.indexOf(lineOf(b[0]))||a[1]-b[1]).map(x=>x[0]);
+  const m0=R.multi.slice(), fo=['Brewer','Williams','Bowne','Layton','Newman','Cooper','Wolcott']; m0.forEach(h=>{ const f=lineOf(h); if(!fo.includes(f)) fo.push(f); });
+  const multi=m0.map((h,i)=>[h,i]).sort((a,b)=>fo.indexOf(lineOf(a[0]))-fo.indexOf(lineOf(b[0]))||(a[0]===S[me]?-1:b[0]===S[me]?1:0)||a[1]-b[1]).map(x=>x[0]);
   const ys=multi.map(h=>Y[mem[h][0]]).filter(Boolean);
   const top=Math.floor(Math.min(...ys)/10)*10-10, bot=(Y[me]||new Date().getFullYear()-30)+8, K=1.9, T=62, yy=y=>T+((y||top)-top)*K;
   const CW=50, X0=46, W=Math.max(680,X0+multi.length*CW+60), H=yy(bot)+70;
@@ -2081,7 +2081,7 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
       if(f){ const x1=colX[multi[i]]-22, x2=colX[multi[j]]+22, hs=multi.slice(i,j+1), ye=Math.max(...hs.map(h=>{ const L=mem[h], e=L[L.length-1], mm=merges.find(m=>m.h===h); return mm?jy(mm):yy(Y[e]); }))+16, col=(FCOLS.find(x=>x[0]===f)||FCOLS[FCOLS.length-1])[1];
         bands+=`<rect x="${x1}" y="0" width="${x2-x1}" height="${ye}" rx="14" fill="${col}" opacity=".08"/>`;
         const wd=x2-x1, nm=f==='Bowne'?(wd>=150?'BOWNE · GROVER · STOUT':'BOWNE'):f.toUpperCase(), geo=LINEGEO[f]||'';
-        lab+=`<text x="${(x1+x2)/2}" y="15" text-anchor="middle" class="rvband" fill="${col}">${esc(nm)}</text>`;
+        const tight=nm.length*7.4>wd-4; lab+=`<text x="${(x1+x2)/2}" y="15" text-anchor="middle" class="rvband${tight?' rvband2':''}" fill="${col}">${esc(nm)}</text>`;
         const sg=LINEGEO_S[f]||''; if(geo&&wd>=geo.length*5.2+10) lab+=`<text x="${(x1+x2)/2}" y="28" text-anchor="middle" class="rvbandg" fill="${col}">${esc(geo)}</text>`;
         else if(sg&&wd>=sg.length*5.2+6) lab+=`<text x="${(x1+x2)/2}" y="28" text-anchor="middle" class="rvbandg" fill="${col}">${esc(sg)}</text>`; }
       i=j+1; } }

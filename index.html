@@ -2186,7 +2186,7 @@ function tourDraw(){ const o=document.getElementById('tour'); if(!o) return; con
 function tourClose(quiet){ const o=document.getElementById('tour'); if(o) o.remove(); if(!quiet) store('wfh-tour',1); }
 function tourMaybe(){ if(store('wfh-tour')) return; const h=location.hash.slice(1); if(/^(kid|kids)/.test(h)) return; setTimeout(()=>{ if(!store('wfh-tour')&&!document.getElementById('tour')) tourOpen(0); },700); }
 /* ---------- family colours (fan chart, road in motion) ---------- */
-const FCOLS=[['Williams','#9a3b28'],['Layton','#2f6b8a'],['Newman','#5d8a33'],['Wolcott','#c08a1e'],['Bowne','#6b4e8a'],['Grover','#9a72b8'],['Stout','#44608f'],['Cooper','#2f8a78'],['Brewer','#b5624f'],['Other','#8f8574']];
+const FCOLS=[['Williams','#9a3b28'],['Layton','#2f6b8a'],['Newman','#5d8a33'],['Wolcott','#c08a1e'],['Bowne','#6b4e8a'],['Grover','#9a72b8'],['Stout','#44608f'],['Cooper','#b5624f'],['Brewer','#2f8a78'],['Other','#8f8574']];
 function surn(p){ const w=String(p&&p.n||'').replace(/\(.*?\)|".*?"/g,' ').replace(/\b(van|von|de|der|ten)\s+(?=[A-Z])/gi,m=>m.trim()).split(/\s+/).filter(x=>x&&!/^(jr|sr|i|ii|iii|iv|esq|widow|captain|capt|lieutenant|lt|rev|dr|col|major|ensign|deacon|-)\.?$/i.test(x));
   if(w.length<2) return '';   // a lone first name ("Mary", "Joan") has no surname to colour by
   return w[w.length-1].split('-')[0].replace(/[^\p{L}]/gu,''); }

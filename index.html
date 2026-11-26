@@ -1371,6 +1371,16 @@ input[type=text],input[type=search],select,textarea{background-color:#fff}
 .archnext{font-family:var(--body);font-size:12px;color:var(--muted);background:none;border:1px solid #d8ccb0;border-radius:10px;padding:1px 8px;margin-left:4px;cursor:pointer;vertical-align:middle;line-height:1.5}.archnext:hover{background:#efe6d2}
 .foot{text-align:center;color:var(--muted);font-size:12.5px;padding:18px 10px}
 /* text panels over the fixed wallpaper */
+/*HEROIN*/.hero-card{padding:14px 14px!important}
+.heroin{position:relative;max-width:720px;margin:0 auto;padding:12px 14px 12px;border-radius:12px;background:radial-gradient(ellipse at 50% 40%,#fbf6ea 0%,#f4ecda 70%,#ecdfc4 100%);box-shadow:inset 0 0 0 1.5px #c9a25a,inset 0 0 0 5px #f4ecda,inset 0 0 0 6px rgba(168,128,58,.55),0 2px 6px rgba(0,0,0,.25)}
+.heroin::before,.heroin::after{content:"❦";position:absolute;top:50%;transform:translateY(-50%);color:#a8803a;font-size:18px;opacity:.75}
+.heroin::before{left:12px}.heroin::after{right:12px;transform:translateY(-50%) scaleX(-1)}
+.hero-card .heroin .kicker,.hero-card .heroin p{background:none!important;box-shadow:none!important;padding:2px 0!important;max-width:none!important;width:auto}
+.hero-card .heroin .kicker{border-radius:0!important;color:#7a4329!important;border-bottom:1px solid rgba(168,128,58,.5);display:inline-block!important;padding:0 10px 5px!important}
+.hero-card .heroin h1{color:#2f4a32;text-shadow:0 1px 0 #fff,0 2px 3px rgba(168,128,58,.25);margin:8px 0 2px}
+.hero-card .heroin .hero-orn path,.hero-card .heroin .hero-orn circle{stroke:#a8803a}.hero-card .heroin .hero-orn circle,.hero-card .heroin .hero-orn path[fill="#e2c27c"]{fill:#a8803a}
+.hero-card .heroin p{color:#3e3528!important;font-style:italic;font-family:var(--head)!important;letter-spacing:.2px!important;font-size:13.5px!important;white-space:nowrap!important}@media (min-width:640px){.hero-card .heroin p{font-size:16px!important}}
+.hero-card::before,.hero-card::after{display:none}
 .herophotos .photo.pf2 img{box-sizing:border-box;padding:9px 9px 13px;background:#f1eadb;outline:none;box-shadow:inset 0 0 0 1px rgba(120,100,70,.18);filter:sepia(.08) brightness(1.02)}
 /*PLAQUE*/.hero-card{padding:16px 20px 16px!important}.hero-card .kicker,.hero-card p{display:block!important;width:100%;max-width:470px!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box;text-align:center}
 .hero-card .kicker,.hero-card p{background:#f6efdc!important;box-shadow:inset 0 0 0 1px #c9a25a,0 1px 0 rgba(0,0,0,.25)!important}
@@ -1769,7 +1779,7 @@ function vHome(){
   const blurbs={Williams:'Metedeconk homestead · Southard (Bethel), Howell',Layton:'From founder William Layton (d.1708), Middletown',Newman:'Shark River, Wreck Pond & Harmony',Wolcott:'Shrewsbury, Eatontown & Burnt Tavern',Bowne:'Middletown patentees · through Catherine (Bowne) Layton',Safety:'Every man named Safety · Grover, Bowne & Layton',Cooper:'Howell & Middletown · two Cooper wives, Newman and Brewer sides',Brewer:'Flatlands to Blue Ball (Adelphia) · through Mary (Brewer) Williams'};
   const counts={};FAMS.forEach(f=>counts[f]=D.records.filter(r=>inF(r,f)).length);
   app.innerHTML=`
-  <div class="hero"><div class="hero-card"><div class="kicker">MONMOUTH COUNTY · N.J.</div><h1>Williams Family History</h1><svg class="hero-orn" viewBox="0 0 160 14" aria-hidden="true"><path d="M2 7H62M98 7H158" stroke="#e2c27c" stroke-width="1.2"/><path d="M80 1L86 7L80 13L74 7Z" fill="none" stroke="#e2c27c" stroke-width="1.3"/><circle cx="80" cy="7" r="1.8" fill="#e2c27c"/><path d="M66 7l4-3v6zM94 7l-4-3v6z" fill="#e2c27c"/></svg><p>Documents and the people and places behind them</p></div>
+  <div class="hero"><div class="hero-card"><div class="heroin"><div class="kicker">MONMOUTH COUNTY · N.J.</div><h1>Williams Family History</h1><svg class="hero-orn" viewBox="0 0 160 14" aria-hidden="true"><path d="M2 7H62M98 7H158" stroke="#e2c27c" stroke-width="1.2"/><path d="M80 1L86 7L80 13L74 7Z" fill="none" stroke="#e2c27c" stroke-width="1.3"/><circle cx="80" cy="7" r="1.8" fill="#e2c27c"/><path d="M66 7l4-3v6zM94 7l-4-3v6z" fill="#e2c27c"/></svg><p>Documents and the people and places behind them</p></div></div>
     </div>
   <div class="wrap">
     ${ME&&ME.you?'':`<button class="mecall" onclick="go('me')"><span class="mck">START HERE</span><span class="mcrow"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><span><b>Put yourself in the tree</b><span class="mcs">Takes a minute. Then every person in the app shows exactly how they’re related to you, and the generation tags count up from you.</span></span></span><span class="mcgo">Find your place ›</span></button>`}

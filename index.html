@@ -2108,7 +2108,7 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
     lines.push([x,yy(Y[L[0]]),yEnd]);
     g+=d; dots+=`<circle cx="${x}" cy="${yy(Y[L[0]])}" r="4" fill="${col}"/>`;
     /* a marriage whose wife is not yet known is still a union: its dot sits where the child was born */
-    L.slice(1).forEach(id=>{ if(merges.some(m=>m.to===h&&m.c===id)||R.mo(id)) return; const yv=yy(Y[id]); dots+=`<circle cx="${x}" cy="${yv}" r="4.5" class="rvjoin rvunk" onclick="riverPick('${id}',event)"/>`; boxes.push([x-7,yv-7,x+7,yv+7]); });
+    L.slice(1).forEach(id=>{ if(merges.some(m=>m.to===h&&m.c===id)||R.mo(id)||P[id].virt) return; const yv=yy(Y[id]); dots+=`<circle cx="${x}" cy="${yv}" r="4.5" class="rvjoin rvunk" onclick="riverPick('${id}',event)"/>`; boxes.push([x-7,yv-7,x+7,yv+7]); });
     boxes.push([x-5,yy(Y[L[0]])-5,x+5,yy(Y[L[0]])+5]); });
   merges.forEach(m=>{ const xr=colX[m.to]; if(xr==null) return; const ym=jy(m), col=rivCol(P[m.h]);
     if(m.multi){ const x=colX[m.h], ye=yy(Y[m.end]), y1=Math.max(ye,ym-46); g+=`<path d="M${x} ${ye} L${x} ${y1} C${x} ${ym-8} ${xr} ${ym-22} ${xr} ${ym}" stroke="${col}" class="rvs${weak.has(strLnk(m.c,m.end).lv)?' rvw':''}" fill="none"/>`; }
@@ -2118,8 +2118,9 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   const gt=p=>p&&p.G?' G'+p.G:'', sn=p=>{ if(!p) return '?'; if(p.living) return 'Living'; const one=String(p.n).replace(/\(.*?\)|".*?"/g,' ').trim().split(/\s+/).length<2; const pm=String(p.n).match(/\(([A-Z][A-Za-z' -]+)\)/); return one?(pm?pm[1].trim():String(p.n).trim()):(surnC(surn(p))||rivName(p)); };
   /* labels are surname and G-tag only */
   multi.forEach(h=>{ const x=colX[h], y=yy(Y[mem[h][0]]), p=mem[h][0]; lab+=place(x,y,[sn(P[h])+gt(P[p]),sn(P[h])],'rvhead',`go('p-${h}')`,'top',12.5); });
-  merges.filter(m=>m.multi&&colX[m.to]!=null).sort((a,b)=>(Y[b.c]||0)-(Y[a.c]||0)).forEach(m=>{ const f=m.f?P[m.f]:null, e=P[m.end];
-    lab+=place(colX[m.to],jy(m),[gt(e)===gt(f)?`${sn(e)}\u200a·\u200a${sn(f)}${gt(f)}`:`${sn(e)}${gt(e)}\u200a·\u200a${sn(f)}${gt(f)}`],'rvlab',`riverPick('${m.c}',event)`,null,11.5,Math.sign((colX[m.h]??colX[m.to])-colX[m.to])||1); });
+  merges.filter(m=>(m.multi||(P[m.end]&&P[m.end].G&&P[m.end].G<=5))&&colX[m.to]!=null).sort((a,b)=>(Y[b.c]||0)-(Y[a.c]||0)).forEach(m=>{ /* recent single-name marriages (G5 and later) are labelled too */ const f=m.f?P[m.f]:null, e=P[m.end];
+    lab+=place(colX[m.to],jy(m),(()=>{ let we=sn(e); if(f&&we===sn(f)){ const tk=String(e.n).replace(/\(.*?\)|".*?"/g,' ').trim().split(/\s+/); we=tk.length>=3?tk[tk.length-2]:tk[0]; } /* a wife listed under her married name: her maiden name if given, else her first name */
+      return [gt(e)===gt(f)?`${we}\u200a·\u200a${sn(f)}${gt(f)}`:`${we}${gt(e)}\u200a·\u200a${sn(f)}${gt(f)}`]; })(),'rvlab',`riverPick('${m.c}',event)`,null,11.5,Math.sign((colX[m.h]??colX[m.to])-colX[m.to])||1); });
   const you=ME&&ME.you&&P[ME.you], xm=colX[S[me]];
   lab+=`<g onclick="go('p-${P[me].group?D.anchor:me}')" style="cursor:pointer"><rect x="${Math.max(4,xm-(P[me].group?86:52))}" y="${yy(bot)+6}" width="${P[me].group?172:104}" height="26" rx="13" class="rvyou"/><text x="${Math.max(4,xm-(P[me].group?86:52))+(P[me].group?86:52)}" y="${yy(bot)+23}" text-anchor="middle" class="rvyout">${you?'You':P[me].group?'The Williams children':'The compiler'}</text></g>`;
   return `<div class="rivwrap"><svg class="rv" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${bands}${g}${dots}${lab}</svg></div>`; }

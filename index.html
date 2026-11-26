@@ -2089,12 +2089,12 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
       i=j+1; } }
   for(let y=Math.ceil(top/50)*50;y<=bot;y+=50){ const v=yy(y); g+=`<line x1="34" y1="${v}" x2="${W-8}" y2="${v}" class="rvgrid"/>${y%100===0?`<text x="4" y="${v+4}" class="rvyr">${y}</text>`:''}`; }
   /* label placement: never over another label, and where possible not across a stream */
-  const boxes=[], lines=[], hit=b=>boxes.some(q=>b[0]<q[2]&&b[2]>q[0]&&b[1]<q[3]&&b[3]>q[1]), cross=b=>lines.some(([x,y1,y2])=>x>b[0]+1&&x<b[2]-1&&y2>b[1]&&y1<b[3]);
+  const boxes=[], lines=[], hit=b=>boxes.some(q=>b[0]<q[2]&&b[2]>q[0]&&b[1]<q[3]&&b[3]>q[1]), cross=b=>lines.some(([x,y1,y2])=>x>b[0]+1&&x<b[2]-1&&y2>b[1]&&y1<b[3])||soft.some(q=>b[0]<q[2]&&b[2]>q[0]&&b[1]<q[3]&&b[3]>q[1]), soft=[];
   boxes.push([0,0,W,34]);
   const tw=(t,fs)=>t.length*fs*.53+6;
-  const place=(x,y,texts,cls,click,pref,fs)=>{ for(const pass of [0,1]) for(const t of texts){ const w=tw(t,fs), h=fs+3;
+  const place=(x,y,texts,cls,click,pref,fs,side)=>{ for(const pass of [0,1]) for(const t of texts){ const w=tw(t,fs), h=fs+3, G=10;
       const C=pref==='top'?[[x-w/2,y-h-6],[x-w/2,y-2*h-6],[x+8,y-h-4],[x-w-8,y-h-4],[x+9,y-h/2],[x-w-9,y-h/2]]
-        :[[x+11,y-h/2],[x-11-w,y-h/2],[x+11,y+4],[x-11-w,y+4],[x+11,y-h-3],[x-11-w,y-h-3],[x+11,y+h+5],[x-11-w,y+h+5],[x+26,y-h/2],[x-26-w,y-h/2],[x+11,y-2*h-4],[x+11,y+2*h+6]];
+        :(()=>{ /* same gap from every join; first on the side the joining stream comes in from */ const Rt=[[x+G,y-h/2],[x+G,y+3],[x+G,y-h-3]], Lt=[[x-G-w,y-h/2],[x-G-w,y+3],[x-G-w,y-h-3]]; return side<0?[...Lt,...Rt]:[...Rt,...Lt]; })();
       for(const [bx,by] of C){ const b=[bx,by,bx+w,by+h]; if(bx<2||bx+w>W-2||by<36||hit(b)||(pass===0&&cross(b))) continue; boxes.push(b); return `<text x="${bx+3}" y="${by+h-3.5}" class="${cls}" onclick="${click}">${esc(t)}</text>`; } }
     return ''; };
   multi.forEach(h=>{ const L=mem[h], x=colX[h], col=rivCol(P[h]); let d='';
@@ -2106,14 +2106,14 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
     boxes.push([x-5,yy(Y[L[0]])-5,x+5,yy(Y[L[0]])+5]); });
   merges.forEach(m=>{ const xr=colX[m.to]; if(xr==null) return; const ym=jy(m), col=rivCol(P[m.h]);
     if(m.multi){ const x=colX[m.h], ye=yy(Y[m.end]), y1=Math.max(ye,ym-46); g+=`<path d="M${x} ${ye} L${x} ${y1} C${x} ${ym-8} ${xr} ${ym-22} ${xr} ${ym}" stroke="${col}" class="rvs${weak.has(strLnk(m.c,m.end).lv)?' rvw':''}" fill="none"/>`; }
-    else { const s=xr+18<W-6?18:-18; g+=`<path d="M${xr+s} ${ym-20} Q${xr+s} ${ym-4} ${xr} ${ym}" stroke="${col}" class="rvs rvthin${weak.has(strLnk(m.c,m.end).lv)?' rvw':''}" fill="none"/>`; boxes.push([Math.min(xr,xr+s)-3,ym-21,Math.max(xr,xr+s)+3,ym]); }
-    dots+=`<circle cx="${xr}" cy="${ym}" r="${m.multi?6.5:4.5}" class="rvjoin" onclick="riverPick('${m.c}',event)"/>`; boxes.push([xr-7,ym-7,xr+7,ym+7]); });
+    else { const s=xr+18<W-6?18:-18; g+=`<path d="M${xr+s} ${ym-20} Q${xr+s} ${ym-4} ${xr} ${ym}" stroke="${col}" class="rvs rvthin${weak.has(strLnk(m.c,m.end).lv)?' rvw':''}" fill="none"/>`; soft.push([Math.min(xr,xr+s)-3,ym-21,Math.max(xr,xr+s)+3,ym]); }
+    dots+=`<circle cx="${xr}" cy="${ym}" r="${m.multi?6.5:4.5}" class="rvjoin" onclick="riverPick('${m.c}',event)"/>`; (m.multi?boxes:soft).push([xr-7,ym-7,xr+7,ym+7]); });
   /* where each stream begins, and where two streams meet (only with their G-tags; the rest are tapped) */
   const gt=p=>p&&p.G?' G'+p.G:'', sn=p=>{ if(!p) return '?'; if(p.living) return 'Living'; const one=String(p.n).replace(/\(.*?\)|".*?"/g,' ').trim().split(/\s+/).length<2; const pm=String(p.n).match(/\(([A-Z][A-Za-z' -]+)\)/); return one?(pm?pm[1].trim():String(p.n).trim()):(surnC(surn(p))||rivName(p)); };
   /* labels are surname and G-tag only */
   multi.forEach(h=>{ const x=colX[h], y=yy(Y[mem[h][0]]), p=mem[h][0]; lab+=place(x,y,[sn(P[h])+gt(P[p]),sn(P[h])],'rvhead',`go('p-${h}')`,'top',12.5); });
   merges.filter(m=>m.multi&&colX[m.to]!=null).sort((a,b)=>(Y[b.c]||0)-(Y[a.c]||0)).forEach(m=>{ const f=m.f?P[m.f]:null, e=P[m.end];
-    lab+=place(colX[m.to],jy(m),[`${sn(e)}${gt(e)} × ${sn(f)}${gt(f)}`],'rvlab',`riverPick('${m.c}',event)`,null,11.5); });
+    lab+=place(colX[m.to],jy(m),[`${sn(e)}${gt(e)} × ${sn(f)}${gt(f)}`],'rvlab',`riverPick('${m.c}',event)`,null,11.5,Math.sign((colX[m.h]??colX[m.to])-colX[m.to])||1); });
   const you=ME&&ME.you&&P[ME.you], xm=colX[S[me]];
   lab+=`<g onclick="go('p-${P[me].group?D.anchor:me}')" style="cursor:pointer"><rect x="${Math.max(4,xm-(P[me].group?86:52))}" y="${yy(bot)+6}" width="${P[me].group?172:104}" height="26" rx="13" class="rvyou"/><text x="${Math.max(4,xm-(P[me].group?86:52))+(P[me].group?86:52)}" y="${yy(bot)+23}" text-anchor="middle" class="rvyout">${you?'You':P[me].group?'The Williams children':'The compiler'}</text></g>`;
   return `<div class="rivwrap"><svg class="rv" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${bands}${g}${dots}${lab}</svg></div>`; }

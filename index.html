@@ -1765,10 +1765,7 @@ function vHome(){
   const counts={};FAMS.forEach(f=>counts[f]=D.records.filter(r=>inF(r,f)).length);
   app.innerHTML=`
   <div class="hero"><div class="hero-card"><div class="kicker">MONMOUTH COUNTY · N.J.</div><h1>Williams Family History</h1><svg class="hero-orn" viewBox="0 0 160 14" aria-hidden="true"><path d="M2 7H62M98 7H158" stroke="#e2c27c" stroke-width="1.2"/><path d="M80 1L86 7L80 13L74 7Z" fill="none" stroke="#e2c27c" stroke-width="1.3"/><circle cx="80" cy="7" r="1.8" fill="#e2c27c"/><path d="M66 7l4-3v6zM94 7l-4-3v6z" fill="#e2c27c"/></svg><p>Documents and the people and places behind them</p></div>
-    <div class="photos herophotos">
-      <div class="photo pf2" onclick="go('p-${fp('Catherine Louisa Newman',1840)}')">${photo(1)}</div>
-      <div class="photo pf3" onclick="go('p-${fp('Harry Franklin Williams',1900)}')">${photo(2)}</div>
-    </div></div>
+    </div>
   <div class="wrap">
     ${ME&&ME.you?'':`<button class="mecall" onclick="go('me')"><span class="mck">START HERE</span><span class="mcrow"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><span><b>Put yourself in the tree</b><span class="mcs">Takes a minute. Then every person in the app shows exactly how they’re related to you, and the generation tags count up from you.</span></span></span><span class="mcgo">Find your place ›</span></button>`}
     <div class="doors">
@@ -1776,6 +1773,11 @@ function vHome(){
       <button class="door d2" onclick="go('family')"><svg viewBox="0 0 24 24"><path d="M3 20a9 9 0 0 1 18 0"/><path d="M7 20a5 5 0 0 1 10 0"/><path d="M12 11V5M6 13.5 3.5 9.5M18 13.5l2.5-4"/></svg><b>The Family</b></button>
       <button class="door d3" onclick="go('map')"><svg viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg><b>The Map</b></button>
     </div>
+    <div class="photos herophotos">
+      <div class="photo pf2" onclick="go('p-${fp('Catherine Louisa Newman',1840)}')">${photo(1)}</div>
+      <div class="photo pf3" onclick="go('p-${fp('Harry Franklin Williams',1900)}')">${photo(2)}</div>
+    </div>
+
     ${ME&&ME.you?`<button class="cta incta" onclick="go('me')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><b class="inct">You’re in the tree</b><span class="inchg">Tap to change ›</span></button>`:''}
     <div class="mstats">
       ${(()=>{ const g1=viewer()?Object.values(P).find(p=>p.G===1&&!p.virt):null; const nA=Object.values(P).filter(p=>p.G>1&&!p.virt).length; return `<button onclick="${g1?`TREEP='${g1.id}';go('anc-${g1.id}')`:"go('fan')"}"><b>${nA.toLocaleString()}</b><span>ancestors</span></button>`; })()}

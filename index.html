@@ -1751,7 +1751,7 @@ function xWire(id){ const el=document.getElementById(id); if(!el) return; const 
   el.addEventListener('scroll',upd,{passive:true}); upd(); }
 function xNext(id){ const el=document.getElementById(id); if(!el) return; const w=el.firstElementChild?el.firstElementChild.offsetWidth+10:el.clientWidth; const end=el.scrollLeft+el.clientWidth>=el.scrollWidth-4; el.scrollTo({left:end?0:el.scrollLeft+w,behavior:'smooth'}); }
 function vArchives(){ setTab('home');
-  app.innerHTML=topBar('From the archives',true)+`<div class="wrap"><div class="card small">Old surveys, plans and maps from the records, each opening the story or document it comes from.</div>${archSlides().map(a=>`<div class="aslide" style="margin:0 0 14px;cursor:pointer" onclick="go('${a.go}')"><img src="${a.src}" alt="" loading="lazy"><div class="figcap">${esc(a.cap)}</div></div>`).join('')}</div>`; }
+  app.innerHTML=topBar('Surveys and plans',true)+`<div class="wrap"><div class="card small">Old surveys, plans and maps from the records, each opening the story or document it comes from.</div>${archSlides().map(a=>`<div class="aslide" style="margin:0 0 14px;cursor:pointer" onclick="go('${a.go}')"><img src="${a.src}" alt="" loading="lazy"><div class="figcap">${esc(a.cap)}</div></div>`).join('')}</div>`; }
 function archNext(){ const el=document.getElementById('arch'); if(!el) return; const w=el.firstElementChild?el.firstElementChild.offsetWidth+10:el.clientWidth; const end=el.scrollLeft+el.clientWidth>=el.scrollWidth-4; el.scrollTo({left:end?0:el.scrollLeft+w,behavior:'smooth'}); }
 
 /* ---------- views ---------- */
@@ -1791,8 +1791,8 @@ function vHome(){
     ${xSec('xlife','Lives behind the records','lives','d2',LIVES.map(L=>({kick:L.kick,t:L.t,sub:L.sub,go:'life-'+L.k})))}
     ${xSec('xgath','Where they gathered','gather','d3',Object.entries(GATHER).map(([k,G])=>({img:G.thumb?'docs/land/t-'+G.thumb+'.jpg':'',icon:G.icon,t:G.title,sub:G.sub,go:'gather-'+k})))}
     <div class="hbtns">
-      ${wbtn("go('archives')",'d3 half','<path d="M3 7h18v13H3z"/><path d="M3 7l2-3h14l2 3M9 11h6"/>','From the archives','Old surveys and plans')}
       ${wbtn("go('marks')",'d1 half','<rect x="3" y="9" width="18" height="6" rx="1.5"/><path d="M3 19h11"/>','How to read the marks','Shading, proof line, G-tags')}
+      ${wbtn("go('archives')",'d2 half','<path d="M3 7h18v13H3z"/><path d="M3 7l2-3h14l2 3M9 11h6"/>','Surveys and plans',archSlides().length+' surveys & plans')}
     </div>
     <div class="hbtns">
       ${wbtn("rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:false};go('records')",'d2 half','<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/>','The records',nRec.toLocaleString()+' documents',nRecNew?`<i class="statnew">+${nRecNew}</i>`:'')}

@@ -1405,8 +1405,8 @@ D.side=D.records.filter(r=>r.side); D.records=D.records.filter(r=>!r.side);
 
 const PL={}; D.places.forEach(x=>PL[x.id]=x);
 const PIC={}; (D.pics||[]).forEach(x=>PIC[x.id]=x);
-const NEWDAYS=14; function isNew(o){return !!(o&&o.add)&&(Date.now()-Date.parse(o.add+'T00:00:00'))<NEWDAYS*864e5}
-const NEWB='<span class="newb" title="Added in the last two weeks">NEW</span>';
+const NEWDAYS=5; function isNew(o){return !!(o&&o.add)&&(Date.now()-Date.parse(o.add+'T00:00:00'))<NEWDAYS*864e5}
+const NEWB='<span class="newb" title="Added in the last five days">NEW</span>';
 const NPHOTO=(D.pics||[]).filter(q=>q.ph).length;
 const FAMS=['Williams','Layton','Newman','Wolcott','Bowne','Cooper','Brewer'];
 const FNAME={Bowne:'Bowne · Grover · Stout',Safety:'Safety'};
@@ -3166,7 +3166,7 @@ function vPics(){ setTab('home'); if(!PCATS.some(c=>c[0]===picState)) picState='
    <input class="search" id="picq" type="search" placeholder="Search pictures — names, places, years" value="${esc(picQ)}" autocomplete="off">
    <div class="chips" id="phf">${PCATS.map(([k,l])=>`<button class="chip" data-k="${k}">${l} <span class="tiny">${(D.pics||[]).filter(q=>q.cat===k).length}</span></button>`).join('')}</div>
    <div id="pg"></div>
-   <div class="card small" style="padding:9px 12px;margin-top:14px">${(D.pics||[]).length} pictures: the compiler's family photographs and the figures from his manuscript <i>The Williams Family Metedeconk Homestead</i> (2026)${nn?`; ${nn} added in the last two weeks are marked ${NEWB}`:''}. Photos and gravestones are counted separately from the records; document images also count once as records. Search accepts "quoted phrases".</div></div>`;
+   <div class="card small" style="padding:9px 12px;margin-top:14px">${(D.pics||[]).length} pictures: the compiler's family photographs and the figures from his manuscript <i>The Williams Family Metedeconk Homestead</i> (2026)${nn?`; ${nn} added in the last five days are marked ${NEWB}`:''}. Photos and gravestones are counted separately from the records; document images also count once as records. Search accepts "quoted phrases".</div></div>`;
   picGrid();
   document.getElementById('picq').oninput=e=>{picQ=e.target.value; picGrid();};
   document.getElementById('phf').onclick=e=>{const b=e.target.closest('[data-k]'); if(b){picState=b.dataset.k; picQ=''; document.getElementById('picq').value=''; picGrid();}}; }

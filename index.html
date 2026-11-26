@@ -1371,6 +1371,7 @@ input[type=text],input[type=search],select,textarea{background-color:#fff}
 .archnext{font-family:var(--body);font-size:12px;color:var(--muted);background:none;border:1px solid #d8ccb0;border-radius:10px;padding:1px 8px;margin-left:4px;cursor:pointer;vertical-align:middle;line-height:1.5}.archnext:hover{background:#efe6d2}
 .foot{text-align:center;color:var(--muted);font-size:12.5px;padding:18px 10px}
 /* text panels over the fixed wallpaper */
+.rvband{font:700 9.5px var(--body);letter-spacing:.12em;opacity:.8}.rvbandg{font:italic 9.5px var(--body);opacity:.75}.rv .rvsm{font-size:10px;fill:#7a6a52}
 .fline{background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;margin:0 0 10px;overflow:hidden}
 .flmain{display:flex;align-items:center;gap:10px;padding:10px 12px 8px;cursor:pointer}.flmain b{font-family:var(--head);font-size:18px;color:var(--c)}.fltx{flex:1;min-width:0}.flriv{width:22px;height:46px;flex:none;opacity:.9}
 .fltog{display:flex;justify-content:space-between;width:100%;border:0;border-top:1px dashed var(--line);background:transparent;padding:7px 14px;font:600 12.5px var(--body);color:var(--muted);cursor:pointer}.fltog span{transition:transform .2s}.fltog.on span{transform:rotate(180deg)}
@@ -2057,37 +2058,73 @@ function riversData(){ const me=viewer()?ME.you:(P.wkids?'wkids':refId()), key=m
   const heads=order.filter(id=>S[id]===id), multi=heads.filter(h=>mem[h].length>=2||h===S[me]);
   const merges=[]; heads.forEach(h=>{ if(h===S[me]) return; const L=mem[h], end=L[L.length-1], c=kid[end]; if(!c) return; const f=fa(c); merges.push({h,end,c,f,to:f?S[f]:S[c],multi:multi.includes(h)}); });
   return RIVC={me,key,S,Y,mem,heads,multi,merges,fa,mo}; }
-function riversSvg(){ const R=riversData(), {S,Y,mem,multi,merges}=R, me=R.me;
-  const ys=multi.map(h=>Y[mem[h][0]]).filter(Boolean); if(multi.length<2) return '';
-  const top=Math.max(1560,Math.floor(Math.min(...ys)/10)*10-6), bot=(Y[me]||new Date().getFullYear()-30)+8, K=1.9, T=46, yy=y=>T+((y||top)-top)*K;
-  const CW=48, X0=46, W=Math.max(680,X0+multi.length*CW+40), H=yy(bot)+70;
+function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
+  if(R.multi.length<2) return '';
+  /* which family line each stream belongs to (same rule as the family-line bars) */
+  const LS=lineStarts(), st=new Set(Object.values(LS).filter(Boolean)), own={};
+  FAMS.forEach(f=>{ const s0=LS[f]; if(!s0||!P[s0]) return; const q=[s0], seen=new Set(); while(q.length){ const id=q.shift(); if(seen.has(id)||!P[id]) continue; seen.add(id); if(!own[id]) own[id]=f; (P[id].par||[]).forEach(x=>{ if(!(st.has(x)&&x!==s0)) q.push(x); }); } });
+  const lineOf=h=>{ const c={}; mem[h].forEach(id=>{ if(own[id]) c[own[id]]=(c[own[id]]||0)+1; }); return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||null; };
+  /* columns: the family's own stream first, then each line's streams kept side by side */
+  const m0=R.multi.slice(), fo=[]; m0.forEach(h=>{ const f=lineOf(h); if(!fo.includes(f)) fo.push(f); });
+  const multi=m0.map((h,i)=>[h,i]).sort((a,b)=>(a[0]===S[me]?-1:b[0]===S[me]?1:0)||fo.indexOf(lineOf(a[0]))-fo.indexOf(lineOf(b[0]))||a[1]-b[1]).map(x=>x[0]);
+  const ys=multi.map(h=>Y[mem[h][0]]).filter(Boolean);
+  const top=Math.floor(Math.min(...ys)/10)*10-10, bot=(Y[me]||new Date().getFullYear()-30)+8, K=1.9, T=62, yy=y=>T+((y||top)-top)*K;
+  const CW=50, X0=46, W=Math.max(680,X0+multi.length*CW+60), H=yy(bot)+70;
   const colX={}; multi.forEach((h,i)=>colX[h]=X0+i*CW+14);
   const weak=new Set(['compiled','hypothesis','open','tree','user','rejected']);
-  let g='', lab='', dots='';
+  /* joins on the same stream that would sit on top of each other are eased apart a little */
+  const JY={}; { const by={}; merges.forEach(m=>{ if(colX[m.to]==null) return; (by[m.to]=by[m.to]||[]).push(m); });
+    Object.values(by).forEach(L=>{ L.sort((a,b)=>(Y[a.c]||0)-(Y[b.c]||0)); let last=-1e9; L.forEach(m=>{ let y=yy(Y[m.c]); if(y-last<11) y=last+11; JY[m.c+'|'+m.h]=y; last=y; }); }); }
+  const jy=m=>JY[m.c+'|'+m.h]??yy(Y[m.c]);
+  let bands='', g='', lab='', dots='';
+  { let i=0; while(i<multi.length){ const f=lineOf(multi[i]); let j=i; while(j+1<multi.length&&lineOf(multi[j+1])===f) j++;
+      if(f){ const x1=colX[multi[i]]-22, x2=colX[multi[j]]+22, hs=multi.slice(i,j+1), ye=Math.max(...hs.map(h=>{ const L=mem[h], e=L[L.length-1], mm=merges.find(m=>m.h===h); return mm?jy(mm):yy(Y[e]); }))+16, col=(FCOLS.find(x=>x[0]===f)||FCOLS[FCOLS.length-1])[1];
+        bands+=`<rect x="${x1}" y="0" width="${x2-x1}" height="${ye}" rx="14" fill="${col}" opacity=".08"/>`;
+        const wd=x2-x1, nm=f==='Bowne'?(wd>=150?'BOWNE · GROVER · STOUT':'BOWNE'):f.toUpperCase(), geo=LINEGEO[f]||'';
+        lab+=`<text x="${(x1+x2)/2}" y="15" text-anchor="middle" class="rvband" fill="${col}">${esc(nm)}</text>`;
+        const sg=LINEGEO_S[f]||''; if(geo&&wd>=geo.length*5.2+10) lab+=`<text x="${(x1+x2)/2}" y="28" text-anchor="middle" class="rvbandg" fill="${col}">${esc(geo)}</text>`;
+        else if(sg&&wd>=sg.length*5.2+6) lab+=`<text x="${(x1+x2)/2}" y="28" text-anchor="middle" class="rvbandg" fill="${col}">${esc(sg)}</text>`; }
+      i=j+1; } }
   for(let y=Math.ceil(top/50)*50;y<=bot;y+=50){ const v=yy(y); g+=`<line x1="34" y1="${v}" x2="${W-8}" y2="${v}" class="rvgrid"/>${y%100===0?`<text x="4" y="${v+4}" class="rvyr">${y}</text>`:''}`; }
-  const boxes=[], hit=b=>boxes.some(q=>b[0]<q[2]&&b[2]>q[0]&&b[1]<q[3]&&b[3]>q[1]);
-  const place=(x,y,t,cls,click,pref)=>{ const w=t.length*6.1+6, h=14, C=pref==='top'?[[x-w/2,y-20],[x-w/2,y-34],[x+8,y-20],[x-w-8,y-20]]:[[x+12,y-7],[x-12-w,y-7],[x+12,y+8],[x-12-w,y+8],[x+12,y-22],[x-12-w,y-22],[x+12,y+23],[x-12-w,y+23]];
-    for(const [bx,by] of C){ const b=[bx,by,bx+w,by+h]; if(bx<2||bx+w>W-2||hit(b)) continue; boxes.push(b); return `<text x="${bx+3}" y="${by+11}" class="${cls}" onclick="${click}">${esc(t)}</text>`; } return ''; };
+  /* label placement: never over another label, and where possible not across a stream */
+  const boxes=[], lines=[], hit=b=>boxes.some(q=>b[0]<q[2]&&b[2]>q[0]&&b[1]<q[3]&&b[3]>q[1]), cross=b=>lines.some(([x,y1,y2])=>x>b[0]+1&&x<b[2]-1&&y2>b[1]&&y1<b[3]);
+  boxes.push([0,0,W,34]);
+  const tw=(t,fs)=>t.length*fs*.53+6;
+  const place=(x,y,texts,cls,click,pref,fs)=>{ for(const pass of [0,1]) for(const t of texts){ const w=tw(t,fs), h=fs+3;
+      const C=pref==='top'?[[x-w/2,y-h-6],[x-w/2,y-2*h-6],[x+8,y-h-4],[x-w-8,y-h-4],[x+9,y-h/2],[x-w-9,y-h/2]]
+        :[[x+11,y-h/2],[x-11-w,y-h/2],[x+11,y+4],[x-11-w,y+4],[x+11,y-h-3],[x-11-w,y-h-3],[x+11,y+h+5],[x-11-w,y+h+5],[x+26,y-h/2],[x-26-w,y-h/2],[x+11,y-2*h-4],[x+11,y+2*h+6]];
+      for(const [bx,by] of C){ const b=[bx,by,bx+w,by+h]; if(bx<2||bx+w>W-2||by<36||hit(b)||(pass===0&&cross(b))) continue; boxes.push(b); return `<text x="${bx+3}" y="${by+h-3.5}" class="${cls}" onclick="${click}">${esc(t)}</text>`; } }
+    return ''; };
   multi.forEach(h=>{ const L=mem[h], x=colX[h], col=rivCol(P[h]); let d='';
     for(let i=1;i<L.length;i++){ const a=L[i-1], b=L[i], lv=strLnk(b,a).lv; d+=`<line x1="${x}" y1="${yy(Y[a])}" x2="${x}" y2="${yy(Y[b])}" stroke="${col}" class="rvs${weak.has(lv)?' rvw':''}"/>`; }
+    const yEnd=h===S[me]?yy(bot):(()=>{ const mm=merges.find(m=>m.h===h); return mm?jy(mm):yy(Y[L[L.length-1]]); })();
     if(h===S[me]) d+=`<line x1="${x}" y1="${yy(Y[L[L.length-1]])}" x2="${x}" y2="${yy(bot)}" stroke="${col}" class="rvs"/>`;
+    lines.push([x,yy(Y[L[0]]),yEnd]);
     g+=d; dots+=`<circle cx="${x}" cy="${yy(Y[L[0]])}" r="4" fill="${col}"/>`;
     boxes.push([x-5,yy(Y[L[0]])-5,x+5,yy(Y[L[0]])+5]); });
-  multi.forEach(h=>{ const x=colX[h], y=yy(Y[mem[h][0]]); lab+=place(x,y,surnC(surn(P[h]))||rivName(P[h]),'rvhead',`go('p-${h}')`,'top'); });
-  merges.forEach(m=>{ const xr=colX[m.to]; if(xr==null) return; const ym=yy(Y[m.c]), col=rivCol(P[m.h]);
+  merges.forEach(m=>{ const xr=colX[m.to]; if(xr==null) return; const ym=jy(m), col=rivCol(P[m.h]);
     if(m.multi){ const x=colX[m.h], ye=yy(Y[m.end]), y1=Math.max(ye,ym-46); g+=`<path d="M${x} ${ye} L${x} ${y1} C${x} ${ym-8} ${xr} ${ym-22} ${xr} ${ym}" stroke="${col}" class="rvs${weak.has(strLnk(m.c,m.end).lv)?' rvw':''}" fill="none"/>`; }
-    else { const s=xr+18<W-6?18:-18; g+=`<path d="M${xr+s} ${ym-20} Q${xr+s} ${ym-4} ${xr} ${ym}" stroke="${col}" class="rvs rvthin${weak.has(strLnk(m.c,m.end).lv)?' rvw':''}" fill="none"/>`; }
+    else { const s=xr+18<W-6?18:-18; g+=`<path d="M${xr+s} ${ym-20} Q${xr+s} ${ym-4} ${xr} ${ym}" stroke="${col}" class="rvs rvthin${weak.has(strLnk(m.c,m.end).lv)?' rvw':''}" fill="none"/>`; boxes.push([Math.min(xr,xr+s)-3,ym-21,Math.max(xr,xr+s)+3,ym]); }
     dots+=`<circle cx="${xr}" cy="${ym}" r="${m.multi?6.5:4.5}" class="rvjoin" onclick="riverPick('${m.c}')"/>`; boxes.push([xr-7,ym-7,xr+7,ym+7]); });
-  merges.filter(m=>m.multi&&colX[m.to]!=null).sort((a,b)=>(Y[a.c]||0)-(Y[b.c]||0)).forEach(m=>{ const f=m.f?P[m.f]:null, e=P[m.end];
-    lab+=place(colX[m.to],yy(Y[m.c]),`${rivName(e)}${e.G?' G'+e.G:''} × ${rivName(f)}${f&&f.G?' G'+f.G:''}`,'rvlab',`riverPick('${m.c}')`); });
+  /* 1. where each stream begins; 2. where two streams meet (full, then shorter); 3. the wives who join as a single name, where room allows */
+  multi.forEach(h=>{ const x=colX[h], y=yy(Y[mem[h][0]]); lab+=place(x,y,[surnC(surn(P[h]))||rivName(P[h])],'rvhead',`go('p-${h}')`,'top',12.5); });
+  const gt=p=>p&&p.G?' G'+p.G:'', sh=p=>{ const n=rivName(p).split(' '); return n.length>1?n[0][0]+'. '+n.slice(1).join(' '):n[0]; };
+  merges.filter(m=>m.multi&&colX[m.to]!=null).sort((a,b)=>(Y[b.c]||0)-(Y[a.c]||0)).forEach(m=>{ const f=m.f?P[m.f]:null, e=P[m.end];
+    lab+=place(colX[m.to],jy(m),[`${rivName(e)}${gt(e)} × ${rivName(f)}${gt(f)}`,`${rivName(e)} × ${rivName(f)}`,`${sh(e)} × ${sh(f)}`,`${surnC(surn(e))} × ${surnC(surn(f))}`],'rvlab',`riverPick('${m.c}')`,null,11.5); });
+  merges.filter(m=>!m.multi&&colX[m.to]!=null&&P[m.h]).sort((a,b)=>(Y[b.c]||0)-(Y[a.c]||0)).forEach(m=>{ const e=P[m.h];
+    lab+=place(colX[m.to]+(colX[m.to]+18<W-6?18:-18),jy(m)-16,[rivName(e),sh(e)],'rvlab rvsm',`go('p-${m.h}')`,null,10); });
   const you=ME&&ME.you&&P[ME.you], xm=colX[S[me]];
   lab+=`<g onclick="go('p-${P[me].group?D.anchor:me}')" style="cursor:pointer"><rect x="${Math.max(4,xm-(P[me].group?86:52))}" y="${yy(bot)+6}" width="${P[me].group?172:104}" height="26" rx="13" class="rvyou"/><text x="${Math.max(4,xm-(P[me].group?86:52))+(P[me].group?86:52)}" y="${yy(bot)+23}" text-anchor="middle" class="rvyout">${you?'You':P[me].group?'The Williams children':'The compiler'}</text></g>`;
-  return `<div class="rivwrap"><svg class="rv" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${g}${dots}${lab}</svg></div>`; }
+  return `<div class="rivwrap"><svg class="rv" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${bands}${g}${dots}${lab}</svg></div>`; }
 function riverPick(c){ const R=riversData(), m=R.merges.find(x=>x.c===c)||{}, f=R.fa(c), mo=R.mo(c), el=document.getElementById('rvinfo'); if(!el) return;
   const nm=id=>id&&P[id]?`<a onclick="go('p-${id}')">${esc(P[id].living?'Living':P[id].n)}</a>${P[id].G?` <span class="gtag">G${P[id].G}</span>`:''}`:'unknown';
   const yb=yr(P[c].b);
   el.innerHTML=`<div class="small"><b>${nm(mo)}</b> &nbsp;×&nbsp; <b>${nm(f)}</b></div><div class="tiny muted" style="margin-top:3px">${(()=>{ const a=surnC(surn(P[m.h||mo]||{}))||'', b=surnC(surn(P[m.to||f]||{}))||''; return a&&b&&a!==b&&(R.mem[m.h]||[]).length>1?`Here the ${esc(a)} line joins the ${esc(b)} line`:`Here ${esc(rivName(P[mo]))} married into the ${esc(b)} line`; })()}, through their child ${nm(c)}${yb&&!P[c].living?` (born ${yb})`:''}.</div>`;
   el.scrollIntoView({block:'nearest',behavior:'smooth'}); }
+function lineStarts(){ const te=P[D.anchor], ma=(te.sp||[]).map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n));
+  return {Williams:D.anchor,Layton:findP('Elizabeth Layton',1805),Newman:findP('Catherine Louisa Newman',1840),Wolcott:ma,Bowne:findP('Catherine Bowne',1718),Cooper:findP('Mary Elizabeth Cooper',1813),Brewer:findP('Mary Brewer',1764)}; }
+const LINEGEO_S={Williams:'Howell',Layton:'Middletown',Newman:'Shark River',Wolcott:'Shrewsbury',Bowne:'Middletown',Cooper:'Howell',Brewer:'Blue Ball'};
+const LINEGEO={Williams:'Metedeconk · Southard (Bethel), Howell',Layton:'Middletown',Newman:'Shark River · Wreck Pond · Harmony',Wolcott:'Shrewsbury · Eatontown · Burnt Tavern',Bowne:'Middletown patentees',Cooper:'Howell & Middletown',Brewer:'Flatlands to Blue Ball (Adelphia)'};
 function vFamily(){ setTab('home');
   const te=P[D.anchor], ma=te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n));
   const lineStart={Williams:D.anchor,Layton:findP('Elizabeth Layton',1805),Newman:findP('Catherine Louisa Newman',1840),Wolcott:ma,Bowne:findP('Catherine Bowne',1718),Safety:findP('Safety Layton',1737),Cooper:findP('Mary Elizabeth Cooper',1813),Brewer:findP('Mary Brewer',1764)};

@@ -2895,7 +2895,7 @@ const HSAREA=new Set(['bordenmill']);
 /* out-tracts an ancestor held but never lived on (John Hance's 1685 Manasquan beach lots): shown among their places, never chosen as the main home */
 const HSOUT=new Set(['hance1685a','hance1685b']);
 const HST={photo:5,exact:5,site:4,place:3,area:3,township:2,bd:1};
-const HSTXT={photo:'Photographed home',exact:'Exact spot',site:'Located tract of land',place:'Village or neighbourhood',township:'Township only',area:'Family area, approximate',bd:'Birth or death place only'};
+const HSTXT={photo:'Photographed home',exact:'Exact spot',site:'Located homestead tract',place:'Home in this village or neighbourhood',township:'Home somewhere in this township',area:'Family area, approximate',bd:'Birth or death place only'};
 const HSJ={photo:.0005,exact:.0005,site:.0012,place:.003,area:.006,township:.009,bd:.005};
 let HSD=null, HSY=null, HSQ='', HSOPEN=false;
 /* points that are land held, bought, surveyed or merely listed - not a place the person lived (homestead sweep, 25 Nov 2026); never removes someone's only point */
@@ -2983,7 +2983,7 @@ function vHomes(){ setTab('map'); store('wfh-mapmode','home');
       <input type="range" class="roadslide" id="hssl" min="${H.lo}" max="${H.hi}" step="1" value="${HSY==null?Math.round((H.lo+H.hi)/2):HSY}" aria-label="Year"${HSY==null?' hidden':''}>
       <div class="hssearch"${HSOPEN?'':' hidden'}><div class="hsqrow"><input id="hsq" type="text" placeholder="Find a name, e.g. Lomell or Daniel Williams" value="${esc(HSQ)}" autocomplete="off"><button class="chip" id="hsclr"${HSQ?'':' hidden'}>✕ Clear</button></div><span id="hsqn" class="tiny"></span></div></div>
     <div id="map"></div>
-    <div class="card small"><b>Homesteads.</b> Each pin is one direct-line ancestor at their main home: the best-located place the records show them living or holding land. Tap a pin for every place they lived. Move to <b>By year</b> and slide to see where the family was living in any year.
+    <div class="card small"><b>Homesteads.</b> Each pin is one direct-line ancestor at their main home: the best-located place the records show them living. Land they only bought, surveyed or held elsewhere is left off. Tap a pin for every place they lived. Where the records give only one place for someone, even a township or the place they were born or died, that is shown as the best we know. Move to <b>By year</b> and slide to see where the family was living in any year.
       <div class="hslg">${['photo','site','place','township','bd'].map(t=>`<div><i class="hsk hs-${t}"></i>${t==='photo'?'Exact spot or photographed home':HSTXT[t]} <span class="muted" id="hsc-${t}"></span></div>`).join('')}</div>
       <div class="tiny muted" style="margin-top:6px">The pin style shows how exactly the place is known, not how well the person is proved. Pins sharing a village or township are spread a little so each can be seen. Labels appear as you zoom in, each set beside its pin where it overlaps least; where pins crowd, a few labels wait until you zoom closer. Search a name to light up every place that person lived. Living people are not shown.</div></div></div>`;
   document.getElementById('hsall').onclick=()=>{ if(MAP) MCARRY={c:MAP.getCenter(),z:MAP.getZoom()}; HSY=null; vHomes(); };

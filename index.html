@@ -1371,6 +1371,12 @@ input[type=text],input[type=search],select,textarea{background-color:#fff}
 .archnext{font-family:var(--body);font-size:12px;color:var(--muted);background:none;border:1px solid #d8ccb0;border-radius:10px;padding:1px 8px;margin-left:4px;cursor:pointer;vertical-align:middle;line-height:1.5}.archnext:hover{background:#efe6d2}
 .foot{text-align:center;color:var(--muted);font-size:12.5px;padding:18px 10px}
 /* text panels over the fixed wallpaper */
+.hero-card p{font-family:var(--sc);font-style:normal;letter-spacing:.2px;font-size:12.5px;padding:5px 12px!important}@media (min-width:640px){.hero-card p{font-size:15px;letter-spacing:.6px}}
+.cta.incta{padding:8px 14px;align-items:center}.cta.incta .inct{flex:1;font-family:var(--head);font-weight:400;font-size:17px}.cta.incta .inchg{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.mepop{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(30,25,15,.45);padding:20px}
+.mepop>div{max-width:360px;width:100%;background:#faf6ee;border:5px solid #3e5f3f;box-shadow:inset 0 0 0 1.5px #c9a25a,0 10px 30px rgba(0,0,0,.3);border-radius:16px;padding:22px 20px 18px;text-align:center}
+.mepop h3{font-family:var(--head);font-weight:400;font-size:24px;color:var(--green);margin:4px 0 8px}.mepop p{margin:0 0 14px;font-size:14.5px;line-height:1.45}
+.mepop button{border:0;border-radius:10px;padding:10px 22px;background:linear-gradient(160deg,#2f4a32,#3e5f3f 60%,#5d4526);color:#f6efdc;font:600 15px var(--body);outline:1.5px solid #c9a25a;outline-offset:-4px;cursor:pointer}
 .fr{--fc:#3e5f3f;border:5px solid var(--fc)!important;box-shadow:inset 0 0 0 1.5px #c9a25a,0 2px 6px rgba(40,30,10,.15)!important;border-radius:14px!important}
 .fr2{--fc:#7a4329}.fr3{--fc:#335a70}
 .xstrip .xslide{--fc:#3e5f3f;background:#faf6ee;border:4px solid var(--fc);border-left-width:4px;box-shadow:inset 0 0 0 1.5px #c9a25a,0 2px 5px rgba(40,30,10,.14);border-radius:12px}
@@ -1769,7 +1775,7 @@ function vHome(){
       <button class="door d2" onclick="go('family')"><svg viewBox="0 0 24 24"><path d="M3 20a9 9 0 0 1 18 0"/><path d="M7 20a5 5 0 0 1 10 0"/><path d="M12 11V5M6 13.5 3.5 9.5M18 13.5l2.5-4"/></svg><b>The Family</b><span>Lines, people & the fan</span></button>
       <button class="door d3" onclick="go('map')"><svg viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg><b>The Map</b><span>Homes, churches & records</span></button>
     </div>
-    ${ME&&ME.you?`<button class="cta incta" onclick="go('me')"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><div><b>You’re in the tree</b><span>Relationships are shown relative to you. Tap to change.</span></div></button>`:''}
+    ${ME&&ME.you?`<button class="cta incta" onclick="go('me')"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg><b class="inct">You’re in the tree</b><span class="inchg">Tap to change ›</span></button>`:''}
     <div class="mstats">
       ${(()=>{ const g1=viewer()?Object.values(P).find(p=>p.G===1&&!p.virt):null; const nA=Object.values(P).filter(p=>p.G>1&&!p.virt).length; return `<button onclick="${g1?`TREEP='${g1.id}';go('anc-${g1.id}')`:"go('fan')"}"><b>${nA.toLocaleString()}</b><span>ancestors</span></button>`; })()}
       <button onclick="go('names')"><b>${ancNames().length}</b><span>family names</span></button>
@@ -1777,8 +1783,7 @@ function vHome(){
       <button onclick="rState={q:'',f:'',t:'',map:false,lim:60,pp:'',nw:false};go('records')"><b>${nRec.toLocaleString()}</b><span>records</span>${nRecNew?`<i>+${nRecNew}</i>`:''}</button>
       <button onclick="pState={q:'',f:'all',lim:80};go('people')"><b>${nPeople.toLocaleString()}</b><span>people</span></button>
     </div>
-    <h3 class="sec">Start with</h3>
-    <div class="card fr fr2" style="cursor:pointer" onclick="go('p-${D.anchor}')"><div class="rtype">The couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">${meetLine()}</div></div>
+    <div class="card fr fr2" style="cursor:pointer;margin-top:14px" onclick="go('p-${D.anchor}')"><div class="rtype">Start with: the couple at the centre</div><div style="font-family:var(--head);font-size:22px;color:var(--green)">Thomas Edward Williams <span class="gtag">G5</span></div><div class="muted">1862 – 1956 · married Mary A. Wolcott (1865 – 1944)</div><div class="small" style="margin-top:6px">${meetLine()}</div></div>
     <div class="card homemap fr fr3" onclick="goStoryMap()"><div class="skick">WHERE IT ALL HAPPENED</div><div class="hmt">The families’ road</div>
       <div class="hmbox">${smapSvg()}<span class="smapen">Follow the road ›</span></div>
       <div class="small" style="margin-top:8px">Three centuries in one journey: from the Dutch and English villages at the western end of Long Island, across the bay to the new Monmouth settlements, inland through Middletown and Freehold to the Crosswicks country, south into the pine woods along the Metedeconk, and at last east to the shore at Point Pleasant. Side roads bring in the families who married into the line along the way.</div></div>
@@ -3408,7 +3413,8 @@ function vMe(){
     if(l!=null) gens[l].living=e.target.checked?1:0;
     if(s!=null){ const v=e.target.value; gens[s]=v?{id:v}:{name:'',living:1}; for(let j=+s+1;j<gens.length;j++) if(gens[j].id) gens[j]={name:'',living:1}; drawG(); }};
   document.getElementById('clrA').onclick=()=>{ME={anchor:'',gens:[],you:ME&&ME.you};vMe()};
-  document.getElementById('saveme').onclick=()=>{ME={anchor:st.anchor,gens}; store('wfh-me',ME); applyMe(); applyGen(); ROADD=null; RX=null; RDOCS=null; for(const k in TALLYF) delete TALLYF[k]; go('p-'+ME.you)};
+  document.getElementById('saveme').onclick=()=>{ME={anchor:st.anchor,gens}; store('wfh-me',ME); applyMe(); applyGen(); ROADD=null; RX=null; RDOCS=null; RIVC=null; for(const k in TALLYF) delete TALLYF[k]; go('p-'+ME.you);
+    setTimeout(()=>{ const o=document.createElement('div'); o.className='mepop'; o.innerHTML=`<div><div style="font-size:30px">✓</div><h3>You’re in the tree</h3><p>From now on every page shows how each person is related to you: the fan, the rivers, the G-tags and every relationship line. Tap “Tap to change” on the home page any time to adjust where you sit.</p><button>Start exploring</button></div>`; o.onclick=e=>{ if(e.target===o||e.target.tagName==='BUTTON') o.remove(); }; document.body.appendChild(o); },250); };
   const c=document.getElementById('clrme'); if(c) c.onclick=()=>{ME=null; try{localStorage.removeItem('wfh-me')}catch(e){} applyMe(); applyGen(); ROADD=null; RX=null; RDOCS=null; for(const k in TALLYF) delete TALLYF[k]; go('home')};
 }
 

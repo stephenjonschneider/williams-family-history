@@ -2163,7 +2163,7 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   const tw=(t,fs)=>(t.replace(/\u200a/g,'').length*.5+(t.split('\u200a').length-1)*.12)*fs+6;
   const place=(x,y,texts,cls,click,pref,fs,side)=>{ for(const t of texts){ const w=tw(t,fs), h=fs+3, G=10;
       /* stream heads: above; joins: the side the joining stream comes in from first (even if it touches a stream), then the other side */
-      const groups=pref==='top'?[[[x-w/2,y-h-6],[x-w/2,y-2*h-6],[x-6,y-h-6],[x-w+6,y-h-6],[x+8,y-h-4],[x-w-8,y-h-4],[x+9,y-h/2],[x-w-9,y-h/2]]]
+      const groups=pref==='top'?[[[x-w/2,y-h-6],[x-w/2,y-2*h-6],...[4,8,12,16,20,24,28,32].flatMap(k=>[[x-w/2+k,y-h-6],[x-w/2-k,y-h-6]]),[x+8,y-h-4],[x-w-8,y-h-4],[x+9,y-h/2],[x-w-9,y-h/2]]]
         :(()=>{ const Rt=[[x+G,y-h/2],[x+G,y+3],[x+G,y-h-3]], Lt=[[x-G-w,y-h/2],[x-G-w,y+3],[x-G-w,y-h-3]]; return side<0?[Lt,Rt]:[Rt,Lt]; })();
       for(const C of groups) for(const pass of [0,1]) for(const [bx,by] of C){ const b=[bx,by,bx+w,by+h]; if(bx<2||bx+w>W-2||by<36||hit(b)||(pass===0&&cross(b))) continue; boxes.push(b); const lft=pref!=='top'&&bx+w<=x; /* left-hand labels end exactly at the gap, whatever their true width */ return lft?`<text x="${x-G}" y="${by+h-3.5}" text-anchor="end" class="${cls}" onclick="${click}">${esc(t)}</text>`:`<text x="${bx+3}" y="${by+h-3.5}" class="${cls}" onclick="${click}">${esc(t)}</text>`; } }
     return ''; };
@@ -2210,7 +2210,9 @@ const LINEGEO_S={Williams:'Howell',Layton:'Middletown',Newman:'Shark River',Wolc
 const LINEGEO={Williams:'Metedeconk · Southard (Bethel), Howell',Layton:'Middletown',Newman:'Shark River · Wreck Pond · Harmony',Wolcott:'Shrewsbury · Eatontown · Burnt Tavern',Bowne:'Middletown patentees',Cooper:'Howell & Middletown',Brewer:'Flatlands to Blue Ball (Adelphia)'};
 function rivCard(){ return (()=>{ const sv=riversSvg(); return sv?`<div class="card rivcard"><div class="skick">THE RIVERS OF THE FAMILY</div><div class="hmt">How every line became one</div><div class="tiny muted" style="margin:2px 0 8px">Each stream is a family line, from its earliest known ancestor down. Streams join where two families married. Solid where the link to the parent is proved, dashed where it is not yet. Tap a name or a join, and scroll sideways to see every line. ${ME&&ME.you?'Drawn for your own line.':'Drawn down to the children of Thomas and Mary Williams; put yourself in the tree to see your own line.'}</div>${sv}</div>`:''; })(); }
 function vRivers(){ setTab('tree'); store('wfh-tree','rivers');
-  app.innerHTML=topBar('The rivers of the family',true)+`<div class="wrap"><div class="chartbar">${treeSeg('rivers')}</div>${rivCard()||'<div class="card small">Not enough family lines to draw yet.</div>'}</div>`; }
+  app.innerHTML=topBar('The rivers of the family',true)+`<div class="wrap"><div class="chartbar">${treeSeg('rivers')}</div>${rivCard()||'<div class="card small">Not enough family lines to draw yet.</div>'}</div>`; rivKeep('rivers'); }
+/* the rivers chart scrolls sideways: remember where the reader was, so tapping a name and coming back lands on the same stretch */
+const RIVX={}; function rivKeep(k){ const el=document.querySelector('.rivwrap'); if(!el) return; const v=RIVX[k]; if(typeof v==='number'){ el.scrollLeft=v; requestAnimationFrame(()=>{ el.scrollLeft=v; }); } el.addEventListener('scroll',()=>{ RIVX[k]=el.scrollLeft; },{passive:true}); }
 function vFamily(){ setTab('home');
   const te=P[D.anchor], ma=te.sp.map(s=>s[0]).find(x=>P[x]&&/Wolcott/.test(P[x].n));
   const lineStart={Williams:D.anchor,Layton:findP('Elizabeth Layton',1805),Newman:findP('Catherine Louisa Newman',1840),Wolcott:ma,Bowne:findP('Catherine Bowne',1718),Safety:findP('Safety Layton',1737),Cooper:findP('Mary Elizabeth Cooper',1813),Brewer:findP('Mary Brewer',1764)};
@@ -2237,7 +2239,7 @@ function vFamily(){ setTab('home');
     ${xrow("document.querySelector('#tabs [data-t=tree]').click()",'⚘','The tree','Ancestors, descendants and charts')}
     ${xrow("go('me')",'✚',ME&&ME.you?'You’re in the tree':'Put yourself in the tree',ME&&ME.you?'Change where you sit':'Then every page shows how you’re related')}
     ${xrow("go('marks')",'▬','How to read the marks','The shading, the proof line and the G-tags')}
-   </div></div>`; }
+   </div></div>`; rivKeep('family'); }
 function vMarks(){ setTab('home');
   app.innerHTML=topBar('How to read the marks',true)+`<div class="wrap">
     <div class="card small"><b>How everything here is graded.</b> Every grade in this app comes from the documents, under fixed rules applied the same way to every person. A parent link is graded by what the records say and, in many cases, by where they place the family: from Proved and Documented, where records state the relationship, down through Strong, Probable, Compiled and Hypothesis as the evidence becomes more indirect, to Open where nothing yet connects them. Each person’s support shading is worked out the same way, from the records behind them and the strength of each. The compiler’s opinion, family tradition and the online family tree never raise a grade. Anything the compiler supplied is cited like any other source and held to the same rules. Every grade can be checked: open a person to see the records it rests on.</div>

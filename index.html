@@ -2873,7 +2873,7 @@ function vDesc(id){
 
 /* records */
 /* pedigree chart (zoomable) */
-let chartDepth=+(store('wfh-depth')||5);
+let chartDepth=+(store('wfh-depth')||10);
 function vChart(id){
   if(!P[id]) return vHome(); setTab('tree'); store('wfh-tree','chart');
   app.innerHTML=topBar('Family chart',true)+`<div class="wrap" style="padding-bottom:4px">
@@ -2901,9 +2901,9 @@ function vChart(id){
   const ci=document.getElementById('ci'), cw=document.getElementById('cw');
   ci.style.width=maxX+'px'; ci.style.height=(maxY+20)+'px'; ci.innerHTML=svg+plates;
   let s=1,tx=10,ty=10; const apply=()=>{ci.style.transform=`translate(${tx}px,${ty}px) scale(${s})`};
-  const fit=()=>{const r=cw.getBoundingClientRect(); s=Math.min(1.2,Math.max(.15,Math.min((r.width-20)/maxX,(r.height-20)/(maxY+20)))); tx=10; ty=Math.max(10,(r.height-(maxY+20)*s)/2); apply()};
-  const zoomAt=(f,cx,cy)=>{const ns=Math.min(2.5,Math.max(.15,s*f)); tx=cx-(cx-tx)*ns/s; ty=cy-(cy-ty)*ns/s; s=ns; apply()};
-  fit(); if(s<.55){ const r=cw.getBoundingClientRect(); s=.62; tx=10; ty=r.height/2-(yOf[id+'@0']+H/2)*s; apply(); }
+  const fit=()=>{const r=cw.getBoundingClientRect(); s=Math.min(1.2,Math.max(.05,Math.min((r.width-20)/maxX,(r.height-20)/(maxY+20)))); tx=10; ty=Math.max(10,(r.height-(maxY+20)*s)/2); apply()};
+  const zoomAt=(f,cx,cy)=>{const ns=Math.min(2.5,Math.max(.05,s*f)); tx=cx-(cx-tx)*ns/s; ty=cy-(cy-ty)*ns/s; s=ns; apply()};
+  fit(); /* opens zoomed out to show everyone; pinch or + to read */
   const ptrs=new Map(); let moved=false, startDist=0, startS=1, last=null;
   cw.addEventListener('pointerdown',e=>{cw.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); moved=false; last={x:e.clientX,y:e.clientY};
     if(ptrs.size===2){const [a,b]=[...ptrs.values()]; startDist=Math.hypot(a.x-b.x,a.y-b.y)||1; startS=s;} cw.classList.add('drag')});

@@ -2207,7 +2207,17 @@ function riversSvg(){ const R=riversData(), {S,Y,mem,merges}=R, me=R.me;
   lab+=`<g onclick="go('p-${P[me].group?D.anchor:me}')" style="cursor:pointer"><rect x="${Math.max(4,xm-(P[me].group?86:52))}" y="${yy(bot)+6}" width="${P[me].group?172:104}" height="26" rx="13" class="rvyou"/><text x="${Math.max(4,xm-(P[me].group?86:52))+(P[me].group?86:52)}" y="${yy(bot)+23}" text-anchor="middle" class="rvyout">${you?'You':P[me].group?'The Williams children':'The compiler'}</text></g>`;
   return `<div class="rivwrap"><svg class="rv" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${bands}${g}${dots}${lab}</svg></div>`; }
 function rvPopClose(){ const o=document.getElementById('rvpop'); if(o) o.remove(); document.removeEventListener('pointerdown',rvPopAway,true); window.removeEventListener('scroll',rvPopClose,true); }
-function rvPopAway(e){ const o=document.getElementById('rvpop'); if(o&&o.contains(e.target)&&e.target.closest('a,button')) return; rvPopClose(); }
+function rvPopAway(e){ /* handled by the app-wide tap-to-dismiss below */ }
+/* app-wide: while a pop-up bubble is open, a tap anywhere outside it only closes the bubble; that tap does not also press what is underneath */
+let POPSWALLOW=0;
+document.addEventListener('pointerdown',e=>{
+  const rv=document.getElementById('rvpop'), lp=[...document.querySelectorAll('.leaflet-popup')];
+  if(rv&&!rv.contains(e.target)){ rvPopClose(); POPSWALLOW=Date.now(); return; }
+  const open=lp.filter(x=>!x.contains(e.target)); if(lp.length&&open.length===lp.length&&!e.target.closest('.leaflet-control')){ open.forEach(x=>{ const b=x.querySelector('.leaflet-popup-close-button'); if(b) b.click(); else x.remove(); }); POPSWALLOW=Date.now(); }
+},true);
+document.addEventListener('click',e=>{ if(POPSWALLOW&&Date.now()-POPSWALLOW<1200){ POPSWALLOW=0; e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); } },true);
+/* a drag or a scroll after the tap is not a press: forget the pending swallow when the finger moves on */
+document.addEventListener('pointerup',()=>{ if(POPSWALLOW) setTimeout(()=>{ POPSWALLOW=0; },400); },true);
 function riverPick(c,ev){ const R=riversData(), m=R.merges.find(x=>x.c===c)||{}, f=R.fa(c), mo=R.mo(c); rvPopClose();
   const el=document.createElement('div'); el.id='rvpop'; el.className='rvpop'; document.body.appendChild(el);
   const nm=id=>id&&P[id]?`<a onclick="go('p-${id}')">${esc(P[id].living?'Living':P[id].n)}</a>${P[id].G?` <span class="gtag">G${P[id].G}</span>`:''}`:'unknown';

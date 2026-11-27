@@ -1371,6 +1371,7 @@ input[type=text],input[type=search],select,textarea{background-color:#fff}
 .archnext{font-family:var(--body);font-size:12px;color:var(--muted);background:none;border:1px solid #d8ccb0;border-radius:10px;padding:1px 8px;margin-left:4px;cursor:pointer;vertical-align:middle;line-height:1.5}.archnext:hover{background:#efe6d2}
 .foot{text-align:center;color:var(--muted);font-size:12.5px;padding:18px 10px}
 /* text panels over the fixed wallpaper */
+.sded{margin-top:4px;border-top:1px solid #e3d9c3}.sded>div{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dotted #e3d9c3}.sded b{color:#a0442c;white-space:nowrap}.sded .sdt{border-bottom:0;font-weight:600}.sded .sdt b{color:inherit}
 /*HEROIN*/.hero-card{padding:14px 14px!important}
 .heroin{position:relative;max-width:720px;margin:0 auto;padding:12px 14px 12px;border-radius:12px;background:radial-gradient(ellipse at 50% 40%,#fbf6ea 0%,#f4ecda 70%,#ecdfc4 100%);box-shadow:inset 0 0 0 1.5px #c9a25a,inset 0 0 0 5px #f4ecda,inset 0 0 0 6px rgba(168,128,58,.55),0 2px 6px rgba(0,0,0,.25)}
 .heroin::before,.heroin::after{content:"❦";position:absolute;top:50%;transform:translateY(-50%);color:#a8803a;font-size:18px;opacity:.75}
@@ -1668,37 +1669,37 @@ const GW={proved:1,documented:1,strong:.85,probable:.45,compiled:.3,hypothesis:.
 function strGrade(f,e){ const r=strGradeRaw(f,e); return r==null?null:Math.round(r); }
 /* the same grade on a 1-100 scale for display */
 function strGrade100(f,e){ const r=strGradeRaw(f,e); return r==null?null:Math.round(r*10); }
-function strGradeRaw(f,e){ const {up,down}=strLine(f,e), all=up.concat(down), own=[], dn=[];
-  for(let i=1;i<all.length;i++){ const lv=strLnk(all[i],all[i-1]).lv; if(lv==='user') continue; (i<up.length?own:dn).push(lv); }
-  if(!own.length) return null;
-  const av=a=>a.length?a.reduce((t,x)=>t+(GW[x]??0),0)/a.length:1, A=own.concat(dn);
-  let g=1+9*(.8*av(own)+.2*av(dn))-.3*A.filter(x=>x==='open'||x==='tree').length;
-  if(own.length<3) g-=.5; /* one or two links is thin evidence however good */
-  if(A.includes('hypothesis')||A.some(x=>x==='open'||x==='tree')) g=Math.min(g,5.4);
-  return Math.max(1,Math.min(10,g)); }
-
+/* the line score: every parent link from the oldest ancestor down to the youngest person who is not living counts equally
+   (the base, the average grade out of 100), then each gap costs points again, so only a fully documented line reaches 100 */
+const DED={proved:0,documented:0,strong:3,probable:8,compiled:10,hypothesis:15,open:20,tree:20};
+function strCalc(f,e){ const {up,down}=strLine(f,e), all=up.concat(down), A=[];
+  for(let i=1;i<all.length;i++){ if(P[all[i]].living) continue; const lv=strLnk(all[i],all[i-1]).lv; if(lv==='user') continue; A.push({c:all[i],p:all[i-1],lv,d:DED[lv]??20}); }
+  if(!A.length) return null;
+  const base=100*A.reduce((t,x)=>t+(GW[x.lv]??0),0)/A.length, d=A.reduce((t,x)=>t+x.d,0);
+  return {A,base:Math.round(base),d,fin:Math.max(5,Math.round(base-d))}; }
+function strGradeRaw(f,e){ const r=strCalc(f,e); return r?r.fin/10:null; }
 /* a short, line-specific read-out of how well the line is proved */
-function strPop(f,vi,ev){ const e=strEntries(f)[vi], {up,down}=strLine(f,e), all=up.concat(down), g=strGradeRaw(f,e); if(g==null) return;
-  const L=[]; for(let i=1;i<all.length;i++){ const lv=strLnk(all[i],all[i-1]).lv; if(lv==='user') continue; L.push({c:all[i],p:all[i-1],lv,own:i<up.length}); }
-  const own=L.filter(x=>x.own), n=own.length, good=own.filter(x=>['proved','documented','strong'].includes(x.lv)).length, docd=own.filter(x=>['proved','documented'].includes(x.lv)).length;
-  const weak=L.filter(x=>!['proved','documented','strong'].includes(x.lv)).sort((a,b)=>(GW[a.lv]??0)-(GW[b.lv]??0));
-  const g100=Math.round(g*10), nm=id=>{ const p=P[id]; return p?`${esc(p.living?'Living':p.n)}${p.G?` <span class="gtag">G${p.G}</span>`:''}`:''; };
-  const verdict=g100>=85?'Very well proved.':g100>=70?'Well supported.':g100>=55?'Mostly sound, with soft spots.':g100>=40?'Partly proved.':'Largely unproved so far.';
-  const first=P[up[0]], top=first?`${esc(first.n)}${first.G?` <span class="gtag">G${first.G}</span>`:''}`:'';
-  let t=`<div class="small"><b style="font-family:var(--head);font-size:18px;font-weight:400">${esc(SLINES.find(x=>x[0]===f)?.[1]||f)} line · ${g100}/100</b></div><div class="small" style="margin-top:4px"><b>${verdict}</b> ${n===1?`Its one parent link, from ${top} down, is ${good?'documented or strong':'not yet proved'}`:`Of the ${n} parent links from ${top} down, ${good} ${good===1?'is':'are'} documented or strong`}${docd?` (${docd} fully documented)`:''}.`;
-  if(n<3) t+=' With so few links, even good evidence counts for less.';
-  if(weak.length){ const w=weak.slice(0,2).map(x=>`${nm(x.c)} → ${nm(x.p)} (${LVL[x.lv].toLowerCase()})`); t+=` The weakest point${weak.length>1?'s':''}: ${w.join('; ')}${weak.length>2?`, and ${weak.length-2} more`:''}.`; }
-  else t+=' Every link in it is documented or strong.';
-  if(weak.some(x=>['open','tree','hypothesis'].includes(x.lv))) t+=' Until those are proved, the score is capped.';
-  else if(g100>=70) t+=' A relative can rely on this line.';
-  t+=`</div>`;
+function strPop(f,vi,ev){ const e=strEntries(f)[vi], {up}=strLine(f,e), R=strCalc(f,e); if(!R) return;
+  const F=R.A, g100=R.fin, nm=id=>{ const p=P[id]; return p?`${esc(p.living?'Living':p.n)}${p.G?` <span class="gtag">G${p.G}</span>`:''}`:''; };
+  const verdict=g100>=85?'very well proved':g100>=70?'well supported':g100>=55?'mostly sound, with soft spots':g100>=40?'partly proved':g100>=20?'weakly proved':'largely unproved so far';
+  const bot=F[F.length-1].c, k=a=>F.filter(x=>a.includes(x.lv)).length;
+  const parts=[[k(['proved','documented']),'documented'],[k(['strong']),'strong'],[k(['probable','compiled']),'probable or compiled'],[k(['hypothesis']),'hypothesis'],[k(['open','tree']),'open or unproven']].filter(x=>x[0]);
+  const plist=parts.map(([c,w])=>`${c} ${w}`), pl=plist.length>1?plist.slice(0,-1).join(', ')+' and '+plist[plist.length-1]:plist[0]||'';
+  const fam=esc(SLINES.find(x=>x[0]===f)?.[1]||f);
+  let t=`<div class="small"><b style="font-family:var(--head);font-size:18px;font-weight:400">${fam} line · ${g100}/100</b></div><div class="small" style="margin-top:4px"><b>From ${nm(up[0])} down to ${nm(bot)}, the full line runs ${F.length} parent link${F.length===1?'':'s'}: ${parts.length===1&&F.length>1?'all '+parts[0][1]:pl}.</b> Overall: ${verdict}.</div>`;
+  const D=F.filter(x=>x.d).sort((a,b)=>b.d-a.d||(P[b.p].G||0)-(P[a.p].G||0));
+  t+=`<div class="small" style="margin-top:6px">Every link counts equally: the line averages <b>${R.base}</b> out of 100.`;
+  if(D.length){ t+=` Each gap then costs points:</div><div class="small sded">${D.slice(0,6).map(x=>`<div><span>${nm(x.c)} → ${nm(x.p)} · ${LVL[x.lv].toLowerCase()}</span><b>−${x.d}</b></div>`).join('')}${D.length>6?`<div><span>${D.length-6} more</span><b>−${D.slice(6).reduce((t,x)=>t+x.d,0)}</b></div>`:''}<div class="sdt"><span>Score</span><b>${g100}</b></div></div>`;
+    if(R.base-R.d<5) t+=`<div class="tiny muted" style="margin-top:4px">The deductions pass zero; the score is held at the floor of 5.</div>`;
+    t+=`<div class="small" style="margin-top:6px">${D.some(x=>['open','tree','hypothesis'].includes(x.lv))?'Proving the open and hypothesis links will lift this line the most.':'Only a fully documented line scores 100.'}</div>`; }
+  else t+=' Every link is documented, so nothing is deducted.</div>';
   rvPopClose(); const el=document.createElement('div'); el.id='rvpop'; el.className='rvpop'; el.innerHTML='<button class="rvpx" aria-label="Close" onclick="rvPopClose()">×</button>'+t; document.body.appendChild(el);
   const r=ev&&ev.currentTarget?ev.currentTarget.getBoundingClientRect():null, w=Math.min(320,innerWidth-24); el.style.width=w+'px'; const h=el.offsetHeight;
   el.style.left=Math.max(12,Math.min(innerWidth-w-12,r?r.right-w:(innerWidth-w)/2))+'px'; el.style.top=Math.max(12,Math.min(innerHeight-h-80,r?r.bottom+8:100))+'px';
   setTimeout(()=>{ document.addEventListener('pointerdown',rvPopAway,true); window.addEventListener('scroll',rvPopClose,true); },0); }
 function strCol(v){ return v>=.85?'#2f6b35':v>=.65?'#5f9a4a':v>=.45?'#d9a441':v>=.25?'#d08a3c':'#c0392b'; }
 const gCol=g=>g>=9?'#2f6b35':g>=6?'#5f9a4a':g>=4?'#d9a441':g>=2?'#d08a3c':'#c0392b';
-function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),g:Math.max(1,...strEntries(k).map(e=>strGrade(k,e)||1)),g100:Math.max(10,...strEntries(k).map(e=>strGrade100(k,e)||10)),n:strEntries(k).length})).sort((a,b)=>b.g100-a.g100||b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
+function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),g:Math.max(1,...strEntries(k).map(e=>strGrade(k,e)||1)),g100:Math.max(5,...strEntries(k).map(e=>strGrade100(k,e)||5)),base:Math.max(0,...strEntries(k).map(e=>(strCalc(k,e)||{base:0}).base)),n:strEntries(k).length})).sort((a,b)=>b.g100-a.g100||b.base-a.base||b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
   const chip=x=>{ const c=gCol(x.g); return `<button class="chip schip ${x.k===f?'on':''}${x.n>1?' multi':''}" style="--sc:${c}" title="Line grade ${x.g100}/100" onclick="strPick('${x.k}')"><i></i>${esc(x.l)}${x.n>1?`<sup class="rtn">${x.n}</sup>`:''}</button>`; };
   const top=L.filter(x=>x.g>=6), low=L.filter(x=>x.g<6);
   return `<div class="srows" id="sf"><div class="chips srow1">${top.map(chip).join('')}</div><div class="chips srow2">${low.map(chip).join('')}</div></div>`; }

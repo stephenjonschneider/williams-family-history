@@ -1698,7 +1698,7 @@ function strPop(f,vi,ev){ const e=strEntries(f)[vi], {up,down}=strLine(f,e), all
   setTimeout(()=>{ document.addEventListener('pointerdown',rvPopAway,true); window.addEventListener('scroll',rvPopClose,true); },0); }
 function strCol(v){ return v>=.85?'#2f6b35':v>=.65?'#5f9a4a':v>=.45?'#d9a441':v>=.25?'#d08a3c':'#c0392b'; }
 const gCol=g=>g>=9?'#2f6b35':g>=6?'#5f9a4a':g>=4?'#d9a441':g>=2?'#d08a3c':'#c0392b';
-function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),g:Math.max(1,...strEntries(k).map(e=>strGrade(k,e)||1)),g100:Math.max(10,...strEntries(k).map(e=>strGrade100(k,e)||10)),n:strEntries(k).length})).sort((a,b)=>b.g-a.g||b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
+function strChips(f){ const L=SLINES.map(([k,l])=>({k,l,v:strScore(k),g:Math.max(1,...strEntries(k).map(e=>strGrade(k,e)||1)),g100:Math.max(10,...strEntries(k).map(e=>strGrade100(k,e)||10)),n:strEntries(k).length})).sort((a,b)=>b.g100-a.g100||b.v-a.v||SLINES.findIndex(x=>x[0]===a.k)-SLINES.findIndex(x=>x[0]===b.k));
   const chip=x=>{ const c=gCol(x.g); return `<button class="chip schip ${x.k===f?'on':''}${x.n>1?' multi':''}" style="--sc:${c}" title="Line grade ${x.g100}/100" onclick="strPick('${x.k}')"><i></i>${esc(x.l)}${x.n>1?`<sup class="rtn">${x.n}</sup>`:''}</button>`; };
   const top=L.filter(x=>x.g>=6), low=L.filter(x=>x.g<6);
   return `<div class="srows" id="sf"><div class="chips srow1">${top.map(chip).join('')}</div><div class="chips srow2">${low.map(chip).join('')}</div></div>`; }
